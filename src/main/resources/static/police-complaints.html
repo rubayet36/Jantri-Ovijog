@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – All Complaints</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Global UI design system -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <link rel="stylesheet" href="./css/police-dashboard.css" />
+  <link rel="stylesheet" href="./css/police-complaints.css" />
+</head>
+<body>
+
+
+<header class="full-navbar">
+  <div class="nav-left">
+    <a href="police-dashboard.html" class="brand-title"><span>🛡️ Jatri_Ovijog</span></a>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-collapsible">
+    <div class="nav-pill" id="nav-pill">
+      <div class="nav-slider" id="nav-slider"></div>
+      <a href="police-dashboard.html" class="nav-pill-link" data-page="police-dashboard"><span>Command</span></a>
+      <a href="police-complaints.html" class="nav-pill-link" data-page="police-complaints"><span>Complaints</span></a>
+      <a href="police-emergency.html" class="nav-pill-link" data-page="police-emergency"><span>Emergency</span></a>
+      <a href="police-manage.html" class="nav-pill-link" data-page="police-manage"><span>Manage</span></a>
+      <a href="police-chat.html" class="nav-pill-link" data-page="police-chat"><span>Team Chat</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+      <button class="nav-icon-btn" id="profile-btn" title="Profile">👮</button>
+      <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+    </div>
+  </div>
+</header>
+<div class="nav-backdrop" aria-hidden="true"></div>
+
+<main class="police-main">
+  <div class="police-header">
+    <div>
+      <h1 class="page-title">Complaint Registry</h1>
+      <p class="police-subtitle">Manage, assign, and resolve passenger reports.</p>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <section class="column-left">
+      <div class="card filters-card">
+        <div class="filter-group">
+    <label>Priority</label>
+    <select id="priorityFilter" class="form-select">
+        <option value="all">All Priorities</option>
+        <option value="High">High Priority</option>
+        <option value="Medium">Medium Priority</option>
+        <option value="Low">Low Priority</option>
+    </select>
+</div>
+        <div class="filters-row">
+          <input type="text" id="searchInput" placeholder="Search ID, Bus, Route..." class="filter-input">
+          <select id="thanaFilter" class="filter-select">
+            <option value="all">All Thanas</option>
+            <option>Uttara East</option>
+            <option>Mirpur</option>
+            <option>Gulshan</option>
+          </select>
+          <select id="statusFilter" class="filter-select">
+            <option value="all">All Status</option>
+            <option>New</option>
+            <option>In-Progress</option>
+            <option>Resolved</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="policeComplaintsList" class="complaints-container"></div>
+    </section>
+
+    <section class="column-right">
+      <div class="card">
+        <h2 class="card-title">Top Offenders</h2>
+        <div id="busHotspotsList"></div>
+      </div>
+    </section>
+  </div>
+</main>
+<!-- Case Details Modal -->
+<div id="caseModal" class="case-modal hidden">
+  <div class="case-modal-box">
+    <div class="case-modal-header">
+      <h2 id="caseModalTitle">Case</h2>
+      <button id="caseModalClose" class="case-icon-btn">✕</button>
+    </div>
+
+    <div id="caseModalBody" class="case-modal-body"></div>
+
+    <div class="case-modal-footer">
+      <button id="caseModalClose2" class="complaint-btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="./js/navbar.js"></script>
+<script src="./js/police-complaints.js"></script>
+</body>
+</html>

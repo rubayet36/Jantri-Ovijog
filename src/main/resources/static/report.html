@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – Report Issue</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+<!-- Global UI design system -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="./css/report.css" />
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+
+</head>
+<body>
+
+  <!-- ======================= -->
+  <!--   FULL NAVBAR (TOP)     -->
+<header class="full-navbar">
+  <div class="nav-left">
+    <a href="dashboard.html" class="brand-title"><span>Jatri_Ovijog</span></a>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-collapsible">
+    <div class="nav-pill" id="nav-pill">
+      <div class="nav-slider" id="nav-slider"></div>
+      <a href="dashboard.html" class="nav-pill-link" data-page="dashboard"><span>Dashboard</span><span class="nav-pill-badge">4</span></a>
+      <a href="feed.html" class="nav-pill-link" data-page="feed"><span>Community</span></a>
+      <a href="report.html" class="nav-pill-link" data-page="report"><span>Report</span></a>
+      <a href="emergency.html" class="nav-pill-link" data-page="emergency"><span>Emergency</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+      <button class="nav-icon-btn" id="profile-btn" title="Profile">👤</button>
+      <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+    </div>
+  </div>
+</header>
+<div class="nav-backdrop" aria-hidden="true"></div>
+
+
+  <!-- ======================= -->
+  <!--     REPORT CONTENT      -->
+  <!-- ======================= -->
+  <main class="report-main">
+    <section class="report-header">
+      <div>
+        <h1>Report an Issue</h1>
+        <p>
+          Help make Dhaka roads safer. Share what happened, where, and which bus or route was involved.
+        </p>
+      </div>
+      <div class="header-badge">
+        💡 You can choose to stay anonymous.
+      </div>
+    </section>
+
+    <section class="report-layout">
+      <!-- LEFT: FORM -->
+      <section class="report-card main-form-card">
+        <form id="report-form">
+          <!-- Reporter info -->
+          <div class="section-block">
+            <div class="section-title-row">
+              <h2>Reporter Details</h2>
+              <label class="inline-checkbox">
+                <input type="checkbox" id="anonymous-checkbox" />
+                Submit anonymously
+              </label>
+            </div>
+
+            <div class="field-grid">
+              <div class="field">
+                <label for="reporterName">Your Name</label>
+                <input type="text" id="reporterName" placeholder="e.g. Rubayet" />
+              </div>
+              <div class="field">
+                <label for="reporterPhone">Phone Number</label>
+                <input type="tel" id="reporterPhone" placeholder="+8801XXXXXXXXX" />
+              </div>
+              <div class="field">
+                <label for="reporterEmail">Email (optional)</label>
+                <input type="email" id="reporterEmail" placeholder="name@example.com" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Incident info -->
+          <div class="section-block">
+            <h2>Incident Details</h2>
+            <div class="field-grid">
+              <div class="field">
+                <label for="incidentType">Type of Issue</label>
+                <select id="incidentType" required>
+                  <option value="">Select type</option>
+                  <option>Fare Dispute / Overcharging</option>
+                  <option>Harassment (verbal/physical)</option>
+                  <option>Women/Reserved Seat Violation</option>
+                  <option>Reckless / Speeding / Racing</option>
+                  <option>Driving Under Influence (suspected)</option>
+                  <option>Overcrowding / Door Hanging</option>
+                  <option>Skipping Stops / Not Stopping at Stand</option>
+                  <option>Illegal / Random Stoppage</option>
+                  <option>Unsafe Bus Condition (no fitness)</option>
+                  <option>Pickpocketing / Theft</option>
+                  <option>Staff Misbehaviour / Abuse</option>
+                  <option>Corrupt Ticketing / Fake Receipts</option>
+                  <option>Other</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="incidentDateTime">Date & Time</label>
+                <input type="datetime-local" id="incidentDateTime" required />
+              </div>
+
+              <div class="field">
+                <label for="busName">Bus Name</label>
+                <input type="text" id="busName" placeholder="e.g. Asmani, Raida" />
+              </div>
+
+              <div class="field">
+                <label for="busNumber">Bus Number / Registration</label>
+                <input type="text" id="busNumber" placeholder="e.g. Dhaka Metro Ba-11-XXXX" />
+              </div>
+
+              <div class="field">
+                <label for="companyName">Company / Service</label>
+                <input type="text" id="companyName" placeholder="e.g. Asmani Transport" />
+              </div>
+
+              <div class="field">
+                <label for="seatInfo">Seat / Section (optional)</label>
+                <input type="text" id="seatInfo" placeholder="e.g. Women reserved area, front row" />
+              </div>
+            </div>
+
+            <div class="field-grid two-cols">
+              <div class="field">
+                <label for="routeFrom">Route – From</label>
+                <input type="text" id="routeFrom" placeholder="e.g. Uttara" />
+              </div>
+              <div class="field">
+                <label for="routeTo">Route – To</label>
+                <input type="text" id="routeTo" placeholder="e.g. Motijheel" />
+              </div>
+            </div>
+
+            <div class="field-grid two-cols">
+              <div class="field">
+                <label for="thana">Thana (Dhaka)</label>
+                <select id="thana" required>
+                  <option value="">Select Thana</option>
+                  <option>Airport</option>
+                  <option>Badda</option>
+                  <option>Banani</option>
+                  <option>Cantonment</option>
+                  <option>Demra</option>
+                  <option>Dhanmondi</option>
+                  <option>Gulshan</option>
+                  <option>Jatrabari</option>
+                  <option>Kafrul</option>
+                  <option>Khilgaon</option>
+                  <option>Khilkhet</option>
+                  <option>Mirpur</option>
+                  <option>Mohammadpur</option>
+                  <option>Motijheel</option>
+                  <option>Pallabi</option>
+                  <option>Ramna</option>
+                  <option>Sabujbagh</option>
+                  <option>Shahbagh</option>
+                  <option>Tejgaon</option>
+                  <option>Uttara West</option>
+                  <option>Uttara East</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="landmark">Nearest Landmark / Stop</label>
+                <input type="text" id="landmark" placeholder="e.g. Farmgate footbridge" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="incidentDescription">Describe what happened</label>
+              <textarea id="incidentDescription" rows="4"
+                placeholder="Share details clearly. What did staff do? What did passengers experience?"></textarea>
+            </div>
+          </div>
+
+          <!-- Media -->
+          <div class="section-block">
+            <h2>Photos & Evidence</h2>
+            <div class="field-grid two-cols">
+              <div class="field">
+                <label for="reportImage">Upload image (bus, ticket, etc.)</label>
+                <input type="file" id="reportImage" accept="image/*" />
+                <small>Optional, but helps authorities verify your report.</small>
+              </div>
+              <div class="image-preview" id="imagePreview">
+                <span class="preview-placeholder">No image selected</span>
+                <img id="previewImg" alt="Preview" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Form buttons -->
+          <div class="form-actions">
+            <button type="submit" class="primary-cta">
+              Submit Report to Authorities
+            </button>
+            <button type="button" id="postToFeedBtn" class="secondary-cta">
+              Submit & Share on Community Feed
+            </button>
+          </div>
+
+          <p class="form-note">
+            This is a demo front-end. Data is not yet sent to the real police server.
+            Later your Spring Boot backend will handle secure submission.
+          </p>
+        </form>
+      </section>
+
+      <!-- RIGHT: LIVE LOCATION + INFO -->
+      <section class="report-side">
+        <article class="report-card location-card">
+          <h2>Live Location</h2>
+          <p class="location-subtitle">
+            Allow location access so we can attach approximate coordinates with your report.
+          </p>
+          <button id="getLocationBtn" class="ghost-cta">📍 Get Current Location</button>
+          <button id="useMapBtn" class="ghost-cta" type="button">🗺️ Pick Location on Map</button>
+
+<div id="mapWrap" style="margin-top:12px; display:none;">
+  <div id="map" style="width:100%; height:260px; border-radius:12px; overflow:hidden;"></div>
+
+  <div style="display:flex; gap:10px; margin-top:10px;">
+    <button id="confirmMapBtn" class="ghost-cta" type="button">✅ Use Selected Location</button>
+    <button id="clearMapBtn" class="ghost-cta" type="button">🧹 Clear</button>
+  </div>
+
+  <small style="display:block; margin-top:8px; opacity:.85;">
+    Tip: Click anywhere on the map to drop a pin.
+  </small>
+</div>
+
+          <div id="locationStatus" class="location-status">
+            Location not captured yet.
+          </div>
+          <div id="locationCoords" class="location-coords"></div>
+          <a id="locationMapLink" class="location-link" href="#" target="_blank" style="display:none;">
+            Open in Google Maps
+          </a>
+        </article>
+
+        <article class="report-card tips-card">
+          <h2>Tips for a Strong Report</h2>
+          <ul>
+            <li>Mention <strong>exact route, time, and landmarks</strong>.</li>
+            <li>If safe, note the <strong>bus number and staff behaviour</strong>.</li>
+            <li>Blur or avoid sharing other passengers’ faces in photos.</li>
+            <li>Use calm, factual language – avoid insults.</li>
+          </ul>
+        </article>
+
+        <article class="report-card preview-card">
+          <h2>What happens next?</h2>
+          <p>Once integrated with your backend, your report will:</p>
+          <ol>
+            <li>Reach the relevant <strong>Thana / Traffic Division</strong>.</li>
+            <li>Be visible in the <strong>Dashboard & Community Feed</strong> (if you choose).</li>
+            <li>Update with <strong>status: Pending → Working → Resolved</strong>.</li>
+          </ol>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script src="./js/navbar.js"></script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="./js/report.js"></script>
+
+</body>
+</html>

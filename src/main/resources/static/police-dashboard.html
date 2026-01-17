@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – Police Command</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <!-- Global UI design system -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <link rel="stylesheet" href="./css/police-dashboard.css" />
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+
+<header class="full-navbar">
+  <div class="nav-left">
+    <a href="police-dashboard.html" class="brand-title"><span>🛡️ Jatri_Ovijog</span></a>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-collapsible">
+    <div class="nav-pill" id="nav-pill">
+      <div class="nav-slider" id="nav-slider"></div>
+      <a href="police-dashboard.html" class="nav-pill-link" data-page="police-dashboard"><span>Command</span></a>
+      <a href="police-complaints.html" class="nav-pill-link" data-page="police-complaints"><span>Complaints</span></a>
+      <a href="police-emergency.html" class="nav-pill-link" data-page="police-emergency"><span>Emergency</span></a>
+      <a href="police-manage.html" class="nav-pill-link" data-page="police-manage"><span>Manage</span></a>
+
+      <a href="police-chat.html" class="nav-pill-link" data-page="police-chat"><span>Team Chat</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+      <button class="nav-icon-btn" id="profile-btn" title="Profile">👮</button>
+      <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+    </div>
+  </div>
+</header>
+<div class="nav-backdrop" aria-hidden="true"></div>
+
+<main class="police-main">
+  <div class="police-header">
+    <div>
+      <h1 class="page-title">Command Dashboard</h1>
+      <p class="police-subtitle">
+        Real-time situational awareness and unit coordination.
+      </p>
+    </div>
+    <div class="police-badge">
+      ⚡ Live Operations Active
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <section class="column-left">
+      
+      <section class="card stats-card">
+        <h2 class="card-title">SitRep (Situation Report)</h2>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-icon stat-icon-blue">📄</div>
+            <div class="stat-number" id="police-new">0</div>
+            <div class="stat-label">New</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon stat-icon-orange">⏳</div>
+            <div class="stat-number" id="police-in-progress">0</div>
+            <div class="stat-label">Working</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon stat-icon-green">✅</div>
+            <div class="stat-number" id="police-resolved">0</div>
+            <div class="stat-label">Closed</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon stat-icon-red">🚩</div>
+            <div class="stat-number" id="police-fake">0</div>
+            <div class="stat-label">Flagged</div>
+          </div>
+        </div>
+        <p class="police-meta">System Sync: <span id="police-last-updated">--</span></p>
+      </section>
+
+      <section class="card heatmap-card">
+        <div class="heatmap-header">
+          <h2 class="card-title">Incident Heatmap</h2>
+          <select id="heatTimeFilter" class="heatmap-filter">
+            <option value="24">Last 24 Hours</option>
+            <option value="168">Last 7 Days</option>
+            <option value="720" selected>Last 30 Days</option>
+            <option value="all">All Time</option>
+          </select>
+        </div>
+        <div id="policeHeatmap"></div>
+        <div class="heatmap-legend">
+          <span><span class="heat-dot heat-low"></span> Low</span>
+          <span><span class="heat-dot heat-med"></span> Medium</span>
+          <span><span class="heat-dot heat-high"></span> Critical</span>
+        </div>
+        
+        <div class="heatmap-hotspots">
+          <div class="hotspots-header">Top High-Risk Zones</div>
+          <div id="heatHotspotList" class="hotspot-list"></div>
+        </div>
+      </section>
+
+      <div class="charts-row">
+        <section class="card">
+          <h2 class="card-title">Case Load</h2>
+          <div class="chart-wrapper">
+            <canvas id="policeStatusChart"></canvas>
+          </div>
+        </section>
+        <section class="card">
+          <h2 class="card-title">By Category</h2>
+          <div class="chart-wrapper">
+            <canvas id="policeCategoryChart"></canvas>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="column-right">
+      
+      <section class="card forecast-card">
+        <h2 class="card-title">AI Forecast</h2>
+        <p class="forecast-subtitle">Projected hotspots for next 4 hours.</p>
+        <ul id="forecastList" class="forecast-list"></ul>
+      </section>
+
+      <section class="card emergency-card">
+        <h2 class="card-title">🚨 SOS Alerts</h2>
+        <div id="emergencyAlertsList" class="emergency-list"></div>
+      </section>
+
+      <section class="card queue-card">
+        <div class="card-header-row">
+          <h2 class="card-title">Case Queue</h2>
+          <select id="queueStatusFilter" class="queue-filter">
+            <option value="all">All</option>
+            <option value="new">New</option>
+            <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
+          </select>
+        </div>
+        <div id="activeComplaintsList" class="police-complaints-list"></div>
+      </section>
+
+    </section>
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="./js/navbar.js"></script>
+<script src="./js/police-dashboard.js"></script>
+</body>
+</html>

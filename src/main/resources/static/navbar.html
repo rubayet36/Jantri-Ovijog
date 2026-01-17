@@ -1,0 +1,60 @@
+<nav class="full-navbar">
+  <div class="nav-left">
+    <a href="dashboard.html" class="brand-title" aria-label="Jatri Ovijog Home">
+      <span>Jatri Ovijog</span>
+    </a>
+  </div>
+
+  <button class="nav-toggle nav-dots" aria-label="Open menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <div class="nav-collapsible">
+    <div class="nav-pill" id="nav-pill">
+      <div class="nav-slider" id="nav-slider"></div>
+
+      <a href="dashboard.html" class="nav-pill-link" data-page="dashboard">
+        <span>Dashboard</span>
+        <span class="nav-pill-badge">4</span>
+      </a>
+
+      <a href="feed.html" class="nav-pill-link" data-page="feed">
+        <span>Community</span>
+      </a>
+
+      <a href="report.html" class="nav-pill-link" data-page="report">
+        <span>Report</span>
+      </a>
+
+      <a href="emergency.html" class="nav-pill-link" data-page="emergency">
+        <span>Emergency</span>
+      </a>
+    </div>
+
+    <div class="nav-right">
+      <a class="nav-cta" href="report.html" aria-label="Report an issue">Report Issue</a>
+
+      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme" aria-label="Toggle theme">
+        🌙
+      </button>
+
+      <button class="nav-icon-btn" id="profile-btn" title="Profile" aria-label="Profile">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+
+      <button class="nav-icon-btn" id="logout-btn" title="Sign Out" aria-label="Sign out">
+        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+<div class="nav-backdrop" aria-hidden="true"></div>

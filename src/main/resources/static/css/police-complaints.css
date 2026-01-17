@@ -1,0 +1,586 @@
+/* police-complaints.css - Modernized */
+
+:root {
+  --bg-body: #F1F5F9;
+  --bg-card: #FFFFFF;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --border-color: #E2E8F0;
+  
+  --primary: #2563EB;
+  --danger: #EF4444;
+  --success: #10B981;
+  --warning: #F59E0B;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --radius-lg: 12px;
+}
+
+/* Layout */
+.complaints-main {
+  padding-top: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.complaints-header {
+  margin-bottom: 24px;
+}
+
+.complaints-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* --- FILTERS & GRID --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px; /* Main List | Sidebar */
+  gap: 24px;
+}
+
+.filters-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.filters-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.filter-input, .filter-select {
+  padding: 10px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-main);
+  background: #F8FAFC;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.filter-input {
+  flex: 1; /* Search bar takes remaining space */
+}
+
+.filter-input:focus, .filter-select:focus {
+  background: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* --- COMPLAINT CARDS --- */
+.complaints-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.complaint-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.complaint-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Hot Bus Flag (Red Border) */
+.complaint-card.bus-hot {
+  border-left: 4px solid var(--danger);
+}
+
+.complaint-image-wrap {
+  width: 100px;
+  height: 100px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #F1F5F9;
+  border: 1px solid var(--border-color);
+}
+
+.complaint-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.complaint-content {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card Header */
+.complaint-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.complaint-id {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text-main);
+}
+.complaint-bus {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Tags */
+.complaint-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+/* Add these to your existing CSS file */
+
+.priority-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.priority-high {
+    background-color: #dc3545; /* Red */
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+.priority-medium {
+    background-color: #ffc107; /* Yellow/Orange */
+    color: #333; /* Dark text for contrast */
+}
+
+.priority-low {
+    background-color: #28a745; /* Green */
+}
+
+.complaint-card {
+    transition: transform 0.2s;
+}
+
+/* Optional: Make High Priority cards stand out slightly more */
+.complaint-card:has(.priority-high) {
+    border-left: 5px solid #dc3545;
+}/* Add these to your existing CSS file */
+
+.priority-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.priority-high {
+    background-color: #dc3545; /* Red */
+    box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+}
+
+.priority-medium {
+    background-color: #ffc107; /* Yellow/Orange */
+    color: #333; /* Dark text for contrast */
+}
+
+.priority-low {
+    background-color: #28a745; /* Green */
+}
+
+.complaint-card {
+    transition: transform 0.2s;
+}
+
+/* Optional: Make High Priority cards stand out slightly more */
+.complaint-card:has(.priority-high) {
+    border-left: 5px solid #dc3545;
+}
+.tag-pill {
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.tag-category { background: #EEF2FF; color: #4F46E5; }
+.tag-thana { background: #F0FDF4; color: #16A34A; }
+.tag-route { background: #F8FAFC; color: #64748B; border: 1px solid #E2E8F0; }
+
+.complaint-desc {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+/* Footer & Actions */
+.complaint-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #F1F5F9;
+  padding-top: 12px;
+  margin-top: auto;
+}
+
+.complaint-meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  gap: 12px;
+}
+
+.complaint-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.complaint-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid var(--border-color);
+  background: white;
+  color: var(--text-main);
+}
+
+.complaint-btn:hover {
+  background: #F8FAFC;
+  border-color: #94A3B8;
+}
+
+.btn-primary-ghost {
+  color: var(--primary);
+  border-color: #BFDBFE;
+  background: #EFF6FF;
+}
+.btn-primary-ghost:hover {
+  background: #DBEAFE;
+  border-color: var(--primary);
+}
+
+/* Status Badges */
+.status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+.status-new { background: #DBEAFE; color: #1E40AF; }
+.status-pending { background: #FEF3C7; color: #92400E; }
+.status-in-progress { background: #E0E7FF; color: #4338CA; }
+.status-resolved { background: #D1FAE5; color: #065F46; }
+.status-fake { background: #FEE2E2; color: #991B1B; }
+
+/* --- SIDEBAR: HOTSPOTS --- */
+.bus-hotspots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bus-hotspot-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #FFFFFF;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.bus-hotspot-item:hover {
+  border-color: var(--primary);
+  background: #F8FAFC;
+  transform: translateX(-2px);
+}
+
+.bus-hotspot-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  display: block;
+}
+
+.bus-hotspot-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.bus-hotspot-count {
+  background: #FEE2E2;
+  color: #B91C1C;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+/* Empty State */
+.empty-queue {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-style: italic;
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+/* -----------------------------------------------------------------
+   Timeline component for complaint lifecycle. Each complaint card
+   can display a horizontal sequence of steps (submitted → closed).
+   Completed steps are filled with the success colour, the active
+   step is filled with the primary colour, and upcoming steps are
+   outlined. The connecting lines adopt the colour of the preceding
+   step. Modify steps order in JS.
+------------------------------------------------------------------- */
+
+.complaint-timeline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+   gap: 14px;  
+}
+
+.timeline-step {
+  position: relative;
+  flex: 1;
+  
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.timeline-step:before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  background: #fff;
+  z-index: 1;
+}
+
+.timeline-step.completed:before {
+  background: var(--success);
+  border-color: var(--success);
+}
+
+.timeline-step.active:before {
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.timeline-step + .timeline-step:after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--border-color);
+  z-index: 0;
+}
+
+.timeline-step.completed + .timeline-step:after {
+  background: var(--success);
+}
+
+.timeline-step.active + .timeline-step:after {
+  background: var(--primary);
+}
+/* ===========================
+   Case Details Modal (Complaints)
+   =========================== */
+
+.case-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 9999;
+}
+
+.case-modal.hidden { display: none; }
+
+.case-modal-box {
+  width: min(920px, 96vw);
+  max-height: 85vh;
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.case-modal-header {
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.case-modal-header h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.case-icon-btn {
+  border: 1px solid var(--border-color);
+  background: #fff;
+  color: var(--text-main);
+  border-radius: 10px;
+  height: 34px;
+  width: 34px;
+  cursor: pointer;
+}
+
+.case-icon-btn:hover { background: #F8FAFC; }
+
+.case-modal-body {
+  padding: 16px;
+  overflow: auto;
+  flex: 1;
+}
+
+.case-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 16px;
+}
+
+.case-grid .row {
+  background: #F8FAFC;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.case-grid .row b {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.case-grid .row span {
+  font-size: 13px;
+  color: var(--text-main);
+  font-weight: 600;
+}
+
+.case-desc {
+  margin-top: 12px;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.case-desc b {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.case-desc p {
+  margin: 0;
+  color: #334155;
+  line-height: 1.5;
+}
+
+.case-image {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.case-image img {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: #F1F5F9;
+}
+
+.case-modal-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  background: #F8FAFC;
+}
+
+@media (max-width: 760px) {
+  .case-grid { grid-template-columns: 1fr; }
+  .case-image { grid-template-columns: 1fr; }
+  .case-image img { width: 100%; height: 180px; }
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .complaint-card { grid-template-columns: 1fr; }
+  .complaint-image-wrap { width: 100%; height: 160px; margin-bottom: 12px; }
+  .filters-row { flex-direction: column; align-items: stretch; }
+}

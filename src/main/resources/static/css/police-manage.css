@@ -1,0 +1,246 @@
+/* police-manage.css
+   ✅ This file is ONLY an addon.
+   ✅ It assumes police-dashboard.css already defines body/theme colors.
+*/
+
+.container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 16px;
+}
+
+.toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.toolbar .title h1 {
+  margin: 0 0 6px;
+  font-size: 20px;
+}
+
+.toolbar .title p {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filters input,
+.filters select {
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  outline: none;
+}
+
+.filters input { min-width: 260px; }
+.filters select { min-width: 160px; }
+
+.card {
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.tableWrap { overflow-x: auto; }
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  /* ✅ Remove min-width so no forced horizontal scroll */
+  min-width: 0;
+}
+
+.table th, .table td {
+  padding: 12px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.10);
+  text-align: left;
+  vertical-align: top;
+}
+
+.table th {
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,0.16);
+  display: inline-block;
+  text-transform: lowercase;
+}
+
+.pill.new { background: rgba(247,183,49,0.12); border-color: rgba(247,183,49,0.35); }
+.pill.working { background: rgba(91,124,250,0.12); border-color: rgba(91,124,250,0.35); }
+.pill.resolved { background: rgba(67,209,122,0.12); border-color: rgba(67,209,122,0.35); }
+.pill.fake { background: rgba(255,92,124,0.12); border-color: rgba(255,92,124,0.35); }
+
+.actionRow {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.actionRow select {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.06);
+  color: inherit;
+  cursor: pointer;
+}
+
+.btn:hover { background: rgba(255,255,255,0.09); }
+
+.btn.primary {
+  border-color: rgba(91,124,250,0.45);
+  background: rgba(91,124,250,0.18);
+}
+/* ===========================
+   FIX: View Modal (police-manage)
+   =========================== */
+
+/* dark backdrop */
+.modal{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 9999;
+}
+.modal.hidden{ display:none; }
+
+/* modal container - prevent huge tall box */
+.modalBox{
+  width: min(820px, 96vw);
+  max-height: 82vh;              /* ✅ stops giant modal */
+  display: flex;
+  flex-direction: column;
+  background: #0f172a;           /* matches your dark portal cards */
+  color: #e5e7eb;
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 18px 70px rgba(0,0,0,0.55);
+}
+
+/* header */
+.modalHeader{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.modalHeader h2{
+  margin:0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* body scrolls instead of growing */
+.modalBody{
+  padding: 14px 16px;
+  overflow: auto;                /* ✅ scroll inside */
+  flex: 1;                       /* ✅ take remaining space */
+}
+
+/* grid inside modal content */
+.modalBody > div{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+.modalBody b{ color: #f3f4f6; }
+
+/* footer stays fixed at bottom */
+.modalFooter{
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,0.12);
+  display:flex;
+  gap: 10px;
+  align-items:center;
+  justify-content:flex-end;
+  flex-wrap: wrap;
+  background: rgba(255,255,255,0.03);
+}
+
+/* form controls look consistent */
+.modalFooter select,
+.modalFooter input{
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: #e5e7eb;
+  outline: none;
+}
+.modalFooter input{
+  min-width: 260px;              /* not too wide */
+  flex: 1;
+}
+
+/* button */
+.modalFooter .btn.primary{
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+}
+
+/* close icon */
+.iconBtn{
+  border: 1px solid rgba(255,255,255,0.16);
+  background: transparent;
+  color: #e5e7eb;
+  height: 36px;
+  width: 36px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.iconBtn:hover{ background: rgba(255,255,255,0.06); }
+
+/* status pill inside modal should not float weird */
+.modalBody .pill{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 72px;
+}
+
+
+.filters input,
+.filters select,
+.actionRow select,
+.btn {
+  border: 1px solid var(--border-light);
+  background: #fff;
+}

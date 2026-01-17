@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – Emergency Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Global UI design system -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <!-- Navbar styles -->
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <!-- Reuse police dashboard and complaints styles for layout and cards -->
+  <link rel="stylesheet" href="./css/police-dashboard.css" />
+  <link rel="stylesheet" href="./css/police-complaints.css" />
+  <!-- Emergency specific styles -->
+  <link rel="stylesheet" href="./css/police-emergency.css" />
+</head>
+<body>
+  <header class="full-navbar">
+    <div class="nav-left">
+      <a href="police-dashboard.html" class="brand-title"><span>🛡️ Jatri_Ovijog</span></a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-collapsible">
+      <div class="nav-pill" id="nav-pill">
+        <div class="nav-slider" id="nav-slider"></div>
+        <a href="police-dashboard.html" class="nav-pill-link" data-page="police-dashboard"><span>Command</span></a>
+        <a href="police-complaints.html" class="nav-pill-link" data-page="police-complaints"><span>Complaints</span></a>
+        <a href="police-emergency.html" class="nav-pill-link" data-page="police-emergency"><span>Emergency</span></a>
+         <a href="police-manage.html" class="nav-pill-link" data-page="police-manage"><span>Manage</span></a>
+        <a href="police-chat.html" class="nav-pill-link" data-page="police-chat"><span>Team Chat</span></a>
+      </div>
+      <div class="nav-right">
+        <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+        <button class="nav-icon-btn" id="profile-btn" title="Profile">👮</button>
+        <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-backdrop" aria-hidden="true"></div>
+
+  <main class="police-main">
+    <div class="police-header">
+      <div>
+        <h1 class="page-title">Emergency Portal</h1>
+        <p class="police-subtitle">View and respond to passenger emergency reports.</p>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Left column: list and filters -->
+      <section class="column-left">
+        <div class="card filters-card">
+          <div class="filters-row">
+            <input type="text" id="emergencySearch" placeholder="Search ID, Passenger, Location..." class="filter-input" />
+            <select id="emergencyStatusFilter" class="filter-select">
+              <option value="all">All Status</option>
+              <option value="new">New</option>
+              <option value="responding">Responding</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+        </div>
+        <!-- Emergency list container -->
+        <div id="emergencyList" class="complaints-container"></div>
+      </section>
+
+      <!-- Right column: optional summary / hotspots -->
+      <section class="column-right">
+        <div class="card emergency-summary-card pad">
+          <h2 class="card-title">Quick Stats</h2>
+          <p class="emergency-summary-subtext">Overview of recent emergencies.</p>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-red">🚨</div>
+              <div class="stat-number" id="emNew">0</div>
+              <div class="stat-label">New</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-orange">⌛</div>
+              <div class="stat-number" id="emResponding">0</div>
+              <div class="stat-label">Responding</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-green">✅</div>
+              <div class="stat-number" id="emResolved">0</div>
+              <div class="stat-label">Resolved</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="./js/police-emergency.js"></script>
+  <script src="./js/navbar.js"></script>
+</body>
+</html>

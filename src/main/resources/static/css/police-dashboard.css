@@ -1,0 +1,367 @@
+/* ============ POLICE COMMAND THEME 2026 ============ */
+:root {
+  /* Backgrounds */
+  --bg-body: #F1F5F9;       /* Slate 100 - High visibility background */
+  --bg-card: #FFFFFF;       /* Crisp White */
+  --bg-sidebar: #0F172A;    /* Slate 900 - Dark sidebar/header areas */
+  
+  /* Text */
+  --text-main: #0F172A;     /* Dark Slate */
+  --text-muted: #64748B;    /* Slate 500 */
+  --text-on-dark: #F8FAFC;
+  
+  /* Brand / Action */
+  --primary: #2563EB;       /* Royal Blue */
+  --primary-dark: #1E40AF;
+  
+  /* Functional Colors */
+  --danger: #EF4444;        /* Red */
+  --warning: #F59E0B;       /* Amber */
+  --success: #10B981;       /* Emerald */
+  --info: #0EA5E9;          /* Sky Blue */
+  
+  /* Borders & Shadows */
+  --border-subtle: #E2E8F0;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+}
+
+/* ============ HEADER & LAYOUT ============ */
+.police-main {
+  max-width: 1400px; /* Wider for command center view */
+  margin: 24px auto;
+  padding: 0 24px;
+}
+
+.police-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+}
+
+.police-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.police-badge {
+  background: #EFF6FF;
+  color: var(--primary);
+  border: 1px solid #BFDBFE;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.police-badge::before {
+  content: "⚡";
+}
+
+/* ============ CARDS (Bento Style) ============ */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ============ STATS ROW ============ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 16px;
+  background: #F8FAFC;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.stat-icon-blue { background: #DBEAFE; color: #2563EB; }
+.stat-icon-orange { background: #FFEDD5; color: #EA580C; }
+.stat-icon-green { background: #D1FAE5; color: #059669; }
+.stat-icon-red { background: #FEE2E2; color: #DC2626; }
+
+.stat-number {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+.police-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 12px;
+  font-family: monospace;
+}
+
+/* ============ HEATMAP CARD ============ */
+.heatmap-card {
+  border-color: #CBD5E1;
+}
+
+.heatmap-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.heatmap-filter {
+  background: #F1F5F9;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+}
+
+#policeHeatmap {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  height: 350px; /* Taller map */
+}
+
+.heatmap-legend {
+  margin-top: 12px;
+  padding: 8px;
+  background: #F8FAFC;
+  border-radius: 6px;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.heat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.hotspots-header {
+  margin-top: 16px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+.hotspot-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  margin-top: 4px;
+  background: #fff;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+}
+.hotspot-item:hover { background: #F8FAFC; }
+
+.hotspot-title { font-weight: 600; font-size: 13px; }
+.hotspot-issues { font-size: 11px; color: var(--text-muted); display: block; }
+.hotspot-count-pill {
+  background: #FEE2E2;
+  color: #DC2626;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* ============ ACTIVE QUEUE ============ */
+.queue-card {
+  height: 100%;
+}
+
+.police-complaints-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.police-complaint-card {
+  background: #FFFFFF;
+  border: 1px solid var(--border-subtle);
+  border-left: 4px solid var(--warning); /* Default pending */
+  border-radius: var(--radius-md);
+  padding: 16px;
+  transition: transform 0.2s;
+}
+
+.police-complaint-card:hover { transform: translateX(2px); border-color: #94A3B8; }
+
+.police-complaint-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.police-complaint-title {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.police-tag {
+  display: inline-block;
+  background: #F1F5F9;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  margin-right: 4px;
+  font-family: monospace;
+}
+
+.police-actions {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.police-action-btn {
+  background: white;
+  border: 1px solid var(--border-subtle);
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.police-action-btn:hover { background: #F1F5F9; border-color: var(--text-muted); }
+
+/* ============ EMERGENCY ALERTS ============ */
+.emergency-item {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-left: 4px solid var(--danger);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 8px;
+  animation: pulseAlert 2s infinite;
+}
+
+@keyframes pulseAlert {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
+  70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.emergency-id { font-weight: 800; color: #991B1B; font-size: 13px; }
+.emergency-level { background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 10px; text-transform: uppercase; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+/* --- MOBILE POLICE DASHBOARD FIXES --- */
+@media (max-width: 1024px) {
+  .police-main {
+    padding: 0 16px;
+    margin-top: 16px;
+  }
+
+  /* Stack columns */
+  .dashboard-grid {
+    grid-template-columns: 1fr; 
+  }
+
+  /* Stack the 4 stats at the top */
+  .stats-grid {
+    grid-template-columns: 1fr 1fr; /* 2x2 grid is okay for mobile */
+  }
+
+  /* Fix heatmap height */
+  #policeHeatmap {
+    height: 250px;
+  }
+
+  /* Fix charts row */
+  .charts-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr; /* 1x4 stack on very small screens */
+  }
+}

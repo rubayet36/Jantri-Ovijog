@@ -1,0 +1,114 @@
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Police Portal - Manage Reports</title>
+
+  <!-- ✅ Same global design system as police-dashboard.html -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <link rel="stylesheet" href="./css/police-dashboard.css" />
+
+  <!-- ✅ Manage page addon -->
+  <link rel="stylesheet" href="./css/police-manage.css" />
+</head>
+
+<body>
+
+<header class="full-navbar">
+  <div class="nav-left">
+    <a href="police-dashboard.html" class="brand-title"><span>🛡️ Jatri_Ovijog</span></a>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-collapsible">
+    <div class="nav-pill" id="nav-pill">
+      <div class="nav-slider" id="nav-slider"></div>
+      <a href="police-dashboard.html" class="nav-pill-link" data-page="police-dashboard"><span>Command</span></a>
+      <a href="police-complaints.html" class="nav-pill-link" data-page="police-complaints"><span>Complaints</span></a>
+      <a href="police-emergency.html" class="nav-pill-link" data-page="police-emergency"><span>Emergency</span></a>
+      <a href="police-manage.html" class="nav-pill-link" data-page="police-manage"><span>Manage</span></a>
+      <a href="police-chat.html" class="nav-pill-link" data-page="police-chat"><span>Team Chat</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+      <button class="nav-icon-btn" id="profile-btn" title="Profile">👮</button>
+      <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+    </div>
+  </div>
+</header>
+<div class="nav-backdrop" aria-hidden="true"></div>
+
+  <main class="container">
+    <section class="toolbar">
+      <div class="title">
+        <h1>Manage Submitted Reports</h1>
+        <p>Verify, mark fake, set working, or resolve complaints.</p>
+      </div>
+
+      <div class="filters">
+        <input id="searchInput" type="text" placeholder="Search by thana, route, bus, category..." />
+        <select id="statusFilter">
+          <option value="all">All statuses</option>
+          <option value="new">New</option>
+          <option value="working">Working</option>
+          <option value="resolved">Resolved</option>
+          <option value="fake">Fake</option>
+        </select>
+        <button id="refreshBtn" class="btn">Refresh</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="tableWrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Category</th>
+              <th>Thana</th>
+              <th>Route</th>
+              <th>Bus</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="reportsTbody">
+            <!-- rows inserted by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Drawer / modal -->
+    <div id="modal" class="modal hidden">
+      <div class="modalBox">
+        <div class="modalHeader">
+          <h2 id="modalTitle">Complaint</h2>
+          <button id="modalClose" class="iconBtn">✕</button>
+        </div>
+
+        <div id="modalBody" class="modalBody"></div>
+
+        <div class="modalFooter">
+          <select id="modalStatus">
+            <option value="new">New</option>
+            <option value="working">Working</option>
+            <option value="resolved">Resolved</option>
+            <option value="fake">Fake</option>
+          </select>
+
+          <input id="modalNote" type="text" placeholder="Optional note (requires SQL extra columns)" />
+
+          <button id="modalSave" class="btn primary">Update Status</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="js/police-manage.js"></script>
+</body>
+</html>

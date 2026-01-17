@@ -1,0 +1,31 @@
+/* police-emergency.css – styles specific to the police emergency portal */
+
+/* Override accent colours for emergency context if needed */
+.stat-icon-red {
+  background: rgba(239, 68, 68, 0.12);
+  color: #991b1b;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-size: 20px;
+}
+
+/* Status badge colours for emergency list */
+.status-new {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.24);
+}
+.status-responding {
+  background: rgba(245, 158, 11, 0.14);
+  color: #92400e;
+  border-color: rgba(245, 158, 11, 0.24);
+}
+.status-resolved {
+  background: rgba(34, 197, 94, 0.12);
+  color: #065f46;
+  border-color: rgba(34, 197, 94, 0.22);
+}

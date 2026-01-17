@@ -1,0 +1,341 @@
+/* fare.css - Modernized */
+
+:root {
+  --bg-body: #F8FAFC;       /* Slate 50 */
+  --bg-card: #FFFFFF;
+  --primary: #2563EB;       /* Royal Blue */
+  --primary-dark: #1E40AF;
+  --text-main: #0F172A;
+  --text-muted: #64748B;
+  --border: #E2E8F0;
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --radius-xl: 16px;
+  --radius-md: 8px;
+}
+
+body {
+  background-color: var(--bg-body);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Prevent body scroll, let grid handle it */
+}
+
+.fare-main {
+  flex: 1;
+  height: calc(100vh - 72px); /* Minus navbar */
+  position: relative;
+}
+
+.fare-grid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  height: 100%;
+}
+
+/* --- MAP SECTION --- */
+.map-section {
+  position: relative;
+  background: #E5E7EB;
+}
+
+#fareMap {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.map-overlay-controls {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 500;
+  display: flex;
+  gap: 10px;
+}
+
+.map-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-main);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.map-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+.map-btn.secondary { color: #EF4444; }
+
+/* --- CONTROLS SECTION --- */
+.controls-section {
+  background: var(--bg-card);
+  border-left: 1px solid var(--border);
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.05);
+  z-index: 10;
+}
+
+.header-block h1 { font-size: 24px; margin: 0 0 4px; color: var(--text-main); }
+.header-block p { font-size: 14px; color: var(--text-muted); margin: 0; }
+
+/* Cards Generic */
+.card {
+  background: #F8FAFC;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+}
+
+/* Input Card (From/To visual) */
+.input-card {
+  display: flex;
+  gap: 16px;
+  background: var(--bg-card);
+  border-color: #CBD5E1;
+}
+
+.route-line-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8px;
+}
+
+.route-dot { width: 10px; height: 10px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 0 1px var(--text-muted); }
+.route-dot.from { background: var(--text-main); }
+.route-dot.to { background: var(--primary); box-shadow: 0 0 0 1px var(--primary); }
+.route-line { width: 2px; flex: 1; background: #E2E8F0; margin: 4px 0; }
+
+.route-inputs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.fake-input {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fake-input.placeholder { color: #94A3B8; font-style: italic; }
+
+/* Preset Card */
+.preset-card {
+  border: 1px dashed var(--primary);
+  background: #EFF6FF;
+}
+
+.card-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.select-wrapper select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #BFDBFE;
+  border-radius: var(--radius-md);
+  background: white;
+  color: var(--text-main);
+  font-size: 13px;
+  outline: none;
+}
+
+/* Safety Info */
+.safety-info {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #BFDBFE;
+}
+.safety-info.hidden { display: none; }
+
+.safety-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+.safety-label { color: var(--text-muted); }
+.safety-val { font-weight: 600; text-align: right; }
+.safety-note { font-size: 11px; color: #64748B; margin-top: 8px; line-height: 1.4; background: white; padding: 6px; border-radius: 4px; }
+
+/* Result Card */
+.result-card {
+  background: var(--text-main); /* Dark card */
+  color: white;
+  border: none;
+  box-shadow: var(--shadow-lg);
+}
+
+.result-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #94A3B8;
+  margin-bottom: 12px;
+}
+
+.fare-display {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+.currency { font-size: 24px; font-weight: 500; margin-top: 6px; margin-right: 4px; color: #CBD5E1; }
+.amount { font-size: 48px; font-weight: 800; line-height: 1; letter-spacing: -1px; }
+
+.breakdown-box {
+  background: rgba(255,255,255,0.1);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+.breakdown-title { font-size: 11px; text-transform: uppercase; font-weight: 700; color: #94A3B8; margin-bottom: 6px; }
+.breakdown-text { font-size: 12px; color: #E2E8F0; line-height: 1.5; margin: 0; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .fare-grid { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+  .controls-section { border-left: none; border-top: 1px solid var(--border); }
+  .fare-main { height: auto; min-height: calc(100vh - 72px); }
+  body { overflow: auto; }
+  #fareMap { min-height: 300px; }
+}/* --- MOBILE FARE PAGE FIXES --- */
+@media (max-width: 900px) {
+  /* Reset body height so we can scroll naturally */
+  body {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  .fare-main {
+    height: auto;
+    display: block;
+  }
+
+  .fare-grid {
+    display: flex;
+    flex-direction: column; /* Stack map on top, controls on bottom */
+    height: auto;
+  }
+
+  .map-section {
+    height: 40vh; /* Map takes top 40% of screen */
+    min-height: 300px;
+  }
+
+  .controls-section {
+    height: auto;
+    border-left: none;
+    border-top: 1px solid var(--border);
+    padding: 20px 16px;
+    overflow: visible;
+  }
+
+  /* Fix input cards looking squashed */
+  .input-card {
+    flex-direction: row; /* Keep dots and inputs aligned */
+    padding: 12px;
+  }
+}
+
+/* --------------------------------------------------------
+   Custom components for the fare breakdown results.
+   These classes are referenced from fare.js when injecting
+   dynamic HTML. Defining them here ensures that all styles
+   live in CSS instead of inline strings. They share
+   variables with the base design system defined in ui.css.
+--------------------------------------------------------- */
+
+/* Chips for recommended buses */
+.bus-tag {
+  display: inline-block;
+  background: var(--accent-soft, rgba(37, 99, 235, 0.12));
+  color: var(--text-main);
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: var(--radius-full, 9999px);
+  margin: 0 4px 4px 0;
+  white-space: nowrap;
+}
+
+/* Message shown when no bus suggestions are available */
+.no-bus-msg {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Metro rail section inserted below bus suggestions */
+.metro-section {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.metro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metro-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--success);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metro-fare {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--success);
+}
+
+.metro-details {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Labels used inside the fare breakdown */
+.recommended-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.bus-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}

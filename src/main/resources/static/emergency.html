@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – Emergency SOS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Global UI design system -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <!-- Styles -->
+  <link rel="stylesheet" href="./css/emergency.css" />
+  <link rel="stylesheet" href="./css/navbar.css" />
+</head>
+<body>
+<header class="full-navbar">
+  <div class="nav-left">
+    <a href="dashboard.html" class="brand-title"><span>Jatri_Ovijog</span></a>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-collapsible">
+    <div class="nav-pill" id="nav-pill">
+      <div class="nav-slider" id="nav-slider"></div>
+      <a href="dashboard.html" class="nav-pill-link" data-page="dashboard"><span>Dashboard</span><span class="nav-pill-badge">4</span></a>
+      <a href="feed.html" class="nav-pill-link" data-page="feed"><span>Community</span></a>
+      <a href="report.html" class="nav-pill-link" data-page="report"><span>Report</span></a>
+      <a href="emergency.html" class="nav-pill-link" data-page="emergency"><span>Emergency</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+      <button class="nav-icon-btn" id="profile-btn" title="Profile">👤</button>
+      <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+    </div>
+  </div>
+</header>
+<div class="nav-backdrop" aria-hidden="true"></div>
+
+
+
+
+  <!-- EMERGENCY CONTENT -->
+  <main class="emergency-main">
+    <section class="emergency-hero">
+      <div>
+        <h1>Emergency SOS</h1>
+        <p>
+          If you are in danger, press the button once. We’ll attach your current location and
+          a 10-second voice clip and send it to the police dashboard (backend placeholder for now).
+        </p>
+      </div>
+      <div class="hero-note">
+        ⚠️ Only use this for real emergencies.
+      </div>
+    </section>
+
+    <section class="emergency-layout">
+      <!-- LEFT: BIG SOS BUTTON & STATUS -->
+      <section class="emergency-card sos-card">
+        <div class="sos-circle" id="sosButton">
+          <div class="sos-inner">
+            <span class="sos-label">EMERGENCY</span>
+            <span class="sos-sub">Tap once to send SOS</span>
+          </div>
+        </div>
+        <p class="sos-help-text">
+          We will automatically capture <strong>your current location</strong> and 
+          <strong>10 seconds of voice</strong>, then submit it to the system.
+        </p>
+
+        <div class="status-grid">
+          <div class="status-chip">
+            <span class="status-title">Location</span>
+            <span id="locationStatus">Not requested yet</span>
+          </div>
+          <div class="status-chip">
+            <span class="status-title">Recording</span>
+            <span id="recordingStatus">Idle</span>
+          </div>
+          <div class="status-chip">
+            <span class="status-title">Countdown</span>
+            <span id="countdownStatus">--</span>
+          </div>
+          <div class="status-chip">
+            <span class="status-title">Sending</span>
+            <span id="sendingStatus">Waiting</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: DETAILS PREVIEW / DEBUG -->
+      <section class="emergency-card info-card">
+        <h2>What will be sent</h2>
+        <div class="info-block">
+          <h3>Approx. Location</h3>
+          <p id="locationCoords">No coordinates yet.</p>
+          <a id="locationMapLink" href="#" target="_blank" class="map-link" style="display:none;">
+            Open in Google Maps
+          </a>
+        </div>
+
+        <div class="info-block">
+          <h3>Voice Clip</h3>
+          <p id="audioInfo">No audio recorded yet.</p>
+          <audio id="audioPreview" controls style="display:none;"></audio>
+        </div>
+
+        <div class="info-block">
+          <h3>System Info (Demo)</h3>
+          <p class="small-note">
+            In this demo, the alert is not actually reaching the police. It will be logged in the console
+            and prepared as if you’re sending it to 
+            <code>/api/emergency-alert</code> from your Spring Boot backend.
+          </p>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="./js/navbar.js"></script>
+  <script src="./js/emergency.js"></script>
+</body>
+</html>

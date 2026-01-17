@@ -1,0 +1,307 @@
+/* 1. Modern font from Google */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* 2. Reset-ish basics */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 3. Background image + gradient overlay */
+body {
+  font-family: "Poppins", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Background: gradient + image */
+  background:
+    linear-gradient(135deg, rgba(15, 32, 39, 0.7), rgba(32, 58, 67, 0.7)),
+    url("https://images.pexels.com/photos/34088/pexels-photo.jpg") center/cover
+    no-repeat fixed;
+
+  color: #f9fafb;
+}
+
+/* 4. Wrapper to keep padding on small screens */
+.auth-wrapper {
+  width: 100%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 5. Glass + Neumorphism card */
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px 32px 26px;
+
+  background: rgba(255, 255, 255, 0.12);           /* translucent */
+  border-radius: 24px;
+
+  border: 1px solid rgba(255, 255, 255, 0.35);     /* glass border */
+  box-shadow:
+    -10px -10px 25px rgba(255, 255, 255, 0.25),    /* light side (neumorph) */
+     12px 12px 30px rgba(0, 0, 0, 0.45);           /* dark side (neumorph) */
+
+  backdrop-filter: blur(18px);                     /* GLASS BLUR */
+  -webkit-backdrop-filter: blur(18px);
+
+  animation: floatIn 0.7s ease-out;                /* entry animation */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Card hover animation */
+.auth-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    -14px -14px 30px rgba(255, 255, 255, 0.3),
+     16px 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* 6. Text headings */
+.auth-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.auth-subtitle {
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.85;
+  margin-bottom: 22px;
+}
+
+/* 7. Form fields */
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #e5e7eb;
+}
+
+.field input {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 12px;
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: rgba(15, 23, 42, 0.35);
+  color: #f9fafb;
+
+  outline: none;
+  font-size: 14px;
+
+  box-shadow:
+    inset -3px -3px 6px rgba(255, 255, 255, 0.15),
+    inset 4px 4px 8px rgba(15, 23, 42, 0.9);
+
+  transition: border-color 0.25s ease, box-shadow 0.25s ease,
+              background 0.25s ease, transform 0.1s ease;
+}
+
+/* Input focus animation */
+.field input:focus {
+  border-color: #38bdf8;
+  background: rgba(15, 23, 42, 0.6);
+  box-shadow:
+    0 0 0 1px rgba(56, 189, 248, 0.9),
+    0 0 18px rgba(56, 189, 248, 0.7);
+  transform: translateY(-1px);
+}
+
+/* Placeholder color */
+.field input::placeholder {
+  color: rgba(209, 213, 219, 0.75);
+}
+
+/* 8. Primary button with gradient + soft 3D */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  margin-top: 4px;
+
+  background: linear-gradient(135deg, #4f46e5, #06b6d4);
+  border: none;
+  border-radius: 999px; /* pill shape */
+  color: #f9fafb;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+              filter 0.15s ease;
+}
+
+/* Button hover + active (animation) */
+.btn-primary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow:
+    0 12px 26px rgba(15, 23, 42, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+
+.btn-primary:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow:
+    0 4px 10px rgba(15, 23, 42, 0.7),
+    inset 0 2px 4px rgba(15, 23, 42, 0.7);
+}
+
+/* 9. Extra text + links */
+.auth-extra {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 13px;
+  color: #e5e7eb;
+}
+
+.auth-footer {
+  margin-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* 10. Entry animation keyframes (for card) */
+@keyframes floatIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* 11. Basic responsiveness */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 24px 20px 18px;
+    border-radius: 18px;
+  }
+
+  .auth-title {
+    font-size: 24px;
+  }
+}
+/* Role selector layout */
+.role-options {
+  display: flex;
+  gap: 16px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.role-options label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #e5e7eb; /* same tone as other labels */
+}
+
+/* Don’t stretch radio buttons like text inputs */
+.role-options input[type="radio"] {
+  width: auto;
+  margin: 0;
+}
+/* ===============================
+   Emergency Button (CRITICAL CTA)
+================================ */
+
+.btn-emergency {
+  width: 100%;
+  margin-top: 12px;
+  padding: 11px;
+
+  background: linear-gradient(
+    135deg,
+    #dc2626,
+    #ef4444
+  );
+  border: none;
+  border-radius: 999px;
+
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 26px rgba(220, 38, 38, 0.55),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+
+  animation: emergencyPulse 2.4s ease-in-out infinite;
+}
+
+/* Hover */
+.btn-emergency:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+  box-shadow:
+    0 14px 32px rgba(220, 38, 38, 0.65),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+
+/* Active / Pressed */
+.btn-emergency:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow:
+    0 6px 14px rgba(220, 38, 38, 0.65),
+    inset 0 3px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* Subtle attention pulse */
+@keyframes emergencyPulse {
+  0% {
+    box-shadow:
+      0 10px 26px rgba(220, 38, 38, 0.45),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+  50% {
+    box-shadow:
+      0 14px 36px rgba(220, 38, 38, 0.75),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+  }
+  100% {
+    box-shadow:
+      0 10px 26px rgba(220, 38, 38, 0.45),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+}

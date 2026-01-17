@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – Estimate Fare</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Global UI design system -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <link rel="stylesheet" href="./css/fare.css" />
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+<header class="full-navbar">
+  <div class="nav-left">
+    <a href="dashboard.html" class="brand-title"><span>Jatri_Ovijog</span></a>
+  </div>
+  <button class="nav-toggle" aria-label="Toggle navigation">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-collapsible">
+    <div class="nav-pill" id="nav-pill">
+      <div class="nav-slider" id="nav-slider"></div>
+      <a href="dashboard.html" class="nav-pill-link" data-page="dashboard"><span>Dashboard</span><span class="nav-pill-badge">4</span></a>
+      <a href="feed.html" class="nav-pill-link" data-page="feed"><span>Community</span></a>
+      <a href="report.html" class="nav-pill-link" data-page="report"><span>Report</span></a>
+      <a href="emergency.html" class="nav-pill-link" data-page="emergency"><span>Emergency</span></a>
+    </div>
+    <div class="nav-right">
+      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+      <button class="nav-icon-btn" id="profile-btn" title="Profile">👤</button>
+      <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+    </div>
+  </div>
+</header>
+<div class="nav-backdrop" aria-hidden="true"></div>
+
+<main class="fare-main">
+  <div class="fare-grid">
+    
+    <section class="map-section">
+      <div id="fareMap"></div>
+      
+      <div class="map-overlay-controls">
+        <button id="btnUseCurrent" class="map-btn" title="Use My Location">
+          📍 My Location
+        </button>
+        <button id="btnClear" class="map-btn secondary" title="Reset Map">
+          ✕ Clear
+        </button>
+      </div>
+    </section>
+
+    <section class="controls-section">
+      <div class="header-block">
+        <h1>Estimate Trip</h1>
+        <p>Plan your route and check official bus fares.</p>
+      </div>
+
+      <div class="card input-card">
+        <div class="route-line-container">
+          <div class="route-dot from"></div>
+          <div class="route-line"></div>
+          <div class="route-dot to"></div>
+        </div>
+        
+        <div class="route-inputs">
+          <div class="input-group">
+            <label>Pickup Point</label>
+            <div id="fromLabel" class="fake-input placeholder">Select on map...</div>
+          </div>
+          <div class="input-group">
+            <label>Destination</label>
+            <div id="toLabel" class="fake-input placeholder">Select on map...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card preset-card">
+        <label for="routePreset" class="card-label">✨ Quick Select Known Route</label>
+        <div class="select-wrapper">
+          <select id="routePreset">
+            <option value="">-- Choose a popular route --</option>
+            <option value="Uttara → Motijheel">Uttara → Motijheel</option>
+            <option value="Mirpur-10 → Motijheel">Mirpur-10 → Motijheel</option>
+            <option value="Gabtoli → Jatrabari">Gabtoli → Jatrabari</option>
+          </select>
+        </div>
+        
+        <div id="safetyInfoBox" class="safety-info hidden">
+          <div class="safety-row">
+            <span class="safety-label">Safety Score</span>
+            <span id="safetyScoreLabel" class="safety-val">--</span>
+          </div>
+          <div class="safety-row">
+            <span class="safety-label">Common Issues</span>
+            <span id="safetyIssuesLabel" class="safety-val text-muted">--</span>
+          </div>
+          <div class="safety-note" id="safetyTimeLabel"></div>
+        </div>
+      </div>
+
+      <div class="card result-card">
+        <div class="result-header">
+          <span class="label">Total Distance</span>
+          <span class="val" id="distanceLabel">0 km</span>
+        </div>
+        
+        <div class="fare-display">
+          <span class="currency">৳</span>
+          <span class="amount" id="fareLabel">0</span>
+        </div>
+        
+        <div class="breakdown-box">
+          <div class="breakdown-title">Fare Breakdown</div>
+          <p id="fareBreakdownText" class="breakdown-text">
+            Select a start and end point to see the official government rate calculation.
+          </p>
+        </div>
+      </div>
+
+    </section>
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="./js/navbar.js"></script>
+<script src="./js/fare.js"></script>
+</body>
+</html>

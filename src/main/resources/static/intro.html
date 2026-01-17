@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – Loading</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="./css/intro.css" />
+</head>
+<body>
+  <div class="splash-wrapper">
+    <div class="splash-orb orb-1"></div>
+    <div class="splash-orb orb-2"></div>
+
+    <section class="splash-card">
+      <div class="logo-dot"></div>
+
+      <h1 class="splash-title">
+        Jatri <span>Ovijog</span>
+      </h1>
+
+      <p class="splash-tagline">
+        Your voice, <span>safer roads</span>.
+      </p>
+
+      <div class="splash-progress">
+        <div class="splash-progress-bar"></div>
+      </div>
+
+      <p class="splash-hint">Preparing your dashboard…</p>
+    </section>
+  </div>
+
+  <script>
+    // Decide where to go next (user/police) – default = dashboard.html
+    const target =
+      sessionStorage.getItem("targetDashboard") || "dashboard.html";
+
+    // small delay so animation is visible
+    setTimeout(() => {
+      window.location.href = target;
+    }, 2600);
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+/* profile.css – Styles for the user profile page */
+
+.profile-main {
+  padding-top: 24px;
+  padding-bottom: 40px;
+}
+
+.profile-card {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+/* Adjust spacing on small screens */
+@media (max-width: 640px) {
+  .profile-card {
+    padding: 24px;
+  }
+}

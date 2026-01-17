@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – Profile</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Global UI design system -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <!-- Navbar styles -->
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <!-- Profile specific styles -->
+  <link rel="stylesheet" href="./css/profile.css" />
+</head>
+<body>
+  <!-- Passenger navbar -->
+  <header class="full-navbar">
+    <div class="nav-left">
+      <a href="dashboard.html" class="brand-title"><span>Jatri_Ovijog</span></a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-collapsible">
+      <div class="nav-pill" id="nav-pill">
+        <!-- Slider for active state -->
+        <div class="nav-slider" id="nav-slider"></div>
+        <a href="dashboard.html" class="nav-pill-link" data-page="dashboard"><span>Dashboard</span></a>
+        <a href="feed.html" class="nav-pill-link" data-page="feed"><span>Community</span></a>
+        <a href="report.html" class="nav-pill-link" data-page="report"><span>Report</span></a>
+        <a href="emergency.html" class="nav-pill-link" data-page="emergency"><span>Emergency</span></a>
+      </div>
+      <div class="nav-right">
+        <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+        <button class="nav-icon-btn" id="profile-btn" title="Profile">👤</button>
+        <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+      </div>
+    </div>
+  </header>
+  <!-- Backdrop for mobile nav -->
+  <div class="nav-backdrop" aria-hidden="true"></div>
+
+  <!-- Profile content -->
+  <main class="profile-main container">
+    <h1 class="page-title">Your Profile</h1>
+    <section class="card pad profile-card">
+      <form id="profileForm">
+        <div class="field">
+          <label for="profileName">Full Name</label>
+          <input type="text" id="profileName" placeholder="Enter your name" />
+        </div>
+        <div class="field">
+          <label for="profileEmail">Email</label>
+          <input type="email" id="profileEmail" placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label for="profilePhone">Phone</label>
+          <input type="text" id="profilePhone" placeholder="01XXXXXXXXX" />
+        </div>
+        <div class="field">
+          <label for="profileLanguage">Preferred Language</label>
+          <select id="profileLanguage">
+            <option value="en">English</option>
+            <option value="bn">Bengali</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="profileTheme">Theme</label>
+          <select id="profileTheme">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+        <div class="profile-actions">
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="./js/profile.js"></script>
+  <script src="./js/navbar.js"></script>
+</body>
+</html>
