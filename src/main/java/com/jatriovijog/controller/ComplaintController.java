@@ -144,7 +144,7 @@ public class ComplaintController {
 
         return supabaseService.createComplaint(fixed);
     }
-
+    
     @PatchMapping("/{id}/status")
     public Mono<Map<String, Object>> updateComplaintStatus(
             @PathVariable("id") long id,
@@ -157,5 +157,18 @@ public class ComplaintController {
         }
         String note = body.get("note") == null ? null : String.valueOf(body.get("note"));
         return supabaseService.updateComplaintStatus(id, status, note);
+    }
+
+    // ✅ NEW ENDPOINT: CHAT-TO-FORM PARSER
+    // This receives the raw text from your frontend Chat Box and asks AI to extract details.
+    @PostMapping("/parse-chat")
+    public Mono<Map<String, Object>> parseChat(@RequestBody Map<String, String> payload) {
+        String chatText = payload.get("text");
+        if (chatText == null || chatText.isEmpty()) {
+            return Mono.just(Map.of("error", "No text provided"));
+        }
+        
+        // Wrap the blocking Service call in Mono so it works with WebFlux
+        return Mono.fromCallable(() -> aiAnalysisService.parseComplaintFromChat(chatText));
     }
 }

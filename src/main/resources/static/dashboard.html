@@ -140,8 +140,37 @@
         </section>
       </section>
     </div>
+    
   </main>
+<div id="ai-widget-container">
+    
+    <div id="ai-chat-popup" class="ai-popup" style="display: none;">
+        <div class="ai-popup-header">
+            <div class="ai-title">
+                <span>🤖</span> Jatri AI Assistant
+            </div>
+            <button id="ai-close-btn" type="button">&times;</button>
+        </div>
+        
+        <div class="ai-popup-body">
+            <p class="ai-instruction">
+                Describe the incident here. We will auto-fill the official report form for you.
+            </p>
+            <textarea id="ai-widget-input" placeholder="e.g. I was on a Raida bus at Rampura and the helper was rude..."></textarea>
+            <div id="ai-widget-status" class="ai-status"></div>
+        </div>
 
+        <div class="ai-popup-footer">
+            <button id="ai-widget-submit" type="button">
+                ✨ Analyze & Draft
+            </button>
+        </div>
+    </div>
+
+    <button id="ai-fab-btn" class="ai-fab" title="Report with AI">
+        💬
+    </button>
+</div>
   <!-- Scripts -->
   <script src="./js/dashboard.js"></script>
   <script src="./js/navbar.js"></script>

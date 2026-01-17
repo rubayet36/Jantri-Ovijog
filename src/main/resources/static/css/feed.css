@@ -184,7 +184,7 @@ html, body {
 
 /* Cards (list view stays clean) */
 .feed-card {
-  background: var(--surface);
+  background: #fcfcfc;
   border: 1px solid var(--border);
   border-radius: var(--r-20);
   box-shadow: var(--shadow-sm);
@@ -192,7 +192,33 @@ html, body {
   transition: 160ms ease;
   cursor: pointer;
 }
+
 .feed-card:hover { transform: translateY(-1px); }
+
+/* ================================
+   New card structure
+   The feed cards use a distinct header and content section. The header has a tinted
+   background to separate user information and status from the body. The content
+   section contains the title, meta chips, description and engagement row. Both
+   sections inherit the card's rounded corners for a seamless look.
+================================ */
+.feed-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: 16px 20px;
+  background: rgba(37, 99, 235, 0.06);
+  border-top-left-radius: var(--r-20);
+  border-top-right-radius: var(--r-20);
+  border-bottom: 1px solid var(--border);
+}
+
+.feed-card-content {
+  padding: 20px;
+  border-bottom-left-radius: var(--r-20);
+  border-bottom-right-radius: var(--r-20);
+}
 
 .feed-card-body { padding: 20px; }
 
@@ -202,6 +228,9 @@ html, body {
   justify-content: space-between;
   gap: var(--s-4);
   margin-bottom: var(--s-4);
+  background-color: #e9eefa;
+  border-radius: 15px;
+  
 }
 
 .feed-user {
@@ -214,12 +243,13 @@ html, body {
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(37, 99, 235, 0.12);
-  color: var(--text);
+  /* Avatar background uses a pastel variant of the primary color for consistency */
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--primary);
   display: grid;
   place-items: center;
   font-weight: 800;
-  border: 1px solid rgba(37, 99, 235, 0.18);
+  border: 1px solid rgba(37, 99, 235, 0.25);
   flex: 0 0 auto;
 }
 .user-meta { min-width: 0; }
@@ -296,7 +326,7 @@ html, body {
 }
 .category {
   border-color: rgba(37, 99, 235, 0.22);
-  background: rgba(37, 99, 235, 0.08);
+  background: #bed9fb;
   color: var(--text);
 }
 

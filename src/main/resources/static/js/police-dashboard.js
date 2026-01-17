@@ -123,29 +123,38 @@ async function fetchPoliceData() {
 // 3. BUILD HEATMAP POINTS
 // =========================================
 function buildIncidentPoints() {
-  const geoComplaints = policeComplaints.filter(
-    (c) => c.latitude !== null && c.longitude !== null && !isNaN(Number(c.latitude)) && !isNaN(Number(c.longitude))
-  );
+ const geoComplaints = policeComplaints.filter(
+  (c) =>
+    c.latitude !== null &&
+    c.longitude !== null &&
+    c.status !== "fake"   // ❌ exclude fake cases
+);
+const grouped = {};
 
-  const grouped = {};
+geoComplaints.forEach((c) => {
+  const key = c.thana || "Unknown";
 
-  geoComplaints.forEach((c) => {
-    const key = c.thana || "Unknown";
+  if (!grouped[key]) {
+    grouped[key] = {
+      thana: key,
+      lat: Number(c.latitude),
+      lng: Number(c.longitude),
+      high: 0,
+      medium: 0,
+      low: 0,
+      total: 0,
+    };
+  }
 
-    if (!grouped[key]) {
-      grouped[key] = {
-        thana: key,
-        lat: Number(c.latitude),
-        lng: Number(c.longitude),
-        count: 0,
-        type: c.type || "Incident",
-      };
-    }
+  if (c.priority === "high") grouped[key].high++;
+  else if (c.priority === "medium") grouped[key].medium++;
+  else grouped[key].low++;
 
-    grouped[key].count++;
-  });
+  grouped[key].total++;
+});
 
-  incidentPoints = Object.values(grouped);
+incidentPoints = Object.values(grouped);
+
 }
 
 // =========================================
@@ -188,6 +197,29 @@ document.addEventListener("DOMContentLoaded", async () => {
       initHeatmap(true);
     });
   }
+
+  // Keep Leaflet responsive (grid changes, orientation changes, navbar toggle)
+  const invalidate = () => {
+    if (heatMapLeaflet) {
+      try { heatMapLeaflet.invalidateSize(); } catch (_) {}
+    }
+  };
+
+  // Debounced resize
+  let resizeT = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(invalidate, 120);
+  });
+
+  // If your navbar uses a collapsible toggle, this helps after open/close
+  const navToggle = document.querySelector(".nav-toggle");
+  if (navToggle) {
+    navToggle.addEventListener("click", () => setTimeout(invalidate, 180));
+  }
+
+  // Initial tick (after layout + fonts settle)
+  setTimeout(invalidate, 250);
 });
 
 // =========================================
@@ -230,8 +262,13 @@ function renderStatusChart() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: "75%",
-      plugins: { legend: { position: "right" } },
+      cutout: "70%",
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: { boxWidth: 10, boxHeight: 10, padding: 14 },
+        },
+      },
     },
   });
 }
@@ -247,7 +284,12 @@ function renderCategoryChart() {
       labels: ["Fare", "Harassment", "Reckless", "Theft"],
       datasets: [{ label: "Reports", data: [15, 8, 12, 5] }],
     },
-    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { grid: { display: false } }, y: { grid: { display: true } } },
+    },
   });
 }
 
@@ -268,10 +310,46 @@ function renderComplaintsQueue(filter) {
     const card = document.createElement("div");
     card.className = "police-complaint-card";
 
+    // Visual priority framing (UI-only)
+    const statusKey = (c.status || "").toLowerCase();
+    const statusLabelMap = {
+      "new": "NEW",
+      "pending": "PENDING",
+      "in-progress": "IN PROGRESS",
+      "working": "IN PROGRESS",
+      "resolved": "CLOSED",
+      "closed": "CLOSED",
+      "fake": "FLAGGED",
+    };
+    const statusLabel = statusLabelMap[statusKey] || (statusKey ? statusKey.toUpperCase() : "NEW");
+
+    const statusClassMap = {
+      "new": "status-new",
+      "pending": "status-pending",
+      "in-progress": "status-in-progress",
+      "working": "status-in-progress",
+      "resolved": "status-resolved",
+      "closed": "status-resolved",
+      "fake": "status-fake",
+    };
+    const statusClass = statusClassMap[statusKey] || "status-new";
+
+    // Border-left uses status (not just warning)
+    const borderColorMap = {
+      "new": "#0284C7",
+      "pending": "#B45309",
+      "in-progress": "#1D4ED8",
+      "working": "#1D4ED8",
+      "resolved": "#15803D",
+      "closed": "#15803D",
+      "fake": "#475569",
+    };
+    card.style.borderLeftColor = borderColorMap[statusKey] || "#B45309";
+
     card.innerHTML = `
       <div class="police-complaint-header">
-        <span>#${c.id} · ${c.type}</span>
-        <span style="text-transform:uppercase; font-size:11px;">${c.priority}</span>
+        <span style="font-weight:800;">#${c.id} · ${c.type}</span>
+        <span class="status-pill ${statusClass}">● ${statusLabel}</span>
       </div>
       <div style="margin-bottom:8px;">
         <span class="police-tag">📍 ${c.thana}</span>
@@ -280,6 +358,10 @@ function renderComplaintsQueue(filter) {
       <p style="font-size:13px; color:#334155; line-height:1.4; margin-bottom:12px;">
         ${c.description}
       </p>
+      <div class="queue-actions">
+        <button class="btn btn-primary" type="button">View</button>
+        <button class="btn" type="button">Assign</button>
+      </div>
     `;
     list.appendChild(card);
   });
@@ -291,15 +373,23 @@ function renderEmergencyAlerts() {
   if (!list) return;
   list.innerHTML = "";
 
-  emergencyAlerts.forEach((a) => {
+  // Most recent first
+  const sorted = [...emergencyAlerts].sort((a, b) => new Date(b.time) - new Date(a.time));
+
+  sorted.forEach((a) => {
     const item = document.createElement("div");
-    item.className = "emergency-item";
+    item.className = `emergency-item emergency-${a.level || "medium"}`;
     const timeStr = new Date(a.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    const levelLabel = (a.level || "medium").toUpperCase();
 
     item.innerHTML = `
       <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
         <span class="emergency-id">ALERT #${a.id}</span>
-        <span style="font-size:11px; font-weight:700;">${timeStr}</span>
+        <span style="display:flex; gap:8px; align-items:center;">
+          <span class="status-pill ${a.level === "critical" ? "status-fake" : a.level === "high" ? "status-pending" : "status-new"}" style="font-weight:900;">${levelLabel}</span>
+          <span style="font-size:11px; font-weight:800; color:#020617;">${timeStr}</span>
+        </span>
       </div>
       <div style="font-size:13px; font-weight:600; margin-bottom:2px;">📍 ${a.location}</div>
       <div style="font-size:12px; color:#7F1D1D;">${a.note}</div>
@@ -334,21 +424,31 @@ function initHeatmap(forceReinit = false) {
     attribution: "&copy; OpenStreetMap, &copy; CartoDB",
   }).addTo(heatMapLeaflet);
 
-  // Add circles
-  incidentPoints.forEach((p) => {
-    const color = p.count >= 5 ? "#EF4444" : "#0EA5E9";
-    const radius = Math.max(150, p.count * 200);
+  // Add circles (3-tier intensity to match legend)
+incidentPoints.forEach((p) => {
+  let color = "#0EA5E9"; // 🔵 Low (default)
 
-    L.circle([p.lat, p.lng], {
-      color,
-      fillColor: color,
-      fillOpacity: 0.35,
-      radius,
-      weight: 1,
-    })
-      .addTo(heatMapLeaflet)
-      .bindPopup(`<b>${p.thana}</b><br>${p.type}<br>${p.count} Reports`);
-  });
+  if (p.high > 0) color = "#EF4444";       // 🔴 High
+  else if (p.medium > 0) color = "#F59E0B"; // 🟠 Medium
+
+  const radius = Math.max(150, p.total * 200);
+
+  L.circle([p.lat, p.lng], {
+    color,
+    fillColor: color,
+    fillOpacity: 0.4,
+    radius,
+    weight: 1,
+  })
+    .addTo(heatMapLeaflet)
+    .bindPopup(`
+      <b>${p.thana}</b><br>
+      🔴 High: ${p.high}<br>
+      🟠 Medium: ${p.medium}<br>
+      🔵 Low: ${p.low}
+    `);
+});
+;
 
   renderHotspots();
 }
@@ -375,7 +475,7 @@ function renderHotspots() {
         <div style="font-weight:600;">${p.thana}</div>
         <div style="font-size:11px; color:#64748B;">${p.type}</div>
       </div>
-      <div style="font-weight:700; color:#EF4444;">${p.count}</div>
+      <div style="font-weight:800; color:#B91C1C;">${p.count}</div>
     `;
 
     item.addEventListener("click", () => {

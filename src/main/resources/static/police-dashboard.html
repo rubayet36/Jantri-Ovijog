@@ -59,9 +59,21 @@
     </div>
   </div>
 
+  <!-- 🔴 PRIMARY PRIORITY: SOS / Emergency banner (full width) -->
+  <section class="card emergency-banner" aria-live="polite">
+    <div class="emergency-banner-header">
+      <div>
+        <div class="emergency-banner-title">🚨 SOS Alerts</div>
+        <div class="emergency-banner-subtitle">Immediate response required. Sorted by most recent.</div>
+      </div>
+      <div class="emergency-banner-chip">LIVE</div>
+    </div>
+    <div id="emergencyAlertsList" class="emergency-list"></div>
+  </section>
+
   <div class="dashboard-grid">
     <section class="column-left">
-      
+
       <section class="card stats-card">
         <h2 class="card-title">SitRep (Situation Report)</h2>
         <div class="stats-grid">
@@ -110,37 +122,26 @@
           <div class="hotspots-header">Top High-Risk Zones</div>
           <div id="heatHotspotList" class="hotspot-list"></div>
         </div>
+         <!-- Secondary analytics (below operational areas) -->
+  <div class="charts-row charts-row-bottom">
+    <section class="card">
+      <h2 class="card-title">Case Load</h2>
+      <div class="chart-wrapper">
+        <canvas id="policeStatusChart"></canvas>
+      </div>
+    </section>
+    <section class="card">
+      <h2 class="card-title">By Category</h2>
+      <div class="chart-wrapper">
+        <canvas id="policeCategoryChart"></canvas>
+      </div>
+    </section>
+  </div>
       </section>
 
-      <div class="charts-row">
-        <section class="card">
-          <h2 class="card-title">Case Load</h2>
-          <div class="chart-wrapper">
-            <canvas id="policeStatusChart"></canvas>
-          </div>
-        </section>
-        <section class="card">
-          <h2 class="card-title">By Category</h2>
-          <div class="chart-wrapper">
-            <canvas id="policeCategoryChart"></canvas>
-          </div>
-        </section>
-      </div>
     </section>
 
     <section class="column-right">
-      
-      <section class="card forecast-card">
-        <h2 class="card-title">AI Forecast</h2>
-        <p class="forecast-subtitle">Projected hotspots for next 4 hours.</p>
-        <ul id="forecastList" class="forecast-list"></ul>
-      </section>
-
-      <section class="card emergency-card">
-        <h2 class="card-title">🚨 SOS Alerts</h2>
-        <div id="emergencyAlertsList" class="emergency-list"></div>
-      </section>
-
       <section class="card queue-card">
         <div class="card-header-row">
           <h2 class="card-title">Case Queue</h2>
@@ -154,8 +155,16 @@
         <div id="activeComplaintsList" class="police-complaints-list"></div>
       </section>
 
+      <section class="card forecast-card">
+        <h2 class="card-title">AI Forecast</h2>
+        <p class="forecast-subtitle">Projected hotspots for next 4 hours.</p>
+        <ul id="forecastList" class="forecast-list"></ul>
+      </section>
+
     </section>
   </div>
+
+ 
 </main>
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

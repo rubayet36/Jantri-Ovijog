@@ -1,37 +1,42 @@
 /* ============ POLICE COMMAND THEME 2026 ============ */
 :root {
   /* Backgrounds */
-  --bg-body: #F1F5F9;       /* Slate 100 - High visibility background */
+  --bg-body: #F8FAFC;       /* calmer base */
   --bg-card: #FFFFFF;       /* Crisp White */
   --bg-sidebar: #0F172A;    /* Slate 900 - Dark sidebar/header areas */
   
   /* Text */
-  --text-main: #0F172A;     /* Dark Slate */
-  --text-muted: #64748B;    /* Slate 500 */
+  --text-main: #020617;     /* near-black */
+  --text-muted: #475569;    /* Slate 600 */
   --text-on-dark: #F8FAFC;
   
   /* Brand / Action */
-  --primary: #2563EB;       /* Royal Blue */
+  --primary: #1D4ED8;       /* authoritative blue */
   --primary-dark: #1E40AF;
   
   /* Functional Colors */
-  --danger: #EF4444;        /* Red */
-  --warning: #F59E0B;       /* Amber */
-  --success: #10B981;       /* Emerald */
-  --info: #0EA5E9;          /* Sky Blue */
+  --danger: #B91C1C;        /* deep red (rare) */
+  --critical: #7F1D1D;      /* ultra-rare */
+  --warning: #B45309;       /* muted amber */
+  --success: #15803D;       /* serious green */
+  --info: #0284C7;          /* info blue */
   
   /* Borders & Shadows */
   --border-subtle: #E2E8F0;
+  --border-strong: #CBD5E1;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --radius-md: 8px;
   --radius-lg: 12px;
+  --radius-xl: 16px;
 }
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
   background-color: var(--bg-body);
   color: var(--text-main);
+  margin: 0;
+  overflow-x: hidden;
 }
 
 /* ============ HEADER & LAYOUT ============ */
@@ -45,13 +50,19 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--border-subtle);
 }
 
+.police-badge {
+  white-space: nowrap;
+}
+
 .page-title {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.5px;
@@ -84,7 +95,7 @@ body {
 .card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   padding: 20px;
   box-shadow: var(--shadow-sm);
   transition: box-shadow 0.2s;
@@ -95,14 +106,53 @@ body {
 }
 
 .card-title {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 650;
   color: var(--text-main);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  text-transform: none;
+  letter-spacing: 0.2px;
   margin-bottom: 16px;
   display: flex;
   justify-content: space-between;
+}
+
+/* ============ EMERGENCY (TOP PRIORITY) ============ */
+.emergency-banner {
+  border-color: rgba(185, 28, 28, 0.25);
+  background: linear-gradient(180deg, rgba(254, 242, 242, 1) 0%, rgba(255, 255, 255, 1) 70%);
+  margin-bottom: 16px;
+}
+
+.emergency-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.emergency-banner-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--critical);
+  letter-spacing: -0.2px;
+}
+
+.emergency-banner-subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.emergency-banner-chip {
+  background: rgba(185, 28, 28, 0.12);
+  color: var(--critical);
+  border: 1px solid rgba(185, 28, 28, 0.25);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.6px;
 }
 
 /* ============ STATS ROW ============ */
@@ -136,7 +186,7 @@ body {
 .stat-icon-blue { background: #DBEAFE; color: #2563EB; }
 .stat-icon-orange { background: #FFEDD5; color: #EA580C; }
 .stat-icon-green { background: #D1FAE5; color: #059669; }
-.stat-icon-red { background: #FEE2E2; color: #DC2626; }
+.stat-icon-red { background: #FFE4E6; color: var(--danger); }
 
 .stat-number {
   font-size: 28px;
@@ -150,7 +200,7 @@ body {
   font-weight: 600;
   color: var(--text-muted);
   margin-top: 4px;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .police-meta {
@@ -163,7 +213,7 @@ body {
 
 /* ============ HEATMAP CARD ============ */
 .heatmap-card {
-  border-color: #CBD5E1;
+  border-color: var(--border-strong);
 }
 
 .heatmap-header {
@@ -184,9 +234,14 @@ body {
   cursor: pointer;
 }
 
+.heat-low { background: var(--info); }
+.heat-med { background: var(--warning); }
+.heat-high { background: var(--danger); }
+
 #policeHeatmap {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
+  width: 100%;
   height: 350px; /* Taller map */
 }
 
@@ -213,11 +268,56 @@ body {
   margin-top: 16px;
   font-size: 12px;
   font-weight: 700;
-  text-transform: uppercase;
+  text-transform: none;
   color: var(--text-muted);
   display: flex;
   justify-content: space-between;
 }
+
+/* ============ LAYOUT GRID ============ */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: start; /* CRITICAL */
+  gap: 24px;
+}
+
+.column-left{ flex: 2; min-width: 0; }
+.column-right{ flex: 1; min-width: 0; }
+.column-left,
+.column-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.charts-row {
+  grid-column: 1 / -1; /* span both columns */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+
+.charts-row-bottom {
+  margin-bottom: 24px;
+}
+
+.chart-wrapper {
+  height: 240px;
+}
+
+/* Ensure long content never forces horizontal scroll */
+.card, .police-main, .dashboard-grid, .charts-row {
+  min-width: 0;
+}
+
+/* Emergency list: prevent it from exploding the layout on small screens */
+.emergency-list {
+  display: grid;
+  gap: 10px;
+}
+
 
 .hotspot-item {
   display: flex;
@@ -287,6 +387,62 @@ body {
   font-family: monospace;
 }
 
+.queue-filter {
+  background: #F1F5F9;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.card-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(2, 6, 23, 0.08);
+}
+
+.status-new { background: rgba(2, 132, 199, 0.10); color: var(--info); }
+.status-pending { background: rgba(180, 83, 9, 0.10); color: var(--warning); }
+.status-in-progress { background: rgba(29, 78, 216, 0.10); color: var(--primary); }
+.status-resolved { background: rgba(21, 128, 61, 0.10); color: var(--success); }
+.status-fake { background: rgba(71, 85, 105, 0.10); color: #475569; }
+
+.queue-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border-subtle);
+  background: #fff;
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.btn:hover { background: #F8FAFC; border-color: var(--border-strong); }
+.btn-primary { background: rgba(29, 78, 216, 0.10); border-color: rgba(29, 78, 216, 0.25); color: var(--primary-dark); }
+.btn-danger { background: rgba(185, 28, 28, 0.10); border-color: rgba(185, 28, 28, 0.25); color: var(--danger); }
+
 .police-actions {
   margin-top: 12px;
   display: flex;
@@ -308,13 +464,23 @@ body {
 
 /* ============ EMERGENCY ALERTS ============ */
 .emergency-item {
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
+  background: #FFFFFF;
+  border: 1px solid rgba(185, 28, 28, 0.25);
   border-left: 4px solid var(--danger);
   border-radius: var(--radius-md);
   padding: 12px;
   margin-bottom: 8px;
-  animation: pulseAlert 2s infinite;
+}
+
+.emergency-critical {
+  background: #FEF2F2;
+  border-color: rgba(127, 29, 29, 0.25);
+  border-left-color: var(--critical);
+  animation: pulseAlert 2.4s infinite;
+}
+
+.emergency-high {
+  background: rgba(254, 242, 242, 0.55);
 }
 
 @keyframes pulseAlert {
@@ -326,42 +492,79 @@ body {
 .emergency-id { font-weight: 800; color: #991B1B; font-size: 13px; }
 .emergency-level { background: #DC2626; color: white; padding: 2px 8px; border-radius: 4px; font-weight: 700; font-size: 10px; text-transform: uppercase; }
 
-/* Responsive */
-@media (max-width: 1024px) {
-  .stats-grid { grid-template-columns: 1fr 1fr; }
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .emergency-critical { animation: none; }
+  .card:hover { box-shadow: var(--shadow-sm); }
+  .police-complaint-card:hover { transform: none; }
 }
-/* --- MOBILE POLICE DASHBOARD FIXES --- */
-@media (max-width: 1024px) {
-  .police-main {
-    padding: 0 16px;
-    margin-top: 16px;
+
+/* =====================
+   RESPONSIVE (robust)
+   ===================== */
+
+/* Large laptops / small desktops */
+@media (max-width: 1200px) {
+  .police-main { padding: 0 18px; }
+  .dashboard-grid { grid-template-columns: 1.5fr 1fr; }
+  .chart-wrapper { height: 220px; }
+}
+
+/* Tablets */
+@media (max-width: 980px) {
+  .police-main { padding: 0 16px; margin: 16px auto; }
+
+  .police-header {
+    align-items: flex-start;
+  }
+
+  .police-badge {
+    margin-left: auto;
   }
 
   /* Stack columns */
-  .dashboard-grid {
-    grid-template-columns: 1fr; 
-  }
+  .dashboard-grid { grid-template-columns: 1fr; }
 
-  /* Stack the 4 stats at the top */
-  .stats-grid {
-    grid-template-columns: 1fr 1fr; /* 2x2 grid is okay for mobile */
-  }
+  /* 2x2 stats */
+  .stats-grid { grid-template-columns: 1fr 1fr; }
 
-  /* Fix heatmap height */
-  #policeHeatmap {
-    height: 250px;
-  }
+  /* Charts stack */
+  .charts-row { grid-template-columns: 1fr; }
 
-  /* Fix charts row */
-  .charts-row {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
+  /* Map height slightly smaller */
+  #policeHeatmap { height: 280px; }
+
+  /* Navbar: allow pills to wrap instead of overflow */
+  .nav-pill { flex-wrap: wrap; gap: 8px; }
+  .nav-collapsible { min-width: 0; }
 }
 
-@media (max-width: 480px) {
-  .stats-grid {
-    grid-template-columns: 1fr; /* 1x4 stack on very small screens */
+/* Phones */
+@media (max-width: 640px) {
+  .police-main { padding: 0 12px; }
+  .page-title { font-size: 26px; }
+  .police-badge { font-size: 12px; padding: 7px 12px; }
+
+  .card { padding: 14px; border-radius: 14px; }
+
+  /* Stats become 1 column if space is tight */
+  .stats-grid { grid-template-columns: 1fr; }
+  .stat-number { font-size: 30px; }
+
+  #policeHeatmap { height: 240px; }
+
+  /* Queue header wraps nicely */
+  .card-header-row { flex-wrap: wrap; align-items: flex-start; }
+  .queue-filter { width: 100%; }
+}
+
+/* Very small phones */
+@media (max-width: 420px) {
+  .page-title { font-size: 24px; }
+  .police-subtitle { font-size: 13px; }
+  #policeHeatmap { height: 220px; }
+}@media (max-width: 1024px) {
+  .charts-row {
+    grid-template-columns: 1fr;
   }
 }

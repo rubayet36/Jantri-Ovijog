@@ -1,14 +1,11 @@
-// dashboard.js — UPDATED
-// Goal:
-// - "Your Statistics" uses ONLY the logged-in user's complaints (my-complaints)
-// - Charts ("Complaints per Company" + "Complaints Overview") use ALL complaints (global)
-
-let myComplaints = [];
-let allComplaints = [];
+// dashboard.js — FULLY UPDATED WITH AI CHAT BOT
 
 // ------------------------------
 // Helpers
 // ------------------------------
+let myComplaints = [];
+let allComplaints = [];
+
 function normStatus(s) {
   return String(s || "").toLowerCase().trim();
 }
@@ -30,7 +27,7 @@ function normalizeComplaint(c) {
 }
 
 // ------------------------------
-// Fetch: MY complaints (for "Your Statistics" only)
+// Fetch: MY complaints
 // ------------------------------
 async function fetchMyComplaints() {
   try {
@@ -45,7 +42,6 @@ async function fetchMyComplaints() {
       myComplaints = [];
       return;
     }
-
     myComplaints = (Array.isArray(data) ? data : []).map(normalizeComplaint);
   } catch (err) {
     console.error("Error loading MY complaints", err);
@@ -54,7 +50,7 @@ async function fetchMyComplaints() {
 }
 
 // ------------------------------
-// Fetch: ALL complaints (for charts + global insights)
+// Fetch: ALL complaints
 // ------------------------------
 async function fetchAllComplaints() {
   try {
@@ -69,7 +65,6 @@ async function fetchAllComplaints() {
       allComplaints = [];
       return;
     }
-
     allComplaints = (Array.isArray(data) ? data : []).map(normalizeComplaint);
   } catch (err) {
     console.error("Error loading ALL complaints", err);
@@ -78,16 +73,14 @@ async function fetchAllComplaints() {
 }
 
 // ------------------------------
-// YOUR STATS (only myComplaints)
+// YOUR STATS
 // ------------------------------
 function loadDashboardStats() {
   const total = myComplaints.length;
-
   const pending = myComplaints.filter((c) => {
     const st = normStatus(c.status);
     return ["new", "pending", "in-progress", "submitted", "working"].includes(st);
   }).length;
-
   const resolved = myComplaints.filter((c) => {
     const st = normStatus(c.status);
     return ["resolved", "closed"].includes(st);
@@ -103,7 +96,7 @@ function loadDashboardStats() {
 }
 
 // ------------------------------
-// Charts (GLOBAL: allComplaints)
+// Charts
 // ------------------------------
 let companyChartInstance = null;
 let overviewChartInstance = null;
@@ -123,7 +116,6 @@ function loadCompanyComplaintsChart() {
   const canvas = document.getElementById("companyComplaintsChart");
   if (!canvas) return;
 
-  // Group ALL complaints by company/bus name
   const counts = {};
   allComplaints.forEach((c) => {
     const company = (c.busName || "Unknown").trim() || "Unknown";
@@ -133,15 +125,12 @@ function loadCompanyComplaintsChart() {
   const labels = Object.keys(counts);
   const values = labels.map((l) => counts[l]);
 
-  // No data state
   if (labels.length === 0) {
-    // Clear chart area (optional)
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     return;
   }
 
-  // Palette-only colors (teal + lime via opacity)
   companyChartInstance = new Chart(canvas, {
     type: "bar",
     data: {
@@ -150,7 +139,7 @@ function loadCompanyComplaintsChart() {
         {
           label: "Number of Complaints (All Users)",
           data: values,
-          backgroundColor: "rgba(11, 69, 80, 0.18)", // teal-ish
+          backgroundColor: "rgba(11, 69, 80, 0.18)",
           borderColor: "rgba(11, 69, 80, 0.90)",
           borderWidth: 1,
           borderRadius: 10,
@@ -183,7 +172,6 @@ function loadComplaintsOverviewChart() {
   const canvas = document.getElementById("complaintsOverviewChart");
   if (!canvas) return;
 
-  // Overview by category with resolved/pending/fake counts (ALL users)
   const categories = {};
   allComplaints.forEach((c) => {
     const typeKey = String(c.category || "other").toLowerCase().trim() || "other";
@@ -196,11 +184,7 @@ function loadComplaintsOverviewChart() {
   });
 
   const labels = Object.keys(categories).map((t) =>
-    t
-      .split(/[\s\-_/]+/g)
-      .filter(Boolean)
-      .map((w) => w[0].toUpperCase() + w.slice(1))
-      .join(" ")
+    t.split(/[\s\-_/]+/g).filter(Boolean).map((w) => w[0].toUpperCase() + w.slice(1)).join(" ")
   );
 
   if (labels.length === 0) {
@@ -221,19 +205,19 @@ function loadComplaintsOverviewChart() {
         {
           label: "Resolved",
           data: resolvedData,
-          backgroundColor: "rgba(11, 69, 80, 0.18)", // teal tint
+          backgroundColor: "rgba(11, 69, 80, 0.18)",
         },
         {
           label: "Pending",
           data: pendingData,
-          backgroundColor: "rgba(230, 255, 43, 0.38)", // lime tint
+          backgroundColor: "rgba(230, 255, 43, 0.38)",
           borderColor: "rgba(230, 255, 43, 0.70)",
           borderWidth: 1,
         },
         {
           label: "Fake",
           data: fakeData,
-          backgroundColor: "rgba(137, 138, 141, 0.30)", // gray tint
+          backgroundColor: "rgba(137, 138, 141, 0.30)",
         },
       ],
     },
@@ -241,33 +225,18 @@ function loadComplaintsOverviewChart() {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: {
-          position: "top",
-          labels: { color: "#0B4550" },
-        },
+        legend: { position: "top", labels: { color: "#0B4550" } },
       },
       scales: {
-        x: {
-          stacked: false,
-          ticks: { color: "rgba(11, 69, 80, 0.70)" },
-          grid: { color: "rgba(137, 138, 141, 0.18)" },
-        },
-        y: {
-          beginAtZero: true,
-          ticks: { color: "rgba(11, 69, 80, 0.70)" },
-          grid: { color: "rgba(137, 138, 141, 0.18)" },
-        },
+        x: { stacked: false, ticks: { color: "rgba(11, 69, 80, 0.70)" }, grid: { color: "rgba(137, 138, 141, 0.18)" } },
+        y: { beginAtZero: true, ticks: { color: "rgba(11, 69, 80, 0.70)" }, grid: { color: "rgba(137, 138, 141, 0.18)" } },
       },
     },
   });
 }
 
 // ------------------------------
-// Right column (Recent Complaints)
-// You can choose:
-// - show MY recent complaints (keeps dashboard personal)
-// - OR show global recent complaints
-// Right now keeping it MY (as your original logic)
+// Recent Complaints
 // ------------------------------
 function loadRecentComplaints() {
   const container = document.getElementById("recentComplaintsList");
@@ -281,11 +250,9 @@ function loadRecentComplaints() {
 
   sorted.forEach((c) => {
     const status = normStatus(c.status);
-
     const row = document.createElement("div");
     row.classList.add("complaint-row");
 
-    // status classes for styling
     if (status === "resolved" || status === "closed") row.classList.add("status-resolved");
     else if (["pending", "new", "in-progress", "submitted", "working"].includes(status)) row.classList.add("status-pending");
     else if (status === "fake") row.classList.add("status-fake");
@@ -297,29 +264,26 @@ function loadRecentComplaints() {
 
     row.innerHTML = `
       <div class="complaint-dot" aria-hidden="true"></div>
-
       <div class="complaint-body">
         <div class="complaint-top">
           <p class="complaint-title" title="${escapeHtml(title)}">${escapeHtml(title)}</p>
         </div>
-
         <div class="complaint-meta">
           ${routeLine ? `<span>${escapeHtml(routeLine)}</span>` : ""}
           <span>Submitted by: ${escapeHtml(submittedBy)}</span>
         </div>
-
         ${desc ? `<div class="complaint-desc">${escapeHtml(desc)}</div>` : ""}
       </div>
-
       <div class="complaint-right">
-        <div class="complaint-right-top"><span class="complaint-status">${escapeHtml(status || "pending")}</span><span class="complaint-time">${escapeHtml(timeAgo(c.createdAt))}</span></div>
+        <div class="complaint-right-top">
+          <span class="complaint-status">${escapeHtml(status || "pending")}</span>
+          <span class="complaint-time">${escapeHtml(timeAgo(c.createdAt))}</span>
+        </div>
         <button class="complaint-view" type="button" data-id="${escapeHtml(c.id)}">View</button>
       </div>
     `;
 
-    // Optional: simple "View" behavior without changing backend
     row.querySelector(".complaint-view")?.addEventListener("click", () => {
-      // You can later replace this with a details modal/drawer.
       alert(`Complaint ID: ${c.id}`);
     });
 
@@ -334,14 +298,8 @@ function formatType(type) {
 }
 
 function escapeHtml(str) {
-  return String(str ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+  return String(str ?? "").replaceAll("&", "&").replaceAll("<", "<").replaceAll(">", ">").replaceAll('"', "").replaceAll("'", "'");
 }
-
 
 function timeAgo(dateStr) {
   if (!dateStr) return "";
@@ -358,18 +316,14 @@ function timeAgo(dateStr) {
 }
 
 // ------------------------------
-// Trusted routes
-// If you want it based on ALL users (recommended), switch to allComplaints.
+// Trusted Routes
 // ------------------------------
 function loadTrustedRoutes() {
   const container = document.getElementById("trustedRoutes");
   if (!container) return;
-
   container.innerHTML = "";
 
-  // ✅ Use GLOBAL data for routes (more meaningful)
   const source = allComplaints;
-
   if (source.length === 0) {
     container.innerHTML = "<p>No route data available.</p>";
     return;
@@ -404,23 +358,21 @@ function loadTrustedRoutes() {
 }
 
 // ------------------------------
-// INIT
+// INIT & AI CHAT BOT LOGIC
 // ------------------------------
 document.addEventListener("DOMContentLoaded", async () => {
-  // Fetch both data sets
+  // 1. Fetch Data
   await Promise.all([fetchMyComplaints(), fetchAllComplaints()]);
 
-  // Personal section
+  // 2. Load Stats & Charts
   loadDashboardStats();
   loadRecentComplaints();
-
-  // Global sections
   destroyChartsIfAny();
   loadCompanyComplaintsChart();
   loadComplaintsOverviewChart();
   loadTrustedRoutes();
 
-  // Quick action
+  // 3. Quick Action Button (Fare)
   const fareBtn = document.getElementById("btnCalculateFare");
   if (fareBtn) {
     fareBtn.addEventListener("click", () => {
@@ -429,6 +381,83 @@ document.addEventListener("DOMContentLoaded", async () => {
         fareBtn.classList.remove("quick-btn-pulse");
         window.location.href = "fare.html";
       }, 220);
+    });
+  }
+
+  // ==========================
+  // 🤖 FLOATING CHAT BOT LOGIC
+  // ==========================
+  const fabBtn = document.getElementById("ai-fab-btn");
+  const popup = document.getElementById("ai-chat-popup");
+  const closeBtn = document.getElementById("ai-close-btn");
+  const submitBtn = document.getElementById("ai-widget-submit");
+  const inputField = document.getElementById("ai-widget-input");
+  const statusDiv = document.getElementById("ai-widget-status");
+
+  // Toggle Popup
+  if (fabBtn && popup) {
+    fabBtn.addEventListener("click", () => {
+      if (popup.style.display === "none") {
+        popup.style.display = "block";
+        if (inputField) inputField.focus();
+      } else {
+        popup.style.display = "none";
+      }
+    });
+
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        popup.style.display = "none";
+      });
+    }
+  }
+
+  // Submit to AI
+  if (submitBtn) {
+    submitBtn.addEventListener("click", async () => {
+      const text = inputField.value.trim();
+      if (!text) return alert("Please type your story first!");
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = "⏳ Analyzing...";
+      if (statusDiv) {
+        statusDiv.style.color = "#64748b";
+        statusDiv.textContent = "Connecting to AI...";
+      }
+
+      try {
+        // CALL BACKEND API
+        const response = await fetch("/api/complaints/parse-chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: text })
+        });
+
+        const data = await response.json();
+
+        if (data.error) throw new Error(data.error);
+
+        // SAVE DRAFT & REDIRECT
+        localStorage.setItem("AI_DRAFT_DATA", JSON.stringify(data));
+        
+        if (statusDiv) {
+          statusDiv.style.color = "green";
+          statusDiv.textContent = "✅ Success! Redirecting...";
+        }
+        
+        setTimeout(() => {
+          window.location.href = "report.html";
+        }, 1000);
+
+      } catch (err) {
+        console.error(err);
+        if (statusDiv) {
+          statusDiv.style.color = "red";
+          statusDiv.textContent = "Error: " + err.message;
+        }
+        submitBtn.disabled = false;
+        submitBtn.textContent = "✨ Analyze & Draft";
+      }
     });
   }
 });

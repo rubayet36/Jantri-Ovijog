@@ -23,6 +23,9 @@ public class AiAnalysisService {
     // ✅ Groq API Endpoint
     private static final String GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
+    // ---------------------------------------------------------
+    // METHOD 1: YOUR EXISTING ANALYSIS (Unchanged)
+    // ---------------------------------------------------------
     public Map<String, String> analyzeComplaint(String description) {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> result = new HashMap<>();
@@ -95,6 +98,56 @@ public class AiAnalysisService {
             result.put("is_fake", "false");
         }
 
+        return result;
+    }
+
+    // ---------------------------------------------------------
+    // METHOD 2: NEW CHAT-TO-FORM PARSER (Added)
+    // ---------------------------------------------------------
+    public Map<String, Object> parseComplaintFromChat(String userText) {
+        RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> result = new HashMap<>();
+
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + apiKey);
+
+            // Prompt: We tell Llama to extract form fields from the story
+            String systemPrompt = 
+                "You are a Complaint Parser for a bus safety app in Dhaka. Extract details from the user's story.\n" +
+                "Return ONLY a JSON object with these exact keys (use null if not found):\n" +
+                "- \"incidentType\": Choose closest from [Fare Dispute / Overcharging, Harassment (verbal/physical), Reckless / Speeding / Racing, Others]\n" +
+                "- \"busName\": String (e.g. Raida, Bikolpo)\n" +
+                "- \"busNumber\": String (e.g. Dhaka Metro Ga-1544)\n" +
+                "- \"location\": String (Specific landmark e.g. Farmgate, Shahbag)\n" +
+                "- \"thana\": String (Best guess Dhaka Thana e.g. Mirpur, Gulshan, Dhanmondi)\n" +
+                "- \"description\": String (A polite, clear summary of what happened)\n\n" +
+                "JSON ONLY. No markdown.";
+
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", "llama-3.3-70b-versatile");
+            requestBody.put("response_format", Map.of("type", "json_object"));
+            
+            requestBody.put("messages", List.of(
+                Map.of("role", "system", "content", systemPrompt),
+                Map.of("role", "user", "content", userText)
+            ));
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+            ResponseEntity<String> response = restTemplate.postForEntity(GROQ_URL, entity, String.class);
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(response.getBody());
+            String aiText = root.path("choices").get(0).path("message").path("content").asText();
+
+            // Convert String JSON to Map
+            result = mapper.readValue(aiText, Map.class);
+
+        } catch (Exception e) {
+            System.err.println("❌ Groq Chat Parser Error: " + e.getMessage());
+            result.put("error", "Failed to parse");
+        }
         return result;
     }
 }

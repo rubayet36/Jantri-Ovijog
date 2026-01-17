@@ -1,14 +1,66 @@
-// report.js (FULL FIX + MAP PICKER)
+// report.js (FULL FIX + MAP PICKER + AI AUTO-FILL)
 
 // ✅ Supabase config
 const SUPABASE_URL = "https://ojnmpmesvbmpzhncgodt.supabase.co";
 const SUPABASE_KEY =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qbm1wbWVzdmJtcHpobmNnb2R0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4NjYxMjEsImV4cCI6MjA4MzQ0MjEyMX0.2yclbJTOsRGdtjgK_EVl6G9oh97Zu7cwSW-BGvNBs3M";
 
-// ✅ Storage bucket name (must exist in Supabase Storage)
 const STORAGE_BUCKET = "complaints";
 
 document.addEventListener("DOMContentLoaded", () => {
+  
+  // ==========================
+  // 🤖 1. CHECK FOR AI DRAFT (From Dashboard Chat)
+  // ==========================
+  const aiDraft = localStorage.getItem("AI_DRAFT_DATA");
+  if (aiDraft) {
+    try {
+      const data = JSON.parse(aiDraft);
+      console.log("🤖 AI Draft Found:", data);
+
+      // Auto-fill Text Fields
+      if (data.busName) document.getElementById("busName").value = data.busName;
+      if (data.busNumber) document.getElementById("busNumber").value = data.busNumber;
+      if (data.location) document.getElementById("landmark").value = data.location;
+      if (data.description) document.getElementById("incidentDescription").value = data.description;
+
+      // Auto-Select Thana (Partial Match)
+      if (data.thana) {
+        const thanaSelect = document.getElementById("thana");
+        for (let i = 0; i < thanaSelect.options.length; i++) {
+          if (thanaSelect.options[i].value.toLowerCase().includes(data.thana.toLowerCase())) {
+            thanaSelect.selectedIndex = i;
+            break;
+          }
+        }
+      }
+
+      // Auto-Select Incident Type
+      if (data.incidentType) {
+        const typeSelect = document.getElementById("incidentType");
+        for (let i = 0; i < typeSelect.options.length; i++) {
+          if (typeSelect.options[i].value.includes(data.incidentType) || 
+              data.incidentType.includes(typeSelect.options[i].value)) {
+            typeSelect.selectedIndex = i;
+            break;
+          }
+        }
+      }
+
+      // Notify User
+      alert("🤖 AI has pre-filled your report based on your chat!\nPlease review details and add a photo.");
+
+      // Clear draft
+      localStorage.removeItem("AI_DRAFT_DATA");
+
+    } catch (e) {
+      console.error("Error parsing AI draft", e);
+    }
+  }
+
+  // ==========================
+  // 2. STANDARD FORM LOGIC
+  // ==========================
   const anonymousCheckbox = document.getElementById("anonymous-checkbox");
   const nameInput = document.getElementById("reporterName");
   const phoneInput = document.getElementById("reporterPhone");
@@ -26,33 +78,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("report-form");
   const postToFeedBtn = document.getElementById("postToFeedBtn");
 
-  // ✅ Map picker elements (must exist in report.html)
+  // Map picker elements
   const useMapBtn = document.getElementById("useMapBtn");
   const mapWrap = document.getElementById("mapWrap");
   const confirmMapBtn = document.getElementById("confirmMapBtn");
   const clearMapBtn = document.getElementById("clearMapBtn");
 
-  // PROFILE & LOGOUT (placeholder)
-  const profileBtn = document.getElementById("profile-btn");
-  const logoutBtn = document.getElementById("logout-btn");
-  if (profileBtn) profileBtn.addEventListener("click", () => alert("Profile panel coming later!"));
-  if (logoutBtn) logoutBtn.addEventListener("click", () => alert("Sign out – replace with real auth later."));
-
-  // ==========================
   // Shared location setter
-  // ==========================
   function setLocation(lat, lng, accuracyLabel = null, sourceLabel = "Selected") {
-    // store in dataset to send with form
     form.dataset.lat = lat;
     form.dataset.lng = lng;
     form.dataset.accuracy = accuracyLabel ?? "";
 
     locationStatus.textContent = `${sourceLabel} location set.`;
     locationStatus.classList.remove("loading");
-
-    locationCoords.textContent = `Lat: ${Number(lat).toFixed(5)}, Lng: ${Number(lng).toFixed(5)}${
-      accuracyLabel ? ` (accuracy ~${accuracyLabel}m)` : ""
-    }`;
+    locationCoords.textContent = `Lat: ${Number(lat).toFixed(5)}, Lng: ${Number(lng).toFixed(5)}${accuracyLabel ? ` (accuracy ~${accuracyLabel}m)` : ""}`;
 
     const url = `https://www.google.com/maps?q=${lat},${lng}`;
     locationMapLink.href = url;
@@ -68,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Image preview (UI only)
+  // Image preview
   reportImageInput.addEventListener("change", () => {
     const file = reportImageInput.files[0];
     if (!file) {
@@ -85,15 +125,12 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(file);
   });
 
-  // ==========================
-  // Current GPS location button
-  // ==========================
+  // GPS Location
   getLocationBtn.addEventListener("click", () => {
     if (!navigator.geolocation) {
-      locationStatus.textContent = "Geolocation is not supported in this browser.";
+      locationStatus.textContent = "Geolocation is not supported.";
       return;
     }
-
     locationStatus.textContent = "Requesting location…";
     locationStatus.classList.add("loading");
     locationCoords.textContent = "";
@@ -104,14 +141,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const { latitude, longitude, accuracy } = pos.coords;
         setLocation(latitude, longitude, Math.round(accuracy), "GPS");
 
-        // If map is open, center it
         if (map && window.L) {
           map.setView([latitude, longitude], 15);
           if (!marker) {
             marker = window.L.marker([latitude, longitude], { draggable: true }).addTo(map);
             marker.on("dragend", () => {
-              const p = marker.getLatLng();
-              pendingLatLng = p;
+              pendingLatLng = marker.getLatLng();
             });
           } else {
             marker.setLatLng([latitude, longitude]);
@@ -121,58 +156,33 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       (err) => {
         locationStatus.classList.remove("loading");
-        if (err.code === err.PERMISSION_DENIED) {
-          locationStatus.textContent = "Location permission denied. You can still submit the report.";
-        } else {
-          locationStatus.textContent = "Could not get location. Try again.";
-        }
+        locationStatus.textContent = err.code === err.PERMISSION_DENIED ? "Location permission denied." : "Could not get location.";
       }
     );
   });
 
-  // ==========================
-  // MAP PICKER (Leaflet)
-  // ==========================
-  // NOTE: report.html must include Leaflet:
-  // <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  // <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
+  // Map Picker (Leaflet)
   let map = null;
   let marker = null;
   let pendingLatLng = null;
 
   function initMap(lat = 23.8103, lng = 90.4125, zoom = 12) {
-    if (!window.L) {
-      alert("Map library not loaded. Add Leaflet CSS/JS in report.html.");
-      return;
-    }
-
+    if (!window.L) return alert("Map library not loaded.");
     if (!map) {
       map = window.L.map("map", { scrollWheelZoom: true }).setView([lat, lng], zoom);
-
-      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "&copy; OpenStreetMap contributors",
-      }).addTo(map);
-
+      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap contributors" }).addTo(map);
+      
       map.on("click", (e) => {
         pendingLatLng = e.latlng;
-
         if (!marker) {
           marker = window.L.marker([e.latlng.lat, e.latlng.lng], { draggable: true }).addTo(map);
-          marker.on("dragend", () => {
-            const p = marker.getLatLng();
-            pendingLatLng = p;
-          });
+          marker.on("dragend", () => pendingLatLng = marker.getLatLng());
         } else {
           marker.setLatLng(e.latlng);
         }
-
-        locationStatus.textContent = "Pin dropped. Click ✅ Use Selected Location to confirm.";
-        locationCoords.textContent = `Lat: ${e.latlng.lat.toFixed(5)}, Lng: ${e.latlng.lng.toFixed(5)}`;
+        locationStatus.textContent = "Pin dropped. Click ✅ Use Selected Location.";
         locationMapLink.style.display = "none";
       });
-
-      // Fix sizing when map is shown after being hidden
       setTimeout(() => map.invalidateSize(), 200);
     } else {
       map.setView([lat, lng], zoom);
@@ -180,111 +190,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Toggle map UI
   if (useMapBtn && mapWrap) {
     useMapBtn.addEventListener("click", () => {
       const isHidden = mapWrap.style.display === "none" || mapWrap.style.display === "";
       mapWrap.style.display = isHidden ? "block" : "none";
-
-      // Center map on existing selected location if available, else Dhaka
       const lat = form.dataset.lat ? Number(form.dataset.lat) : 23.8103;
       const lng = form.dataset.lng ? Number(form.dataset.lng) : 90.4125;
       initMap(lat, lng, form.dataset.lat ? 15 : 12);
-
-      // If there is already a selected location, place marker there
-      if (form.dataset.lat && form.dataset.lng && window.L && map) {
-        const existing = { lat: Number(form.dataset.lat), lng: Number(form.dataset.lng) };
-        pendingLatLng = existing;
-
-        if (!marker) {
-          marker = window.L.marker([existing.lat, existing.lng], { draggable: true }).addTo(map);
-          marker.on("dragend", () => {
-            const p = marker.getLatLng();
-            pendingLatLng = p;
-          });
-        } else {
-          marker.setLatLng([existing.lat, existing.lng]);
-        }
-      }
     });
   }
 
-  // Confirm selection
   if (confirmMapBtn) {
     confirmMapBtn.addEventListener("click", () => {
-      if (!pendingLatLng) {
-        alert("Please click on the map to choose a location first.");
-        return;
-      }
+      if (!pendingLatLng) return alert("Click map to choose location.");
       setLocation(pendingLatLng.lat, pendingLatLng.lng, null, "Map");
     });
   }
 
-  // Clear selection
   if (clearMapBtn) {
     clearMapBtn.addEventListener("click", () => {
       pendingLatLng = null;
-      if (marker) {
-        marker.remove();
-        marker = null;
-      }
+      if (marker) { marker.remove(); marker = null; }
       delete form.dataset.lat;
       delete form.dataset.lng;
       delete form.dataset.accuracy;
-
       locationStatus.textContent = "Location cleared.";
       locationCoords.textContent = "";
       locationMapLink.style.display = "none";
     });
   }
 
-  // ✅ Upload helper
+  // Upload Helper
   async function uploadComplaintImage(file) {
     if (!file) return null;
-
-    // Supabase JS must be loaded in report.html:
-    // <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     if (!window.supabase || !window.supabase.createClient) {
-      alert("Supabase client not loaded. Add supabase-js script in report.html.");
+      alert("Supabase client not loaded.");
       return null;
     }
-
     const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
     const safeExt = ext.replace(/[^a-z0-9]/g, "");
     const path = `complaints/${Date.now()}_${Math.random().toString(36).slice(2)}.${safeExt}`;
 
     const { error: uploadError } = await client.storage.from(STORAGE_BUCKET).upload(path, file, { upsert: true });
-
     if (uploadError) {
-      console.error("Upload error:", uploadError);
       alert("Image upload failed: " + uploadError.message);
       return null;
     }
-
-    const { data: publicData } = client.storage.from(STORAGE_BUCKET).getPublicUrl(path);
-    const publicUrl = publicData?.publicUrl || null;
-
-    if (!publicUrl) {
-      alert("Upload succeeded, but could not generate public URL. Make bucket public.");
-    }
-
-    return publicUrl;
+    const { data } = client.storage.from(STORAGE_BUCKET).getPublicUrl(path);
+    return data?.publicUrl || null;
   }
 
-  // Main submit (to authorities only)
+  // Submit Logic
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-
     const report = collectReportData(form);
     if (!validateReport(report)) return;
 
-    // ✅ Upload image first (if any)
     const file = reportImageInput.files[0] || null;
     const imageUrl = await uploadComplaintImage(file);
-
-    // Prepare payload for backend
     const token = localStorage.getItem("token");
 
     const payload = {
@@ -302,15 +266,10 @@ document.addEventListener("DOMContentLoaded", () => {
       description: report.description,
       landmark: report.landmark,
       seatInfo: report.seatInfo,
-
-      // ✅ geo
       latitude: report.latitude ? Number(report.latitude) : null,
       longitude: report.longitude ? Number(report.longitude) : null,
       accuracy: report.accuracy ? Number(report.accuracy) : null,
-
-      // ✅ image URL stored in DB
       imageUrl: imageUrl,
-
       createdAt: report.createdAt,
     };
 
@@ -325,58 +284,45 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await resp.json();
-
       if (!resp.ok) {
-        console.error("Complaint submit error:", data);
-        alert(data.error || "Failed to submit complaint. Please try again.");
+        alert(data.error || "Failed to submit.");
         return;
       }
 
-      alert("Your complaint has been submitted successfully.");
-
+      alert("Complaint submitted successfully.");
       form.reset();
       previewImg.style.display = "none";
       previewPlaceholder.style.display = "block";
       locationCoords.textContent = "";
       locationMapLink.style.display = "none";
-
-      // reset stored location
       delete form.dataset.lat;
       delete form.dataset.lng;
       delete form.dataset.accuracy;
-
-      // reset map state (optional)
-      if (marker) {
-        marker.remove();
-        marker = null;
-      }
+      if (marker) { marker.remove(); marker = null; }
       pendingLatLng = null;
       if (mapWrap) mapWrap.style.display = "none";
     } catch (err) {
       console.error(err);
-      alert("An error occurred while submitting your complaint.");
+      alert("Error submitting complaint.");
     }
   });
 
-  // Submit & share to community feed (local only)
+  // Post to Feed (Local)
   postToFeedBtn.addEventListener("click", () => {
     const report = collectReportData(form);
     if (!validateReport(report)) return;
     saveToLocalFeed(report);
-    alert("Report saved and added to local Community Feed.\nOpen the Feed page to see it.");
+    alert("Saved to local Community Feed.");
   });
 });
 
-// Collect all form data into one object
 function collectReportData(form) {
   const anon = document.getElementById("anonymous-checkbox").checked;
-
   return {
     anonymous: anon,
     reporterName: anon ? "Anonymous" : document.getElementById("reporterName").value.trim(),
     reporterPhone: anon ? "" : document.getElementById("reporterPhone").value.trim(),
     reporterEmail: anon ? "" : document.getElementById("reporterEmail").value.trim(),
-
     incidentType: document.getElementById("incidentType").value,
     incidentDateTime: document.getElementById("incidentDateTime").value,
     busName: document.getElementById("busName").value.trim(),
@@ -388,25 +334,21 @@ function collectReportData(form) {
     thana: document.getElementById("thana").value,
     landmark: document.getElementById("landmark").value.trim(),
     description: document.getElementById("incidentDescription").value.trim(),
-
     latitude: form.dataset.lat || null,
     longitude: form.dataset.lng || null,
     accuracy: form.dataset.accuracy || null,
-
     createdAt: new Date().toISOString(),
   };
 }
 
-// Minimal validation
 function validateReport(report) {
-  if (!report.incidentType) return alert("Please select the type of issue."), false;
-  if (!report.incidentDateTime) return alert("Please enter the date and time of the incident."), false;
-  if (!report.thana) return alert("Please select a Thana."), false;
-  if (!report.description) return alert("Please describe what happened."), false;
+  if (!report.incidentType) return alert("Select type of issue."), false;
+  if (!report.incidentDateTime) return alert("Enter date & time."), false;
+  if (!report.thana) return alert("Select a Thana."), false;
+  if (!report.description) return alert("Describe what happened."), false;
   return true;
 }
 
-// Save to localStorage for feed page to read
 function saveToLocalFeed(report) {
   const key = "communityReports";
   const existing = JSON.parse(localStorage.getItem(key) || "[]");
