@@ -18,13 +18,16 @@ public class ComplaintController {
 
     private final SupabaseService supabaseService;
     private final JwtUtil jwtUtil;
-    private final AiAnalysisService aiAnalysisService; // 1. Add AI Service here
+    private final AiAnalysisService aiAnalysisService;
 
-    // 2. Update Constructor to include AI Service
+    // ✅ CONSTRUCTOR WITH DEBUG LOG
     public ComplaintController(SupabaseService supabaseService, JwtUtil jwtUtil, AiAnalysisService aiAnalysisService) {
         this.supabaseService = supabaseService;
         this.jwtUtil = jwtUtil;
         this.aiAnalysisService = aiAnalysisService;
+        
+        // 👇 THIS PROVES THE NEW CODE IS RUNNING
+        System.out.println("🔥 COMPLAINT CONTROLLER LOADED WITH AI SERVICE! 🔥");
     }
 
     @GetMapping
@@ -32,7 +35,7 @@ public class ComplaintController {
         return supabaseService.getComplaints();
     }
 
-@PostMapping
+    @PostMapping
     public Mono<Map<String, Object>> createComplaint(
             @RequestBody Map<String, Object> payload,
             @RequestHeader(value = "Authorization", required = false) String authHeader
@@ -40,57 +43,68 @@ public class ComplaintController {
 
         Map<String, Object> fixed = new HashMap<>();
 
+        // 1. Get Description
         String description = (String) payload.get("description");
         fixed.put("description", description);
 
         // --- START AI INTEGRATION ---
         boolean isFake = false;
-        
+
+        // Only call AI if description exists
         if (description != null && !description.isEmpty()) {
             try {
+                // LOGGING INPUT
                 System.out.println("🤖 Sending to AI: " + description);
+                
+                // CALL SERVICE
                 Map<String, String> analysis = aiAnalysisService.analyzeComplaint(description);
                 
+                // LOGGING OUTPUT
                 System.out.println("✅ AI Result: " + analysis);
 
-                // 1. Check Fake Status
+                // 2. Check Fake Status
+                // Boolean.parseBoolean returns false if null, so this is safe
                 isFake = Boolean.parseBoolean(analysis.get("is_fake"));
 
                 if (isFake) {
-                    // ⛔ IF FAKE: Force status to 'fake' and priority to 'Low'
+                    // ⛔ IF FAKE: Force status to 'fake', priority 'Low', category 'Spam'
+                    System.out.println("⛔ Detected FAKE complaint. Marking as Spam.");
                     fixed.put("status", "fake");
                     fixed.put("priority", "Low");
-                    fixed.put("category", "Spam/Irrelevant"); // Optional: Mark category as Spam
+                    fixed.put("category", "Other"); // Or "Spam" if your DB allows
                 } else {
-                    // ✅ IF REAL: Use AI priority and user status
+                    // ✅ IF REAL: Use AI priority
                     fixed.put("priority", analysis.get("priority"));
-                    fixed.put("status", payload.getOrDefault("status", "new")); // Default behavior
+                    fixed.put("status", payload.getOrDefault("status", "new"));
                     
-                    // Auto-category if missing
-                    if (payload.get("category") == null || payload.get("category").toString().isEmpty()) {
+                    // Auto-fill category if user didn't select one
+                    String userCategory = (String) payload.get("category");
+                    if (userCategory == null || userCategory.trim().isEmpty()) {
                         fixed.put("category", analysis.get("category"));
                     } else {
-                        fixed.put("category", payload.get("category"));
+                        fixed.put("category", userCategory);
                     }
                 }
 
             } catch (Exception e) {
+                // FALLBACK IF AI FAILS
                 System.err.println("❌ AI Failed: " + e.getMessage());
+                e.printStackTrace();
                 fixed.put("priority", "Low");
                 fixed.put("status", payload.getOrDefault("status", "new"));
                 fixed.put("category", payload.getOrDefault("category", "General"));
             }
         } else {
-            // No description = potentially low quality, but we keep basic logic
+            // No description provided
             fixed.put("category", payload.get("category"));
             fixed.put("status", payload.getOrDefault("status", "new"));
+            fixed.put("priority", "Low");
         }
         // --- END AI INTEGRATION ---
 
         // ----------------------------
         // Standard Fields
         // ----------------------------
-        // Note: If 'status' wasn't set by AI (because no description), set it here
         if (!fixed.containsKey("status")) {
             fixed.put("status", payload.getOrDefault("status", "new"));
         }
@@ -123,6 +137,7 @@ public class ComplaintController {
         }
         fixed.put("user_id", userId);
 
+        // Location fields
         if (payload.containsKey("latitude")) fixed.put("latitude", payload.get("latitude"));
         if (payload.containsKey("longitude")) fixed.put("longitude", payload.get("longitude"));
         if (payload.containsKey("accuracy")) fixed.put("accuracy", payload.get("accuracy"));

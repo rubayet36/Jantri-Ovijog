@@ -11,26 +11,33 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
 public class AiAnalysisService {
 
-    @Value("${gemini.api.key}")
+    @Value("${groq.api.key}")
     private String apiKey;
 
-    private static final String GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=";
+    // ✅ Groq API Endpoint
+    private static final String GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
     public Map<String, String> analyzeComplaint(String description) {
         RestTemplate restTemplate = new RestTemplate();
         Map<String, String> result = new HashMap<>();
 
         try {
-            // ✅ UPDATED PROMPT: Matches your Frontend Categories exactly
-            String prompt =
-                "You are a complaint analysis AI. Analyze this passenger complaint: \"" + description + "\"\n\n" +
-                "Return a strict JSON object with 3 fields:\n" +
-                "1. \"category\": Choose the BEST fit from this exact list:\n" +
+            // 1. Prepare Headers (Groq uses Bearer Token)
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("Authorization", "Bearer " + apiKey);
+
+            // 2. Define the System Prompt (The Rules)
+            String systemPrompt = 
+                "You are a complaint analysis AI. Analyze the user's passenger complaint.\n" +
+                "Return a strict JSON object with these 3 fields:\n" +
+                "1. \"category\": Choose the BEST fit from this list:\n" +
                 "   - \"Fare Dispute / Overcharging\"\n" +
                 "   - \"Harassment (verbal/physical)\"\n" +
                 "   - \"Women/Reserved Seat Violation\"\n" +
@@ -43,42 +50,46 @@ public class AiAnalysisService {
                 "   - \"Pickpocketing / Theft\"\n" +
                 "   - \"Staff Misbehaviour / Abuse\"\n" +
                 "   - \"Corrupt Ticketing / Fake Receipts\"\n" +
-                "   - \"Other\"\n\n" +
-                "2. \"priority\": \"High\" (if dangerous, violence, harassment, theft), \"Medium\" (if money/service issue), \"Low\" (minor).\n" +
-                "3. \"is_fake\": true/false (true if spam/gibberish).\n\n" +
-                "JSON ONLY. No markdown.";
+                "   - \"Other\"\n" +
+                "2. \"priority\": \"High\" (dangerous/violence), \"Medium\", \"Low\".\n" +
+                "3. \"is_fake\": true (if spam/gibberish) or false.\n" +
+                "Return JSON ONLY.";
 
-            // Safety: Escape the prompt to prevent JSON breakage
-            String safePrompt = new ObjectMapper().writeValueAsString(prompt);
-            String requestBody = "{ \"contents\": [{ \"parts\": [{ \"text\": " + safePrompt + " }] }] }";
+            // 3. Build Request Body (OpenAI Format)
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("model", "llama-3.3-70b-versatile"); // Use Llama 3 for speed/intelligence
+            
+            // Enable JSON Mode (Crucial for Groq reliability)
+            requestBody.put("response_format", Map.of("type", "json_object"));
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+            requestBody.put("messages", List.of(
+                Map.of("role", "system", "content", systemPrompt),
+                Map.of("role", "user", "content", description)
+            ));
 
-            ResponseEntity<String> response = restTemplate.postForEntity(GEMINI_URL + apiKey, entity, String.class);
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-            // Parsing
+            // 4. Send Request
+            ResponseEntity<String> response = restTemplate.postForEntity(GROQ_URL, entity, String.class);
+
+            // 5. Parse Response
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(response.getBody());
-            String aiText = root.path("candidates").get(0).path("content").path("parts").get(0).path("text").asText();
+            
+            // Groq Path: choices[0].message.content
+            String aiText = root.path("choices").get(0).path("message").path("content").asText();
 
-            // Cleaner
-            int firstBracket = aiText.indexOf("{");
-            int lastBracket = aiText.lastIndexOf("}");
-            if (firstBracket != -1 && lastBracket != -1) {
-                aiText = aiText.substring(firstBracket, lastBracket + 1);
-            }
-
+            // 6. Final JSON Parsing
             JsonNode jsonResult = mapper.readTree(aiText);
             
-            result.put("category", jsonResult.get("category").asText());
-            result.put("priority", jsonResult.get("priority").asText());
-            result.put("is_fake", String.valueOf(jsonResult.get("is_fake").asBoolean()));
+            result.put("category", jsonResult.path("category").asText("Other"));
+            result.put("priority", jsonResult.path("priority").asText("Low"));
+            result.put("is_fake", String.valueOf(jsonResult.path("is_fake").asBoolean(false)));
 
         } catch (Exception e) {
-            System.err.println("❌ AI Service Error: " + e.getMessage());
-            e.printStackTrace(); // Keep this to see the error in console
+            System.err.println("❌ Groq AI Service Error: " + e.getMessage());
+            e.printStackTrace();
+            // Fallback
             result.put("category", "Other");
             result.put("priority", "Low");
             result.put("is_fake", "false");
