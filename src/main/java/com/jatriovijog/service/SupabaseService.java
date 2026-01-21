@@ -74,6 +74,19 @@ public class SupabaseService {
                 .bodyToMono(LIST_OF_MAP);
     }
 
+    public Mono<List<Map<String, Object>>> getComplaintsSummary() {
+        // Exclude image_url to reduce payload size
+        String columns = "id,status,priority,category,description,thana,route,latitude,longitude,created_at,bus_name,bus_number,reporter_type,accuracy";
+        return auth(webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/complaints")
+                        .queryParam("select", columns)
+                        .build()))
+                .retrieve()
+                .onStatus(status -> status.isError(), this::mapSupabaseError)
+                .bodyToMono(LIST_OF_MAP);
+    }
+
     public Mono<List<Map<String, Object>>> getComplaintsByUser(long userId) {
         return auth(webClient.get()
                 .uri(uriBuilder -> uriBuilder
@@ -162,6 +175,20 @@ public class SupabaseService {
     public Mono<List<Map<String, Object>>> getEmergencies() {
         return auth(webClient.get()
                 .uri("/emergency_reports?select=*"))
+                .retrieve()
+                .onStatus(status -> status.isError(), this::mapSupabaseError)
+                .bodyToMono(LIST_OF_MAP);
+    }
+
+    public Mono<List<Map<String, Object>>> getEmergenciesSummary() {
+        // Exclude audio_url and image_url to reduce payload size
+        // REMOVED 'status' and 'label' as they do not exist in emergency_reports table
+        String columns = "id,latitude,longitude,created_at,user_id,accuracy";
+        return auth(webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/emergency_reports")
+                        .queryParam("select", columns)
+                        .build()))
                 .retrieve()
                 .onStatus(status -> status.isError(), this::mapSupabaseError)
                 .bodyToMono(LIST_OF_MAP);

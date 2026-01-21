@@ -39,6 +39,11 @@ public class ComplaintController {
         return supabaseService.getComplaints();
     }
 
+    @GetMapping("/summary")
+    public Mono<List<Map<String, Object>>> getComplaintsSummary() {
+        return supabaseService.getComplaintsSummary();
+    }
+
     @PostMapping
     public Mono<Map<String, Object>> createComplaint(
             @RequestBody Map<String, Object> payload,

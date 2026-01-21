@@ -23,7 +23,7 @@ async function fetchPoliceData() {
     const token = localStorage.getItem("token");
 
     // ---- Complaints ----
-    const cResp = await fetch("/api/complaints", {
+    const cResp = await fetch("/api/complaints/summary", {
       headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     });
 
@@ -79,7 +79,7 @@ async function fetchPoliceData() {
     }
 
     // ---- Emergencies ----
-    const eResp = await fetch("/api/emergencies", {
+    const eResp = await fetch("/api/emergencies/summary", {
       headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
     });
 

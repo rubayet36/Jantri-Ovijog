@@ -24,6 +24,11 @@ public class EmergencyController {
         return supabaseService.getEmergencies();
     }
 
+    @GetMapping("/summary")
+    public Mono<List<Map<String, Object>>> getEmergenciesSummary() {
+        return supabaseService.getEmergenciesSummary();
+    }
+
     @PostMapping
     public Mono<Map<String, Object>> createEmergency(@Valid @RequestBody Map<String, Object> payload) {
         // ✅ whitelist fields to prevent mass-assignment
