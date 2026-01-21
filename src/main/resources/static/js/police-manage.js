@@ -99,7 +99,7 @@ function toCamel(row) {
     id: row.id,
     category,
     status,
-    priority: computePriority({ category, status }),
+    priority: (row.priority || "low").toLowerCase(),
     thana: row.thana || "-",
     route: row.route || "-",
     busName: row.bus_name ?? "",
@@ -261,8 +261,8 @@ function renderList() {
       const safeThana = escapeHtml(c.thana || "-");
       const safeRoute = escapeHtml(c.route || "-");
       const bus = `${escapeHtml(c.busName || "-")}${c.busNumber
-          ? ` · <span style="opacity:.75">${escapeHtml(c.busNumber)}</span>`
-          : ""
+        ? ` · <span style="opacity:.75">${escapeHtml(c.busNumber)}</span>`
+        : ""
         }`;
       const desc = escapeHtml(c.description || "-");
       const created = formatDate(c.createdAt);
