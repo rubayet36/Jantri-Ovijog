@@ -19,16 +19,20 @@
   color: #b91c1c;
   border-color: rgba(239, 68, 68, 0.24);
 }
+
 .status-responding {
   background: rgba(245, 158, 11, 0.14);
   color: #92400e;
   border-color: rgba(245, 158, 11, 0.24);
 }
+
 .status-resolved {
   background: rgba(34, 197, 94, 0.12);
   color: #065f46;
   border-color: rgba(34, 197, 94, 0.22);
-}/* ============================
+}
+
+/* ============================
    POLICE EMERGENCY PORTAL UI
    ============================ */
 
@@ -166,13 +170,26 @@ audio {
   color: #6b7280;
   font-size: 14px;
 }
+
 /* ============================
    Emergency Map Panel (Leaflet)
    ============================ */
 
 .emergency-map-card {
+  position: relative;
+  /* was sticky, but we moved sticky to the parent card */
+}
+
+/* Make the whole right card sticky so map + stats stay visible */
+.emergency-summary-card {
   position: sticky;
-  top: 88px; /* keeps it visible while scrolling */
+  top: 90px;
+  z-index: 10;
+}
+
+/* Override default 'start' alignment so the right column allows sticky scrolling */
+.dashboard-grid {
+  align-items: stretch;
 }
 
 .map-header {
@@ -195,7 +212,7 @@ audio {
 }
 
 .emergency-map {
-  height: 320px;
+  height: 500px;
   width: 100%;
   border-radius: 14px;
   border: 1px solid #e5e7eb;
@@ -213,6 +230,7 @@ audio {
 .leaflet-control-zoom a {
   border-radius: 10px !important;
 }
+
 .tag-pill-btn {
   border: 0;
   cursor: pointer;

@@ -133,6 +133,11 @@ public class SupabaseService {
         if (note != null && !note.trim().isEmpty())
             payload.put("verification_note", note.trim());
 
+        // ✅ AUTO-LOWER PRIORITY ON RESOLUTION
+        if ("resolved".equalsIgnoreCase(status)) {
+            payload.put("priority", "Low");
+        }
+
         var req = webClient.patch()
                 .uri("/complaints?id=eq." + id)
                 .contentType(MediaType.APPLICATION_JSON)

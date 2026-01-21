@@ -26,6 +26,25 @@
   let markersLayer = null;
   const markerById = new Map(); // id -> marker
 
+  // Custom icons
+  const blueIcon = typeof L !== "undefined" ? L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  }) : null;
+
+  const redIcon = typeof L !== "undefined" ? L.icon({
+    iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41]
+  }) : null;
+
   // Modal state
   let activeIssueId = null;
 
@@ -112,39 +131,38 @@
 
     feedList.innerHTML = Array.from({ length: count }).map(() => {
       return `
-        <article class="feed-card skeleton" aria-hidden="true">
+        <article class="feed-card" aria-hidden="true" style="pointer-events: none;">
           <div class="feed-card-body">
             <div class="feed-top">
               <div class="feed-user">
-                <div class="sk sk-avatar" aria-hidden="true"></div>
+                <div class="skeleton skeleton-circle" style="width: 40px; height: 40px;"></div>
                 <div class="user-meta" style="width:100%">
-                  <div class="sk sk-line lg sk-w-55"></div>
-                  <div style="height:10px"></div>
-                  <div class="sk sk-line sm sk-w-40"></div>
+                  <div class="skeleton skeleton-text w-50"></div>
+                  <div class="skeleton skeleton-text w-75" style="height: 10px;"></div>
                 </div>
               </div>
-              <div class="status-badge"><span class="sk sk-line sm" style="width:70px; height:12px;"></span></div>
+              <div class="status-badge skeleton" style="width:80px; height:24px; border:none;"></div>
             </div>
 
             <div style="height:12px"></div>
-            <div class="sk sk-line lg sk-w-65"></div>
+            <div class="skeleton skeleton-text" style="height: 24px; width: 60%; margin-bottom: 12px;"></div>
 
-            <div class="meta-row" style="margin-top:14px">
-              <span class="sk sk-chip"></span>
-              <span class="sk sk-chip" style="width: 140px"></span>
-              <span class="sk sk-chip" style="width: 120px"></span>
+            <div class="meta-row" style="margin-top:14px; gap: 8px;">
+              <span class="skeleton" style="width: 80px; height: 20px; border-radius: 99px;"></span>
+              <span class="skeleton" style="width: 100px; height: 20px; border-radius: 99px;"></span>
+              <span class="skeleton" style="width: 90px; height: 20px; border-radius: 99px;"></span>
             </div>
 
-            <div style="display:flex; flex-direction:column; gap:10px; margin-top:12px">
-              <div class="sk sk-line sk-w-90"></div>
-              <div class="sk sk-line sk-w-80"></div>
-              <div class="sk sk-line sk-w-55"></div>
+            <div style="display:flex; flex-direction:column; gap:6px; margin-top:12px">
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text w-75"></div>
             </div>
 
-            <div class="engagement-row" style="margin-top:18px">
-              <span class="sk sk-chip" style="width: 140px"></span>
-              <span class="sk sk-chip" style="width: 120px"></span>
-              <span class="sk sk-chip" style="width: 110px"></span>
+            <div class="engagement-row" style="margin-top:18px; gap: 12px;">
+              <span class="skeleton" style="width: 60px; height: 20px; border-radius: 12px;"></span>
+              <span class="skeleton" style="width: 60px; height: 20px; border-radius: 12px;"></span>
+              <span class="skeleton" style="width: 60px; height: 20px; border-radius: 12px;"></span>
             </div>
           </div>
         </article>
@@ -332,7 +350,7 @@
     const el = document.getElementById("global-map");
     if (!el) return;
 
-    globalMap = window.L.map(el, { zoomControl: true, scrollWheelZoom: false })
+    globalMap = window.L.map(el, { zoomControl: true, scrollWheelZoom: true })
       .setView([23.8103, 90.4125], 12); // Dhaka default
 
     window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -362,7 +380,7 @@
 
     const bounds = [];
     withCoords.forEach((issue) => {
-      const m = window.L.marker([issue.latitude, issue.longitude]).addTo(markersLayer);
+      const m = window.L.marker([issue.latitude, issue.longitude], { icon: blueIcon, opacity: 0.5 }).addTo(markersLayer);
       m.bindPopup(`<b>${escapeHtml(issue.title)}</b><br/>${escapeHtml(formatStatus(issue.status))}`);
       markerById.set(String(issue.id), m);
       bounds.push([issue.latitude, issue.longitude]);
@@ -370,16 +388,27 @@
 
     try {
       globalMap.fitBounds(bounds, { padding: [24, 24] });
-    } catch (_) {}
+    } catch (_) { }
   }
 
   function highlightMarker(issueId, openPopup = false) {
+    // Reset all to blue and semi-transparent
+    markerById.forEach((marker) => {
+      marker.setIcon(blueIcon);
+      marker.setOpacity(0.5);
+    });
+
     const m = markerById.get(String(issueId));
     if (!m) return;
+
+    // Set selected to red and fully opaque
+    m.setIcon(redIcon);
+    m.setOpacity(1.0);
+
     try {
       if (openPopup) m.openPopup();
       globalMap.panTo(m.getLatLng(), { animate: true });
-    } catch (_) {}
+    } catch (_) { }
   }
 
   // --------------------

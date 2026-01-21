@@ -1,21 +1,4 @@
-/* DARK MODE OVERRIDE FOR EMERGENCY PAGE */
-body {
-  background: #111827 !important; /* Very Dark Gray */
-  color: #F9FAFB !important;
-}
-
-/* Navbar override for dark mode */
-.full-navbar {
-  background: rgba(17, 24, 39, 0.9) !important;
-  border-bottom: 1px solid #374151 !important;
-}
-.brand-title { color: #F87171 !important; } /* Light Red */
-.nav-pill { background: #1F2937 !important; }
-.nav-pill-link { color: #9CA3AF !important; }
-.nav-pill-link.active { background: #374151 !important; color: #F87171 !important; }
-.nav-icon-btn { border-color: #374151 !important; color: white !important; }
-
-/* Main Content */
+/* Main Content - inherits global theme from ui.css/body */
 .emergency-main {
   max-width: 1000px;
   margin: 40px auto;
@@ -26,17 +9,25 @@ body {
   text-align: center;
   margin-bottom: 40px;
 }
-.emergency-hero h1 { font-size: 36px; color: white; margin-bottom: 8px; }
-.emergency-hero p { color: #9CA3AF; }
+
+.emergency-hero h1 {
+  font-size: 36px;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.emergency-hero p {
+  color: var(--text-muted);
+}
 
 .hero-note {
   display: inline-block;
   margin-top: 16px;
-  background: rgba(239, 68, 68, 0.2);
-  color: #FECACA;
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
   padding: 6px 12px;
   border-radius: 99px;
-  border: 1px solid #EF4444;
+  border: 1px solid var(--danger);
   font-size: 13px;
   font-weight: 600;
 }
@@ -50,11 +41,11 @@ body {
 
 /* SOS Card */
 .emergency-card {
-  background: #1F2937; /* Dark Grey Card */
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 32px;
-  border: 1px solid #374151;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
   text-align: center;
 }
 
@@ -69,26 +60,36 @@ body {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 0 0 12px rgba(239, 68, 68, 0.15), 0 0 30px rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 0 12px rgba(239, 68, 68, 0.15), 0 0 30px rgba(239, 68, 68, 0.4);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
 
 .sos-circle:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 0 16px rgba(239, 68, 68, 0.25), 0 0 50px rgba(239, 68, 68, 0.8);
+  box-shadow: 0 0 0 16px rgba(239, 68, 68, 0.25), 0 0 50px rgba(239, 68, 68, 0.6);
 }
 
-.sos-circle:active { transform: scale(0.95); }
+.sos-circle:active {
+  transform: scale(0.95);
+}
 
 .sos-circle.active {
   animation: pulseCritical 1.5s infinite;
 }
 
 @keyframes pulseCritical {
-  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-  70% { box-shadow: 0 0 0 40px rgba(239, 68, 68, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 40px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
 }
 
 .sos-label {
@@ -96,17 +97,19 @@ body {
   font-size: 28px;
   font-weight: 900;
   color: white;
+  /* Always white on red button */
   letter-spacing: 2px;
 }
+
 .sos-sub {
-  color: rgba(255,255,255,0.8);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 12px;
   margin-top: 4px;
   display: block;
 }
 
 .sos-help-text {
-  color: #9CA3AF;
+  color: var(--text-muted);
   font-size: 14px;
   margin-bottom: 24px;
 }
@@ -119,30 +122,61 @@ body {
 }
 
 .status-chip {
-  background: #111827;
+  background: var(--bg-muted);
   padding: 12px;
   border-radius: 12px;
-  border: 1px solid #374151;
+  border: 1px solid var(--border-light);
+  text-align: left;
 }
 
-.status-title { display: block; font-size: 11px; color: #6B7280; text-transform: uppercase; margin-bottom: 4px; }
-.status-chip span:last-child { font-weight: 600; color: white; font-size: 14px; }
+.status-title {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.status-chip span:last-child {
+  font-weight: 600;
+  color: var(--text-main);
+  font-size: 14px;
+}
 
 /* Right Info Column */
-.info-card h2 { color: white; margin-bottom: 20px; font-size: 20px; }
+.info-card h2 {
+  color: var(--text-main);
+  margin-bottom: 20px;
+  font-size: 20px;
+}
 
 .info-block {
-  background: #111827;
-  border: 1px solid #374151;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
   padding: 16px;
   border-radius: 12px;
   margin-bottom: 16px;
+  text-align: left;
 }
 
-.info-block h3 { color: #D1D5DB; font-size: 14px; margin: 0 0 8px; }
-.info-block p { color: #9CA3AF; font-size: 13px; margin: 0; }
-.map-link { color: #60A5FA; }
+.info-block h3 {
+  color: var(--text-main);
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+
+.info-block p {
+  color: var(--text-muted);
+  font-size: 13px;
+  margin: 0;
+}
+
+.map-link {
+  color: var(--accent);
+}
 
 @media (max-width: 800px) {
-  .emergency-layout { grid-template-columns: 1fr; }
+  .emergency-layout {
+    grid-template-columns: 1fr;
+  }
 }

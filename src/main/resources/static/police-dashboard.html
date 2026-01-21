@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Jatri Ovijog – Police Command</title>
@@ -16,165 +17,168 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="./js/auth-guard.js"></script>
 </head>
 
 <body>
 
-<header class="full-navbar">
-  <div class="nav-left">
-    <a href="police-dashboard.html" class="brand-title"><span>🛡️ Jatri_Ovijog</span></a>
-  </div>
-  <button class="nav-toggle" aria-label="Toggle navigation">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="nav-collapsible">
-    <div class="nav-pill" id="nav-pill">
-      <div class="nav-slider" id="nav-slider"></div>
-      <a href="police-dashboard.html" class="nav-pill-link" data-page="police-dashboard"><span>Command</span></a>
-      <a href="police-complaints.html" class="nav-pill-link" data-page="police-complaints"><span>Complaints</span></a>
-      <a href="police-emergency.html" class="nav-pill-link" data-page="police-emergency"><span>Emergency</span></a>
-      
+  <header class="full-navbar">
+    <div class="nav-left">
+      <a href="police-dashboard.html" class="brand-title"><span>🛡️ Jatri_Ovijog</span></a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-collapsible">
+      <div class="nav-pill" id="nav-pill">
+        <div class="nav-slider" id="nav-slider"></div>
+        <a href="police-dashboard.html" class="nav-pill-link" data-page="police-dashboard"><span>Command</span></a>
+        <a href="police-complaints.html" class="nav-pill-link" data-page="police-complaints"><span>Complaints</span></a>
+        <a href="police-emergency.html" class="nav-pill-link" data-page="police-emergency"><span>Emergency</span></a>
 
-      <a href="police-chat.html" class="nav-pill-link" data-page="police-chat"><span>Team Chat</span></a>
-    </div>
-    <div class="nav-right">
-      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
-      <button class="nav-icon-btn" id="profile-btn" title="Profile">👮</button>
-      <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
-        <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-          <polyline points="16 17 21 12 16 7"></polyline>
-          <line x1="21" y1="12" x2="9" y2="12"></line>
-        </svg>
-      </button>
-    </div>
-  </div>
-</header>
-<div class="nav-backdrop" aria-hidden="true"></div>
 
-<main class="police-main">
-  <div class="police-header">
-    <div>
-      <h1 class="page-title">Command Dashboard</h1>
-      <p class="police-subtitle">
-        Real-time situational awareness and unit coordination.
-      </p>
-    </div>
-    <div class="police-badge">
-      ⚡ Live Operations Active
-    </div>
-  </div>
+        <a href="police-chat.html" class="nav-pill-link" data-page="police-chat"><span>Team Chat</span></a>
+      </div>
+      <div class="nav-right">
+        <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
 
-  <!-- 🔴 PRIMARY PRIORITY: SOS / Emergency banner (full width) -->
-  <section class="card emergency-banner" aria-live="polite">
-    <div class="emergency-banner-header">
+        <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-backdrop" aria-hidden="true"></div>
+
+  <main class="police-main">
+    <div class="police-header">
       <div>
-        <div class="emergency-banner-title">🚨 SOS Alerts</div>
-        <div class="emergency-banner-subtitle">Immediate response required. Sorted by most recent.</div>
+        <h1 class="page-title">Command Dashboard</h1>
+        <p class="police-subtitle">
+          Real-time situational awareness and unit coordination.
+        </p>
       </div>
-      <div class="emergency-banner-chip">LIVE</div>
+      <div class="police-badge">
+        ⚡ Live Operations Active
+      </div>
     </div>
-    <div id="emergencyAlertsList" class="emergency-list"></div>
-  </section>
 
-  <div class="dashboard-grid">
-    <section class="column-left">
-
-      <section class="card stats-card">
-        <h2 class="card-title">SitRep (Situation Report)</h2>
-        <div class="stats-grid">
-          <div class="stat-item">
-            <div class="stat-icon stat-icon-blue">📄</div>
-            <div class="stat-number" id="police-new">0</div>
-            <div class="stat-label">New</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon stat-icon-orange">⏳</div>
-            <div class="stat-number" id="police-in-progress">0</div>
-            <div class="stat-label">Working</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon stat-icon-green">✅</div>
-            <div class="stat-number" id="police-resolved">0</div>
-            <div class="stat-label">Closed</div>
-          </div>
-          <div class="stat-item">
-            <div class="stat-icon stat-icon-red">🚩</div>
-            <div class="stat-number" id="police-fake">0</div>
-            <div class="stat-label">Flagged</div>
-          </div>
+    <!-- 🔴 PRIMARY PRIORITY: SOS / Emergency banner (full width) -->
+    <section class="card emergency-banner" aria-live="polite">
+      <div class="emergency-banner-header">
+        <div>
+          <div class="emergency-banner-title">🚨 SOS Alerts</div>
+          <div class="emergency-banner-subtitle">Immediate response required. Sorted by most recent.</div>
         </div>
-        <p class="police-meta">System Sync: <span id="police-last-updated">--</span></p>
-      </section>
-
-      <section class="card heatmap-card">
-        <div class="heatmap-header">
-          <h2 class="card-title">Incident Heatmap</h2>
-          <select id="heatTimeFilter" class="heatmap-filter">
-            <option value="24">Last 24 Hours</option>
-            <option value="168">Last 7 Days</option>
-            <option value="720" selected>Last 30 Days</option>
-            <option value="all">All Time</option>
-          </select>
-        </div>
-        <div id="policeHeatmap"></div>
-        <div class="heatmap-legend">
-          <span><span class="heat-dot heat-low"></span> Low</span>
-          <span><span class="heat-dot heat-med"></span> Medium</span>
-          <span><span class="heat-dot heat-high"></span> Critical</span>
-        </div>
-        
-        <div class="heatmap-hotspots">
-          <div class="hotspots-header">Top High-Risk Zones</div>
-          <div id="heatHotspotList" class="hotspot-list"></div>
-        </div>
-         <!-- Secondary analytics (below operational areas) -->
-  <div class="charts-row charts-row-bottom">
-    <section class="card">
-      <h2 class="card-title">Case Load</h2>
-      <div class="chart-wrapper">
-        <canvas id="policeStatusChart"></canvas>
+        <div class="emergency-banner-chip">LIVE</div>
       </div>
+      <div id="emergencyAlertsList" class="emergency-list"></div>
     </section>
-    <section class="card">
-      <h2 class="card-title">By Category</h2>
-      <div class="chart-wrapper">
-        <canvas id="policeCategoryChart"></canvas>
-      </div>
-    </section>
-  </div>
+
+    <div class="dashboard-grid">
+      <section class="column-left">
+
+        <section class="card stats-card">
+          <h2 class="card-title">SitRep (Situation Report)</h2>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-blue">📄</div>
+              <div class="stat-number" id="police-new">0</div>
+              <div class="stat-label">New</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-orange">⏳</div>
+              <div class="stat-number" id="police-in-progress">0</div>
+              <div class="stat-label">Working</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-green">✅</div>
+              <div class="stat-number" id="police-resolved">0</div>
+              <div class="stat-label">Closed</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-red">🚩</div>
+              <div class="stat-number" id="police-fake">0</div>
+              <div class="stat-label">Flagged</div>
+            </div>
+          </div>
+          <p class="police-meta">System Sync: <span id="police-last-updated">--</span></p>
+        </section>
+
+        <section class="card heatmap-card">
+          <div class="heatmap-header">
+            <h2 class="card-title">Incident Heatmap</h2>
+            <select id="heatTimeFilter" class="heatmap-filter">
+              <option value="24">Last 24 Hours</option>
+              <option value="168">Last 7 Days</option>
+              <option value="720" selected>Last 30 Days</option>
+              <option value="all">All Time</option>
+            </select>
+          </div>
+          <div id="policeHeatmap"></div>
+          <div class="heatmap-legend">
+            <span><span class="heat-dot heat-low"></span> Low</span>
+            <span><span class="heat-dot heat-med"></span> Medium</span>
+            <span><span class="heat-dot heat-high"></span> Critical</span>
+          </div>
+
+          <div class="heatmap-hotspots">
+            <div class="hotspots-header">Top High-Risk Zones</div>
+            <div id="heatHotspotList" class="hotspot-list"></div>
+          </div>
+          <!-- Secondary analytics (below operational areas) -->
+          <div class="charts-row charts-row-bottom">
+            <section class="card">
+              <h2 class="card-title">Case Load</h2>
+              <div class="chart-wrapper">
+                <canvas id="policeStatusChart"></canvas>
+              </div>
+            </section>
+            <section class="card">
+              <h2 class="card-title">By Category</h2>
+              <div class="chart-wrapper">
+                <canvas id="policeCategoryChart"></canvas>
+              </div>
+            </section>
+          </div>
+        </section>
+
       </section>
 
-    </section>
+      <section class="column-right">
+        <section class="card queue-card">
+          <div class="card-header-row">
+            <h2 class="card-title">Case Queue</h2>
+            <select id="queueStatusFilter" class="queue-filter">
+              <option value="all">All</option>
+              <option value="new">New</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+            </select>
+          </div>
+          <div id="activeComplaintsList" class="police-complaints-list"></div>
+        </section>
 
-    <section class="column-right">
-      <section class="card queue-card">
-        <div class="card-header-row">
-          <h2 class="card-title">Case Queue</h2>
-          <select id="queueStatusFilter" class="queue-filter">
-            <option value="all">All</option>
-            <option value="new">New</option>
-            <option value="pending">Pending</option>
-            <option value="in-progress">In Progress</option>
-          </select>
-        </div>
-        <div id="activeComplaintsList" class="police-complaints-list"></div>
+        <section class="card forecast-card">
+          <h2 class="card-title">AI Forecast</h2>
+          <p class="forecast-subtitle">Projected hotspots for next 4 hours.</p>
+          <ul id="forecastList" class="forecast-list"></ul>
+        </section>
+
       </section>
+    </div>
 
-      <section class="card forecast-card">
-        <h2 class="card-title">AI Forecast</h2>
-        <p class="forecast-subtitle">Projected hotspots for next 4 hours.</p>
-        <ul id="forecastList" class="forecast-list"></ul>
-      </section>
 
-    </section>
-  </div>
+  </main>
 
- 
-</main>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="./js/navbar.js"></script>
-<script src="./js/police-dashboard.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./js/navbar.js"></script>
+  <script src="./js/police-dashboard.js"></script>
 </body>
+
 </html>

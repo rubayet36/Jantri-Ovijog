@@ -1,183 +1,137 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Jatri Ovijog – Emergency Portal</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <!-- Global UI design system -->
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-    />
 
-    <link rel="stylesheet" href="./css/ui.css" />
-    <!-- Navbar styles -->
-    <link rel="stylesheet" href="./css/navbar.css" />
-    <!-- Reuse police dashboard and complaints styles for layout and cards -->
-    <link rel="stylesheet" href="./css/police-dashboard.css" />
-    <link rel="stylesheet" href="./css/police-complaints.css" />
-    <!-- Emergency specific styles -->
-    <link rel="stylesheet" href="./css/police-emergency.css" />
-  </head>
-  <body>
-    <header class="full-navbar">
-      <div class="nav-left">
-        <a href="police-dashboard.html" class="brand-title"
-          ><span>🛡️ Jatri_Ovijog</span></a
-        >
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog – Emergency Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Global UI design system -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <link rel="stylesheet" href="./css/ui.css" />
+  <!-- Navbar styles -->
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <!-- Reuse police dashboard and complaints styles for layout and cards -->
+  <link rel="stylesheet" href="./css/police-dashboard.css" />
+  <link rel="stylesheet" href="./css/police-complaints.css" />
+  <!-- Emergency specific styles -->
+  <link rel="stylesheet" href="./css/police-emergency.css" />
+  <script src="./js/auth-guard.js"></script>
+</head>
+
+<body>
+  <header class="full-navbar">
+    <div class="nav-left">
+      <a href="police-dashboard.html" class="brand-title"><span>🛡️ Jatri_Ovijog</span></a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-collapsible">
+      <div class="nav-pill" id="nav-pill">
+        <div class="nav-slider" id="nav-slider"></div>
+        <a href="police-dashboard.html" class="nav-pill-link" data-page="police-dashboard"><span>Command</span></a>
+        <a href="police-complaints.html" class="nav-pill-link" data-page="police-complaints"><span>Complaints</span></a>
+        <a href="police-emergency.html" class="nav-pill-link" data-page="police-emergency"><span>Emergency</span></a>
+
+        <a href="police-chat.html" class="nav-pill-link" data-page="police-chat"><span>Team Chat</span></a>
       </div>
-      <button class="nav-toggle" aria-label="Toggle navigation">
-        <span></span><span></span><span></span>
-      </button>
-      <div class="nav-collapsible">
-        <div class="nav-pill" id="nav-pill">
-          <div class="nav-slider" id="nav-slider"></div>
-          <a
-            href="police-dashboard.html"
-            class="nav-pill-link"
-            data-page="police-dashboard"
-            ><span>Command</span></a
-          >
-          <a
-            href="police-complaints.html"
-            class="nav-pill-link"
-            data-page="police-complaints"
-            ><span>Complaints</span></a
-          >
-          <a
-            href="police-emergency.html"
-            class="nav-pill-link"
-            data-page="police-emergency"
-            ><span>Emergency</span></a
-          >
+      <div class="nav-right">
+        <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">
+          🌙
+        </button>
 
-          <a
-            href="police-chat.html"
-            class="nav-pill-link"
-            data-page="police-chat"
-            ><span>Team Chat</span></a
-          >
-        </div>
-        <div class="nav-right">
-          <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">
-            🌙
-          </button>
-          <button class="nav-icon-btn" id="profile-btn" title="Profile">
-            👮
-          </button>
-          <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
-            <svg
-              class="nav-icon-svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-          </button>
-        </div>
+        <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
       </div>
-    </header>
-    <div class="nav-backdrop" aria-hidden="true"></div>
+    </div>
+  </header>
+  <div class="nav-backdrop" aria-hidden="true"></div>
 
-    <main class="police-main">
-      <div class="police-header">
-        <div>
-          <h1 class="page-title">Emergency Portal</h1>
-          <p class="police-subtitle">
-            View and respond to passenger emergency reports.
+  <main class="police-main">
+    <div class="police-header">
+      <div>
+        <h1 class="page-title">Emergency Portal</h1>
+        <p class="police-subtitle">
+          View and respond to passenger emergency reports.
+        </p>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <!-- Left column: list and filters -->
+      <section class="column-left">
+        <div class="card filters-card">
+          <div class="filters-row">
+            <input type="text" id="emergencySearch" placeholder="Search ID, Passenger, Location..."
+              class="filter-input" />
+            <select id="emergencyStatusFilter" class="filter-select">
+              <option value="all">All Status</option>
+              <option value="new">New</option>
+              <option value="responding">Responding</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+        </div>
+        <!-- Emergency list container -->
+        <div id="emergencyList" class="complaints-container"></div>
+      </section>
+
+      <!-- Right column: optional summary / hotspots -->
+      <section class="column-right">
+        <div class="card emergency-summary-card pad">
+          <h2 class="card-title">Quick Stats</h2>
+          <div class="card emergency-map-card pad">
+            <div class="map-header">
+              <h2 class="card-title">Live Location</h2>
+              <a id="emMapOpenLink" class="map-open-link" target="_blank" rel="noopener" style="display: none">
+                Open in Google Maps
+              </a>
+            </div>
+
+            <div id="emergencyMap" class="emergency-map" aria-label="Emergency location map"></div>
+
+            <div class="map-hint" id="emMapHint">
+              Click <b>Open location</b> on an emergency to preview it here.
+            </div>
+          </div>
+
+          <p class="emergency-summary-subtext">
+            Overview of recent emergencies.
           </p>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-red">🚨</div>
+              <div class="stat-number" id="emNew">0</div>
+              <div class="stat-label">New</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-orange">⌛</div>
+              <div class="stat-number" id="emResponding">0</div>
+              <div class="stat-label">Responding</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon stat-icon-green">✅</div>
+              <div class="stat-number" id="emResolved">0</div>
+              <div class="stat-label">Resolved</div>
+            </div>
+          </div>
         </div>
-      </div>
-
-      <div class="dashboard-grid">
-        <!-- Left column: list and filters -->
-        <section class="column-left">
-          <div class="card filters-card">
-            <div class="filters-row">
-              <input
-                type="text"
-                id="emergencySearch"
-                placeholder="Search ID, Passenger, Location..."
-                class="filter-input"
-              />
-              <select id="emergencyStatusFilter" class="filter-select">
-                <option value="all">All Status</option>
-                <option value="new">New</option>
-                <option value="responding">Responding</option>
-                <option value="resolved">Resolved</option>
-              </select>
-            </div>
-          </div>
-          <!-- Emergency list container -->
-          <div id="emergencyList" class="complaints-container"></div>
-        </section>
-
-        <!-- Right column: optional summary / hotspots -->
-        <section class="column-right">
-          <div class="card emergency-summary-card pad">
-            <h2 class="card-title">Quick Stats</h2>
-            <div class="card emergency-map-card pad">
-              <div class="map-header">
-                <h2 class="card-title">Live Location</h2>
-                <a
-                  id="emMapOpenLink"
-                  class="map-open-link"
-                  target="_blank"
-                  rel="noopener"
-                  style="display: none"
-                >
-                  Open in Google Maps
-                </a>
-              </div>
-
-              <div
-                id="emergencyMap"
-                class="emergency-map"
-                aria-label="Emergency location map"
-              ></div>
-
-              <div class="map-hint" id="emMapHint">
-                Click <b>Open location</b> on an emergency to preview it here.
-              </div>
-            </div>
-
-            <p class="emergency-summary-subtext">
-              Overview of recent emergencies.
-            </p>
-            <div class="stats-grid">
-              <div class="stat-item">
-                <div class="stat-icon stat-icon-red">🚨</div>
-                <div class="stat-number" id="emNew">0</div>
-                <div class="stat-label">New</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon stat-icon-orange">⌛</div>
-                <div class="stat-number" id="emResponding">0</div>
-                <div class="stat-label">Responding</div>
-              </div>
-              <div class="stat-item">
-                <div class="stat-icon stat-icon-green">✅</div>
-                <div class="stat-number" id="emResolved">0</div>
-                <div class="stat-label">Resolved</div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </main>
+      </section>
+    </div>
+  </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="./js/police-emergency.js"></script>
-<script src="./js/navbar.js"></script>
+  <script src="./js/police-emergency.js"></script>
+  <script src="./js/navbar.js"></script>
 
-  </body>
+</body>
+
 </html>

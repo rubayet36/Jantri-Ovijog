@@ -1,43 +1,18 @@
 /* Inherit Global from navbar.css */
 
 .report-main {
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 40px auto;
   padding: 0 20px;
 }
 
-.report-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.report-header h1 {
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: 10px;
-}
-
-.report-header p {
-  color: var(--text-muted);
-  font-size: 16px;
-}
-
-.header-badge {
-  display: inline-block;
-  margin-top: 16px;
-  background: #EFF6FF;
-  color: var(--accent);
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-}
+/* ... existing styles ... */
 
 /* Layout */
 .report-layout {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 1.6fr 1fr;
+  /* gave sidebar a bit more width relative to form */
   gap: 32px;
   align-items: start;
 }
@@ -47,22 +22,30 @@
   background: var(--bg-card);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
-  padding: 32px;
+  padding: 24px;
+  /* Reduced from 32px */
   box-shadow: var(--shadow-sm);
 }
 
 .section-block {
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+  /* Reduced from 32px */
   border-bottom: 1px solid var(--border-light);
-  padding-bottom: 32px;
+  padding-bottom: 24px;
+  /* Reduced from 32px */
 }
-.section-block:last-child { border-bottom: none; padding-bottom: 0; }
+
+.section-block:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
 
 .section-title-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  /* Reduced from 24px */
 }
 
 h2 {
@@ -76,6 +59,7 @@ h2 {
   display: grid;
   gap: 20px;
 }
+
 .two-cols {
   grid-template-columns: 1fr 1fr;
 }
@@ -108,7 +92,9 @@ textarea {
   background: #F8FAFC;
 }
 
-input:focus, select:focus, textarea:focus {
+input:focus,
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--accent);
   background: white;
@@ -157,7 +143,8 @@ input:focus, select:focus, textarea:focus {
   margin-top: 20px;
 }
 
-.primary-cta, .secondary-cta {
+.primary-cta,
+.secondary-cta {
   width: 100%;
   padding: 14px;
   border-radius: 8px;
@@ -173,14 +160,20 @@ input:focus, select:focus, textarea:focus {
   color: white;
   box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.3);
 }
-.primary-cta:hover { background: var(--accent-hover); }
+
+.primary-cta:hover {
+  background: var(--accent-hover);
+}
 
 .secondary-cta {
   background: white;
   border: 1px solid var(--border-light);
   color: var(--text-main);
 }
-.secondary-cta:hover { background: #F1F5F9; }
+
+.secondary-cta:hover {
+  background: #F1F5F9;
+}
 
 .form-note {
   margin-top: 16px;
@@ -194,6 +187,8 @@ input:focus, select:focus, textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  position: sticky;
+  top: 100px;
 }
 
 .ghost-cta {
@@ -206,37 +201,54 @@ input:focus, select:focus, textarea:focus {
   cursor: pointer;
   font-weight: 600;
 }
-.ghost-cta:hover { background: #EFF6FF; }
+
+.ghost-cta:hover {
+  background: #EFF6FF;
+}
 
 .location-status {
   font-size: 12px;
   margin-top: 8px;
   color: var(--text-muted);
 }
-.location-status.loading { color: var(--warning); }
 
-.tips-card ul, .preview-card ol {
+.location-status.loading {
+  color: var(--warning);
+}
+
+.tips-card ul,
+.preview-card ol {
   padding-left: 20px;
   margin-top: 12px;
 }
-.tips-card li, .preview-card li {
+
+.tips-card li,
+.preview-card li {
   font-size: 13px;
   color: var(--text-muted);
   margin-bottom: 8px;
 }
 
 @media (max-width: 768px) {
-  .report-layout { grid-template-columns: 1fr; }
-  .field-grid.two-cols { grid-template-columns: 1fr; }
-}
-/* --- MOBILE REPORT FIXES --- */
-@media (max-width: 768px) {
   .report-layout {
-    grid-template-columns: 1fr; /* Stack Form over Sidebar */
+    grid-template-columns: 1fr;
   }
 
   .field-grid.two-cols {
-    grid-template-columns: 1fr; /* Stack inputs vertically */
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- MOBILE REPORT FIXES --- */
+@media (max-width: 768px) {
+  .report-layout {
+    grid-template-columns: 1fr;
+    /* Stack Form over Sidebar */
+  }
+
+  .field-grid.two-cols {
+    grid-template-columns: 1fr;
+    /* Stack inputs vertically */
   }
 
   .report-header h1 {
@@ -246,7 +258,7 @@ input:focus, select:focus, textarea:focus {
   .report-card {
     padding: 20px 16px;
   }
-  
+
   /* Fix image preview width */
   .image-preview {
     width: 100%;

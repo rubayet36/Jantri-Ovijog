@@ -368,11 +368,11 @@ function initEmergencyMap() {
 
   emMap = L.map(mapEl, {
     zoomControl: true,
-    scrollWheelZoom: false,
+    scrollWheelZoom: true,
   });
 
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "&copy; OpenStreetMap contributors",
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+    attribution: "&copy; OpenStreetMap, &copy; CartoDB",
   }).addTo(emMap);
 
   emMap.setView(dhaka, 12);

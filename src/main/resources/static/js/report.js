@@ -8,7 +8,7 @@ const SUPABASE_KEY =
 const STORAGE_BUCKET = "complaints";
 
 document.addEventListener("DOMContentLoaded", () => {
-  
+
   // ==========================
   // 🤖 1. CHECK FOR AI DRAFT (From Dashboard Chat)
   // ==========================
@@ -39,8 +39,8 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.incidentType) {
         const typeSelect = document.getElementById("incidentType");
         for (let i = 0; i < typeSelect.options.length; i++) {
-          if (typeSelect.options[i].value.includes(data.incidentType) || 
-              data.incidentType.includes(typeSelect.options[i].value)) {
+          if (typeSelect.options[i].value.includes(data.incidentType) ||
+            data.incidentType.includes(typeSelect.options[i].value)) {
             typeSelect.selectedIndex = i;
             break;
           }
@@ -167,11 +167,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let pendingLatLng = null;
 
   function initMap(lat = 23.8103, lng = 90.4125, zoom = 12) {
-    if (!window.L) return alert("Map library not loaded.");
+    if (!window.L) return; // Silent return if not loaded yet
     if (!map) {
       map = window.L.map("map", { scrollWheelZoom: true }).setView([lat, lng], zoom);
       window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap contributors" }).addTo(map);
-      
+
       map.on("click", (e) => {
         pendingLatLng = e.latlng;
         if (!marker) {
@@ -183,21 +183,24 @@ document.addEventListener("DOMContentLoaded", () => {
         locationStatus.textContent = "Pin dropped. Click ✅ Use Selected Location.";
         locationMapLink.style.display = "none";
       });
+      // Force resize to ensure tiles load in the now-visible container
       setTimeout(() => map.invalidateSize(), 200);
     } else {
       map.setView([lat, lng], zoom);
-      setTimeout(() => map.invalidateSize(), 100);
     }
   }
 
-  if (useMapBtn && mapWrap) {
-    useMapBtn.addEventListener("click", () => {
-      const isHidden = mapWrap.style.display === "none" || mapWrap.style.display === "";
-      mapWrap.style.display = isHidden ? "block" : "none";
-      const lat = form.dataset.lat ? Number(form.dataset.lat) : 23.8103;
-      const lng = form.dataset.lng ? Number(form.dataset.lng) : 90.4125;
-      initMap(lat, lng, form.dataset.lat ? 15 : 12);
-    });
+  // Always init map now
+  // Check if we have pre-filled coords (from AI draft or otherwise)
+  const initialLat = form.dataset.lat ? Number(form.dataset.lat) : 23.8103;
+  const initialLng = form.dataset.lng ? Number(form.dataset.lng) : 90.4125;
+  const initialZoom = form.dataset.lat ? 15 : 12;
+
+  // waiting for Leaflet to be ready if loaded via CDN
+  if (typeof window.L !== 'undefined') {
+    initMap(initialLat, initialLng, initialZoom);
+  } else {
+    setTimeout(() => initMap(initialLat, initialLng, initialZoom), 1000);
   }
 
   if (confirmMapBtn) {
