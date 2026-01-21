@@ -35,10 +35,15 @@ public class SupabaseService {
 
         // NOTE: no default Authorization header here.
         // We'll attach the correct one per request using auth(...)
+        // ✅ FIXED: Increased buffer size to 10MB to handle base64-encoded images in
+        // emergency_reports
         this.webClient = WebClient.builder()
                 .baseUrl(restUrl)
                 .defaultHeader("apikey", anonKey)
                 .defaultHeader(HttpHeaders.ACCEPT, "application/json")
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .maxInMemorySize(10 * 1024 * 1024)) // 10 MB buffer
                 .build();
     }
 
@@ -153,7 +158,7 @@ public class SupabaseService {
         return auth(webClient.get()
                 .uri("/emergency_reports?select=*"))
                 .retrieve()
-                .onStatus(s -> s.isError(), this::mapSupabaseError)
+                .onStatus(status -> status.isError(), this::mapSupabaseError)
                 .bodyToMono(LIST_OF_MAP);
     }
 
