@@ -22,7 +22,7 @@
   --info: #0284C7;          /* info blue */
   
   /* Borders & Shadows */
-  --border-subtle: #E2E8F0;
+  --border-subtle: #001839;
   --border-strong: #CBD5E1;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
@@ -342,9 +342,11 @@ body {
   border-radius: 4px;
 }
 
-/* ============ ACTIVE QUEUE ============ */
 .queue-card {
   height: 100%;
+  scroll-behavior: smooth;
+   max-height: 1100px;
+  overflow-y: auto;
 }
 
 .police-complaints-list {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Jatri Ovijog – Passenger Dashboard</title>
@@ -19,6 +20,7 @@
   <!-- Chart.js for graphs -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
   <!-- Navbar (keeps existing IDs for navbar.js) -->
@@ -37,9 +39,10 @@
       <div class="nav-collapsible">
         <div class="nav-pill" id="nav-pill">
           <div class="nav-slider" id="nav-slider"></div>
-          <a href="dashboard.html" class="nav-pill-link" data-page="dashboard"><span>Dashboard</span><span class="nav-pill-badge">4</span></a>
+          <a href="dashboard.html" class="nav-pill-link" data-page="dashboard"><span>Dashboard</span><span
+              class="nav-pill-badge">4</span></a>
           <a href="feed.html" class="nav-pill-link" data-page="feed"><span>Community</span></a>
-        
+
           <a href="emergency.html" class="nav-pill-link" data-page="emergency"><span>Emergency</span></a>
         </div>
 
@@ -47,7 +50,14 @@
           <a class="nav-cta" href="report.html">Report Issue</a>
           <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
           <button class="nav-icon-btn" id="profile-btn" title="Profile">👤</button>
-          <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+          <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
+            <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+              stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
         </div>
       </div>
     </nav>
@@ -63,7 +73,7 @@
         <h1 class="page-title">Passenger Dashboard</h1>
         <div class="page-subtitle">Track your reports, review trusted routes, and monitor system-wide trends.</div>
       </div>
-</div>
+    </div>
 
     <div class="dashboard-grid">
       <!-- LEFT COLUMN -->
@@ -115,16 +125,16 @@
         <!-- Two-up cards -->
         <div class="two-up">
           <section class="card trusted-routes-card">
-          <h2 class="card-title">Trusted Routes</h2>
-          <p class="trusted-subtitle">Based on recent complaints and safety reports.</p>
-          <div class="trusted-chips" id="trustedRoutes"></div>
-        </section>
+            <h2 class="card-title">Trusted Routes</h2>
+            <p class="trusted-subtitle">Based on recent complaints and safety reports.</p>
+            <div class="trusted-chips" id="trustedRoutes"></div>
+          </section>
           <section class="card">
-          <h2 class="card-title">Complaints per Company</h2>
-          <div class="chart-wrapper">
-            <canvas id="companyComplaintsChart"></canvas>
-          </div>
-        </section>
+            <h2 class="card-title">Complaints per Company</h2>
+            <div class="chart-wrapper">
+              <canvas id="companyComplaintsChart"></canvas>
+            </div>
+          </section>
         </div>
 
 
@@ -140,39 +150,74 @@
         </section>
       </section>
     </div>
-    
-  </main>
-<div id="ai-widget-container">
-    
-    <div id="ai-chat-popup" class="ai-popup" style="display: none;">
-        <div class="ai-popup-header">
-            <div class="ai-title">
-                <span>🤖</span> Jatri AI Assistant
-            </div>
-            <button id="ai-close-btn" type="button">&times;</button>
-        </div>
-        
-        <div class="ai-popup-body">
-            <p class="ai-instruction">
-                Describe the incident here. We will auto-fill the official report form for you.
-            </p>
-            <textarea id="ai-widget-input" placeholder="e.g. I was on a Raida bus at Rampura and the helper was rude..."></textarea>
-            <div id="ai-widget-status" class="ai-status"></div>
-        </div>
 
-        <div class="ai-popup-footer">
-            <button id="ai-widget-submit" type="button">
-                ✨ Analyze & Draft
-            </button>
+  </main>
+  <div id="ai-widget-container">
+
+    <div id="ai-chat-popup" class="ai-popup" style="display: none;">
+      <div class="ai-popup-header">
+        <div class="ai-title">
+          <span>🤖</span> Jatri AI Assistant
         </div>
+        <button id="ai-close-btn" type="button">&times;</button>
+      </div>
+
+      <div class="ai-popup-body">
+        <p class="ai-instruction">
+          Describe the incident here. We will auto-fill the official report form for you.
+        </p>
+        <textarea id="ai-widget-input"
+          placeholder="e.g. I was on a Raida bus at Rampura and the helper was rude..."></textarea>
+        <div id="ai-widget-status" class="ai-status"></div>
+      </div>
+
+      <div class="ai-popup-footer">
+        <button id="ai-widget-submit" type="button">
+          ✨ Analyze & Draft
+        </button>
+      </div>
     </div>
 
+
     <button id="ai-fab-btn" class="ai-fab" title="Report with AI">
-        💬
+      💬
     </button>
-</div>
+  </div>
+
+  <!-- EDIT COMPLAINT MODAL -->
+  <div id="editModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Edit Complaint</h3>
+        <button class="modal-close" onclick="closeEditModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editComplaintId" />
+
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <input type="text" id="editCategory" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea id="editDescription" class="form-textarea"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Route / Location</label>
+          <input type="text" id="editRoute" class="form-input" placeholder="e.g. Mirpur to Motijheel" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+        <button class="btn-save" onclick="saveComplaintEdit()">Save Changes</button>
+      </div>
+    </div>
+  </div>
   <!-- Scripts -->
   <script src="./js/dashboard.js"></script>
   <script src="./js/navbar.js"></script>
 </body>
+
 </html>

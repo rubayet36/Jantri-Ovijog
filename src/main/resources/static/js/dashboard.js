@@ -238,6 +238,7 @@ function loadComplaintsOverviewChart() {
 // ------------------------------
 // Recent Complaints
 // ------------------------------
+
 function loadRecentComplaints() {
   const container = document.getElementById("recentComplaintsList");
   if (!container) return;
@@ -262,6 +263,19 @@ function loadRecentComplaints() {
     const desc = String(c.description || "").trim();
     const submittedBy = c.reporterName || c.reporterType || "Anonymous";
 
+    // Edit/Delete buttons
+    const actionsHtml = `
+      <div class="complaint-actions">
+        <button class="btn-icon btn-edit" title="Edit" onclick="openEditModal(${c.id})">
+           ✎
+        </button>
+        <button class="btn-icon btn-delete" title="Delete" onclick="deleteComplaintInit(${c.id})">
+           🗑
+        </button>
+        <button class="complaint-view" type="button" data-id="${escapeHtml(c.id)}">View</button>
+      </div>
+    `;
+
     row.innerHTML = `
       <div class="complaint-dot" aria-hidden="true"></div>
       <div class="complaint-body">
@@ -279,17 +293,106 @@ function loadRecentComplaints() {
           <span class="complaint-status">${escapeHtml(status || "pending")}</span>
           <span class="complaint-time">${escapeHtml(timeAgo(c.createdAt))}</span>
         </div>
-        <button class="complaint-view" type="button" data-id="${escapeHtml(c.id)}">View</button>
+        ${actionsHtml}
       </div>
     `;
 
     row.querySelector(".complaint-view")?.addEventListener("click", () => {
-      alert(`Complaint ID: ${c.id}`);
+      alert(`Complaint ID: ${c.id}\nStatus: ${c.status}\nDescription: ${c.description}`);
     });
 
     container.appendChild(row);
   });
 }
+
+// ------------------------------
+// EDIT / DELETE LOGIC
+// ------------------------------
+
+window.openEditModal = function (id) {
+  const c = myComplaints.find(x => x.id === id);
+  if (!c) return;
+
+  document.getElementById("editComplaintId").value = c.id;
+  document.getElementById("editCategory").value = c.category || "";
+  document.getElementById("editDescription").value = c.description || "";
+  document.getElementById("editRoute").value = c.route || "";
+
+  document.getElementById("editModal").classList.remove("hidden");
+};
+
+window.closeEditModal = function () {
+  document.getElementById("editModal").classList.add("hidden");
+};
+
+window.saveComplaintEdit = async function () {
+  const idStr = document.getElementById("editComplaintId").value;
+  if (!idStr) return;
+  const id = Number(idStr);
+
+  const payload = {
+    category: document.getElementById("editCategory").value,
+    description: document.getElementById("editDescription").value,
+    route: document.getElementById("editRoute").value
+  };
+
+  const btn = document.querySelector(".btn-save");
+  const oldText = btn.textContent;
+  btn.textContent = "Saving...";
+  btn.disabled = true;
+
+  try {
+    const token = localStorage.getItem("token");
+    const resp = await fetch(`/api/complaints/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (!resp.ok) throw new Error("Failed to update");
+
+    // Success
+    alert("Complaint updated successfully!");
+    closeEditModal();
+    // Refresh
+    await fetchMyComplaints();
+    loadRecentComplaints();
+
+  } catch (e) {
+    console.error(e);
+    alert("Error updating complaint");
+  } finally {
+    btn.textContent = oldText;
+    btn.disabled = false;
+  }
+};
+
+window.deleteComplaintInit = async function (id) {
+  if (!confirm("Are you sure you want to delete this complaint? This cannot be undone.")) return;
+
+  try {
+    const token = localStorage.getItem("token");
+    const resp = await fetch(`/api/complaints/${id}`, {
+      method: "DELETE",
+      headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+    });
+
+    if (!resp.ok) throw new Error("Failed to delete");
+
+    // Success
+    // Refresh
+    await fetchMyComplaints(); // Update local list
+    loadRecentComplaints();    // Re-render
+    loadDashboardStats();      // Update stats
+
+  } catch (e) {
+    console.error(e);
+    alert("Error deleting complaint: " + e.message);
+  }
+};
 
 function formatType(type) {
   if (!type) return "";
@@ -439,12 +542,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         // SAVE DRAFT & REDIRECT
         localStorage.setItem("AI_DRAFT_DATA", JSON.stringify(data));
-        
+
         if (statusDiv) {
           statusDiv.style.color = "green";
           statusDiv.textContent = "✅ Success! Redirecting...";
         }
-        
+
         setTimeout(() => {
           window.location.href = "report.html";
         }, 1000);

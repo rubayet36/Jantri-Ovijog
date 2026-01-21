@@ -1,350 +1,558 @@
-// police-complaints.js - Final Version with Smart Sorting (Resolved at Bottom)
+// police-manage.js (Modern list UI + filters: thana, priority, status)
+// Backend endpoints unchanged:
+//  - GET /api/complaints
+//  - PATCH /api/complaints/:id/status
 
-// ===== Complaints Data =====
-let complaintsData = [];
+let allComplaints = [];
+let selectedComplaint = null;
 
-// ===== State =====
-let selectedThana = "all";
-let selectedStatus = "all";
-let selectedPriority = "all";
-let searchQuery = "";
+// UI elements
+const listEl = document.getElementById("reportsList");
+const searchInput = document.getElementById("searchInput");
+const statusFilter = document.getElementById("statusFilter");
+const thanaFilter = document.getElementById("thanaFilter");
+const priorityFilter = document.getElementById("priorityFilter");
+const sortFilter = document.getElementById("sortFilter");
+const refreshBtn = document.getElementById("refreshBtn");
+const clearFilters = document.getElementById("clearFilters");
+const resultCount = document.getElementById("resultCount");
+const lastSynced = document.getElementById("lastSynced");
 
-// ===== Init =====
-document.addEventListener("DOMContentLoaded", async () => {
-    initFilters();
-    await loadComplaints();
-    renderComplaints();
-    renderHotspots();
-    wireCaseModalClose();
-});
+// modal
+const modal = document.getElementById("modal");
+const modalClose = document.getElementById("modalClose");
+const modalTitle = document.getElementById("modalTitle");
+const modalKicker = document.getElementById("modalKicker");
+const modalBody = document.getElementById("modalBody");
+const modalStatus = document.getElementById("modalStatus");
+const modalNote = document.getElementById("modalNote");
+const modalSave = document.getElementById("modalSave");
 
-// ===== 1. Data Loading =====
-async function loadComplaints() {
-    try {
-        const token = localStorage.getItem("token");
-        const resp = await fetch("http://localhost:8080/api/complaints", { 
-            headers: {
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-        });
+// Leaflet map instance for the review modal (created on-demand)
+let modalMap = null;
 
-        const data = await resp.json();
-
-        if (resp.ok) {
-            complaintsData = data.map((c) => {
-                return {
-                    ...c,
-                    id: c.id,
-                    description: c.description || "",
-                    category: c.category || "General",
-                    status: c.status ? c.status.toLowerCase() : "new",
-                    
-                    // Priority Default
-                    priority: c.priority ? c.priority.charAt(0).toUpperCase() + c.priority.slice(1) : "Low",
-
-                    // Mappings
-                    busName: c.bus_name ?? c.busName ?? "Unknown Bus",
-                    busNumber: c.bus_number ?? c.busNumber ?? "N/A",
-                    imageUrl: c.image_url ?? c.imageUrl ?? "",
-                    reporterType: c.reporter_type ?? c.reporterType ?? "Public",
-                    createdAt: c.created_at ?? c.createdAt ?? new Date().toISOString(),
-                    thana: c.thana ?? "Unknown",
-                    route: c.route ?? "Unknown",
-                    reporterName: c.reporter_name ?? c.reporterName ?? "Anonymous",
-                    reporterPhone: c.reporter_phone ?? c.reporterPhone ?? "-",
-                    reporterEmail: c.reporter_email ?? c.reporterEmail ?? "-",
-                };
-            });
-            
-            // Initial Sort
-            sortComplaints(complaintsData);
-
-        } else {
-            console.error("Failed to load complaints", data);
-            complaintsData = [];
-        }
-    } catch (err) {
-        console.error("Error fetching complaints:", err);
-        complaintsData = [];
-    }
+function getAuthHeaders(extra = {}) {
+  const token = localStorage.getItem("token");
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...extra,
+  };
 }
 
-// ===== 2. SMART SORTING LOGIC (Fixed Issue) =====
-function sortComplaints(list) {
-    const priorityWeight = { 'High': 3, 'Medium': 2, 'Low': 1 };
-    
-    // Status Weights: Active/New are higher than Resolved/Closed
-    const statusWeight = {
-        'new': 10,
-        'working': 10,
-        'assigned': 10,
-        'in-progress': 10,
-        'resolved': 0, // Resolved drops to bottom
-        'closed': 0,
-        'fake': -1
-    };
-
-    list.sort((a, b) => {
-        const statusA = statusWeight[a.status] || 5;
-        const statusB = statusWeight[b.status] || 5;
-
-        // 1. Sort by Status (Active cases stay top)
-        if (statusA !== statusB) return statusB - statusA;
-
-        // 2. Sort by Priority (High first)
-        const pWeightA = priorityWeight[a.priority] || 0;
-        const pWeightB = priorityWeight[b.priority] || 0;
-        if (pWeightA !== pWeightB) return pWeightB - pWeightA;
-
-        // 3. Sort by Date (Newest first)
-        return new Date(b.createdAt) - new Date(a.createdAt);
-    });
+async function safeReadJson(resp) {
+  const text = await resp.text().catch(() => "");
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { message: text };
+  }
 }
 
-// ===== 3. Filters =====
-function initFilters() {
-    const searchInput = document.getElementById("searchInput");
-    const thanaSelect = document.getElementById("thanaFilter");
-    const statusSelect = document.getElementById("statusFilter");
-    const prioritySelect = document.getElementById("priorityFilter"); 
-
-    if (searchInput) {
-        searchInput.addEventListener("input", (e) => {
-            searchQuery = e.target.value.toLowerCase();
-            renderComplaints();
-        });
-    }
-
-    if (thanaSelect) {
-        thanaSelect.addEventListener("change", (e) => {
-            selectedThana = e.target.value;
-            renderComplaints();
-        });
-    }
-
-    if (statusSelect) {
-        statusSelect.addEventListener("change", (e) => {
-            selectedStatus = e.target.value.toLowerCase();
-            renderComplaints();
-        });
-    }
-
-    if (prioritySelect) {
-        prioritySelect.addEventListener("change", (e) => {
-            selectedPriority = e.target.value; 
-            renderComplaints();
-        });
-    }
+function normalizeStatus(s) {
+  const v = String(s || "new").toLowerCase();
+  // unify variants
+  if (v === "in progress") return "in-progress";
+  if (v === "closed") return "resolved";
+  return v;
 }
 
-// ===== 4. Rendering =====
-function renderComplaints() {
-    const container = document.getElementById("policeComplaintsList"); 
-    if (!container) return;
+// ✅ UPDATED: resolved => low priority (always)
+function computePriority({ category, status }) {
+  const st = normalizeStatus(status);
+  const cat = String(category || "").toLowerCase();
 
-    let filtered = complaintsData.filter((c) => {
-        const matchesSearch =
-            (c.busName || "").toLowerCase().includes(searchQuery) ||
-            (c.busNumber || "").toLowerCase().includes(searchQuery) ||
-            (c.description || "").toLowerCase().includes(searchQuery) ||
-            String(c.id).includes(searchQuery);
+  // ✅ force resolved -> low
+  if (st === "resolved") return "low";
 
-        const matchesThana = selectedThana === "all" || c.thana === selectedThana;
+  // exclude fake from priority logic (still filterable as status)
+  if (st === "fake") return "low";
 
-        const dataStatus = (c.status || "").toLowerCase();
-        const filterStatus = (selectedStatus || "").toLowerCase();
-        const matchesStatus = filterStatus === "all" || dataStatus === filterStatus;
+  // High: harassment/violence/theft/sos-ish OR already in-progress
+  if (st === "in-progress" || st === "working") return "high";
+  if (
+    cat.includes("harass") ||
+    cat.includes("theft") ||
+    cat.includes("assault") ||
+    cat.includes("abuse")
+  )
+    return "high";
 
-        const matchesPriority = selectedPriority === "all" || c.priority === selectedPriority;
+  // Medium: reckless / speeding / racing / traffic etc.
+  if (
+    cat.includes("reck") ||
+    cat.includes("speed") ||
+    cat.includes("traffic") ||
+    cat.includes("fare")
+  )
+    return "medium";
 
-        return matchesSearch && matchesThana && matchesStatus && matchesPriority;
-    });
-
-    // Apply Smart Sorting
-    sortComplaints(filtered);
-
-    container.innerHTML = "";
-
-    if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty-queue">No complaints found matching your filters.</div>`;
-        return;
-    }
-
-    filtered.forEach((c) => {
-        const card = document.createElement("div");
-        // Only mark as "Hot" if it's NOT resolved
-        const isResolved = ['resolved', 'closed', 'fake'].includes(c.status);
-        const isRepeatOffender = !isResolved && complaintsData.filter((x) => x.busNumber === c.busNumber && !['resolved', 'closed', 'fake'].includes(x.status)).length > 2;
-
-        const priorityClass = isResolved ? 'priority-resolved' : `priority-${(c.priority || 'low').toLowerCase()}`;
-        
-        // Dim the card if resolved
-        card.className = `complaint-card ${isRepeatOffender ? "bus-hot" : ""} ${isResolved ? "card-dimmed" : ""}`;
-
-        card.innerHTML = `
-            <div class="complaint-image-wrap">
-                <img src="${c.imageUrl}" alt="Evidence" onerror="this.src='./assets/bus-generic.jpg'">
-                <div class="priority-badge ${priorityClass}">${isResolved ? 'Resolved' : c.priority + ' Priority'}</div>
-            </div>
-
-            <div class="complaint-content">
-                <div class="complaint-row-top">
-                    <div>
-                        <div class="complaint-id">#${c.id} · ${c.category}</div>
-                        <div class="complaint-bus">${c.busName} (${c.busNumber})</div>
-                    </div>
-                    <span class="status-badge status-${c.status}">${formatStatus(c.status)}</span>
-                </div>
-
-                <div class="complaint-tags">
-                    <span class="tag-pill tag-thana">📍 ${c.thana}</span>
-                    <span class="tag-pill tag-route">🚌 ${c.route}</span>
-                </div>
-
-                <p class="complaint-desc">${c.description || "No description provided."}</p>
-
-                <div class="complaint-meta-row">
-                    <div class="complaint-meta">
-                        <span>📅 ${formatDate(c.createdAt)}</span>
-                    </div>
-                    <div class="complaint-actions">
-                        <button class="complaint-btn btn-primary-ghost" onclick="openCase(${c.id})">Open Case</button>
-                    </div>
-                </div>
-            </div>
-        `;
-        
-        // Timeline
-        const lifecycle = ["new", "assigned", "in-progress", "resolved"];
-        const statusMap = { "new": 0, "assigned": 1, "working": 2, "in-progress": 2, "resolved": 3, "closed": 3, "fake": 3 };
-        const currentIndex = statusMap[c.status] || 0;
-        
-        let timelineHtml = '<div class="complaint-timeline">';
-        ["Received", "Assigned", "Processing", "Resolved"].forEach((step, idx) => {
-            let cls = "";
-            if (idx < currentIndex) cls = "completed";
-            else if (idx === currentIndex) cls = "active";
-            timelineHtml += `<div class="timeline-step ${cls}">${step}</div>`;
-        });
-        timelineHtml += "</div>";
-
-        card.innerHTML += timelineHtml;
-        container.appendChild(card);
-    });
+  // Default
+  return "low";
 }
 
-function renderHotspots() {
-    const container = document.getElementById("busHotspotsList");
-    if (!container) return;
+function toCamel(row) {
+  const status = normalizeStatus(row.status || "new");
+  const category = row.category || "-";
 
-    const counts = {};
-    complaintsData.forEach((c) => {
-        // Only count ACTIVE complaints for hotspots
-        if (['resolved', 'closed', 'fake'].includes(c.status)) return;
+  return {
+    id: row.id,
+    category,
+    status,
+    priority: computePriority({ category, status }),
+    thana: row.thana || "-",
+    route: row.route || "-",
+    busName: row.bus_name ?? "",
+    busNumber: row.bus_number ?? "",
+    imageUrl: row.image_url ?? "",
+    reporterType: row.reporter_type ?? "",
+    description: row.description ?? "",
+    createdAt: row.created_at ?? row.createdAt ?? null,
 
-        if (!counts[c.busNumber]) {
-            counts[c.busNumber] = { count: 0, name: c.busName, route: c.route };
-        }
-        counts[c.busNumber].count++;
-    });
-
-    const sorted = Object.entries(counts)
-        .map(([num, data]) => ({ num, ...data }))
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 5);
-
-    container.innerHTML = "";
-    sorted.forEach((bus) => {
-        const item = document.createElement("div");
-        item.className = "bus-hotspot-item";
-        item.onclick = () => {
-            const searchBox = document.getElementById("searchInput");
-            if(searchBox) {
-                searchBox.value = bus.num;
-                searchBox.dispatchEvent(new Event('input'));
-            }
-        };
-
-        item.innerHTML = `
-            <div>
-                <span class="bus-hotspot-title">${bus.name} (${bus.num})</span>
-                <span class="bus-hotspot-sub">${bus.route}</span>
-            </div>
-            <span class="bus-hotspot-count">${bus.count} Active</span>
-        `;
-        container.appendChild(item);
-    });
-}
-
-// ===== Helpers =====
-function formatStatus(st) {
-    if (!st) return "-";
-    if (st === "in-progress" || st === "working") return "Processing";
-    return st.charAt(0).toUpperCase() + st.slice(1);
+    // geo (optional, used for map)
+    latitude: row.latitude ?? row.lat ?? null,
+    longitude: row.longitude ?? row.lng ?? null,
+    accuracy: row.accuracy ?? null,
+  };
 }
 
 function formatDate(iso) {
-    if (!iso) return "-";
-    const d = new Date(iso);
-    return d.toLocaleDateString() + " " + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  if (!iso) return "-";
+  const d = new Date(iso);
+  return d.toLocaleString();
 }
 
-function safe(v) { return v ?? "-"; }
-
-function getById(id) {
-    return complaintsData.find((x) => Number(x.id) === Number(id));
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
-// ===== Modal Logic =====
-function closeCaseModal() {
-    const modal = document.getElementById("caseModal");
-    if (modal) modal.classList.add("hidden");
+function statusBadgeClass(status) {
+  const s = normalizeStatus(status);
+  if (s === "new") return "status-new";
+  if (s === "pending") return "status-pending";
+  if (s === "working" || s === "in-progress") return "status-working";
+  if (s === "resolved") return "status-resolved";
+  if (s === "fake") return "status-fake";
+  return "status-new";
 }
 
-function wireCaseModalClose() {
-    const close1 = document.getElementById("caseModalClose");
-    const close2 = document.getElementById("caseModalClose2");
-    const modal = document.getElementById("caseModal");
-    if (close1) close1.onclick = closeCaseModal;
-    if (close2) close2.onclick = closeCaseModal;
-    if (modal) {
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) closeCaseModal();
-        });
-    }
+function prioBadgeClass(p) {
+  if (p === "high") return "prio-high";
+  if (p === "medium") return "prio-medium";
+  return "prio-low";
 }
 
-window.openCase = function (id) {
-    const c = getById(id);
-    if (!c) return;
+function prioLabel(p) {
+  if (p === "high") return "High";
+  if (p === "medium") return "Medium";
+  return "Low";
+}
 
-    const title = document.getElementById("caseModalTitle");
-    const body = document.getElementById("caseModalBody");
-    const modal = document.getElementById("caseModal");
-    if (!title || !body || !modal) return;
+async function fetchComplaints() {
+  const resp = await fetch("/api/complaints", {
+    headers: getAuthHeaders(),
+  });
 
-    const pColor = c.priority === "High" ? "red" : c.priority === "Medium" ? "orange" : "green";
-    title.innerHTML = `Case #${c.id} <span style="font-size:0.8em; margin-left:10px; color:${pColor}">(${c.priority})</span>`;
+  const data = await safeReadJson(resp);
+  if (!resp.ok) {
+    throw new Error(data?.message || data?.error || JSON.stringify(data));
+  }
 
-    const imgUrl = c.imageUrl || "";
-    const imgHtml = imgUrl ? 
-        `<div class="case-image"><img src="${imgUrl}" alt="Evidence"><div style="margin-top:10px"><a href="${imgUrl}" target="_blank" class="complaint-btn">View Full Image</a></div></div>` : 
-        `<div class="row" style="margin-top:12px; color:#888;">No visual evidence provided.</div>`;
+  allComplaints = (Array.isArray(data) ? data : []).map(toCamel);
+  lastSynced.textContent = `Sync: ${new Date().toLocaleTimeString()}`;
 
-    body.innerHTML = `
-        <div class="case-grid">
-            <div class="row"><b>Status</b><span>${safe(formatStatus(c.status))}</span></div>
-            <div class="row"><b>Date</b><span>${formatDate(c.createdAt)}</span></div>
-            <div class="row"><b>Category</b><span>${safe(c.category)}</span></div>
-            <div class="row"><b>Priority</b><span style="color:${pColor}; font-weight:bold">${safe(c.priority)}</span></div>
-            <div class="row"><b>Thana</b><span>${safe(c.thana)}</span></div>
-            <div class="row"><b>Bus</b><span>${safe(c.busName)} (${safe(c.busNumber)})</span></div>
-            <div class="row"><b>Reporter</b><span>${safe(c.reporterName)}</span></div>
-            <div class="row"><b>Phone</b><span>${safe(c.reporterPhone)}</span></div>
-        </div>
-        <div class="case-desc"><b>Description</b><p>${safe(c.description)}</p></div>
-        ${imgHtml}
+  hydrateThanaFilter();
+}
+
+function hydrateThanaFilter() {
+  const thanas = [
+    ...new Set(allComplaints.map((c) => String(c.thana || "-").trim())),
+  ]
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b));
+
+  const current = thanaFilter.value || "all";
+  thanaFilter.innerHTML = `<option value="all">All</option>`;
+  thanas.forEach((t) => {
+    const opt = document.createElement("option");
+    opt.value = t;
+    opt.textContent = t;
+    thanaFilter.appendChild(opt);
+  });
+
+  if ([...thanaFilter.options].some((o) => o.value === current))
+    thanaFilter.value = current;
+}
+
+function applyFilters() {
+  const q = (searchInput.value || "").trim().toLowerCase();
+  const st = String(statusFilter.value || "all").toLowerCase();
+  const th = String(thanaFilter.value || "all");
+  const pr = String(priorityFilter.value || "all").toLowerCase();
+  const sort = String(sortFilter.value || "newest");
+
+  let rows = allComplaints.filter((c) => {
+    const text = `${c.id} ${c.category} ${c.thana} ${c.route} ${c.busName} ${c.busNumber} ${c.status} ${c.priority}`.toLowerCase();
+    const qOk = !q || text.includes(q);
+    const sOk = st === "all" || normalizeStatus(c.status) === st;
+    const tOk = th === "all" || String(c.thana || "-") === th;
+    const pOk = pr === "all" || String(c.priority || "low") === pr;
+    return qOk && sOk && tOk && pOk;
+  });
+
+  // ✅ always high priority first, then medium, then low
+  const priorityRank = { high: 0, medium: 1, low: 2 };
+
+  rows.sort((a, b) => {
+    const da = new Date(a.createdAt || 0).getTime();
+    const db = new Date(b.createdAt || 0).getTime();
+
+    const pa = priorityRank[a.priority] ?? 9;
+    const pb = priorityRank[b.priority] ?? 9;
+    if (pa !== pb) return pa - pb;
+
+    if (sort === "oldest") return da - db;
+    return db - da;
+  });
+
+  resultCount.textContent = `${rows.length} result${rows.length === 1 ? "" : "s"}`;
+  return rows;
+}
+
+function renderList() {
+  const rows = applyFilters();
+
+  if (!rows.length) {
+    listEl.innerHTML = `
+      <div class="empty">
+        <strong>No reports found.</strong><br/>
+        Try adjusting your filters or search.
+      </div>
     `;
+    return;
+  }
 
-    modal.classList.remove("hidden");
-};
+  listEl.innerHTML = rows
+    .map((c) => {
+      const statusClass = statusBadgeClass(c.status);
+      const prClass = prioBadgeClass(c.priority);
+      const safeTitle = escapeHtml(c.category || "-");
+      const safeThana = escapeHtml(c.thana || "-");
+      const safeRoute = escapeHtml(c.route || "-");
+      const bus = `${escapeHtml(c.busName || "-")}${
+        c.busNumber
+          ? ` · <span style="opacity:.75">${escapeHtml(c.busNumber)}</span>`
+          : ""
+      }`;
+      const desc = escapeHtml(c.description || "-");
+      const created = formatDate(c.createdAt);
+
+      return `
+        <article class="report-item" data-id="${c.id}">
+          <div class="report-main">
+            <div class="report-top">
+              <div style="min-width:0;">
+                <div class="report-id">#${c.id}</div>
+                <h3 class="report-title">${safeTitle}</h3>
+              </div>
+              <div class="badges">
+                <span class="badge ${statusClass}">${escapeHtml(
+        normalizeStatus(c.status)
+      )}</span>
+                <span class="badge ${prClass}">${prioLabel(c.priority)}</span>
+              </div>
+            </div>
+
+            <div class="report-meta">
+              <span class="meta-chip">📍 ${safeThana}</span>
+              <span class="meta-chip">🚌 ${safeRoute}</span>
+              <span class="meta-chip">🚎 ${bus}</span>
+            </div>
+
+            <p class="report-desc">${desc}</p>
+          </div>
+
+          <aside class="report-side">
+            <div class="side-top">
+              <div class="created-at">${escapeHtml(created)}</div>
+            </div>
+
+            <div class="quick-actions">
+              <select class="statusSelect" data-id="${c.id}" aria-label="Change status">
+                <option value="new" ${
+                  normalizeStatus(c.status) === "new" ? "selected" : ""
+                }>new</option>
+                <option value="pending" ${
+                  normalizeStatus(c.status) === "pending" ? "selected" : ""
+                }>pending</option>
+                <option value="working" ${
+                  normalizeStatus(c.status) === "working" ? "selected" : ""
+                }>working</option>
+                <option value="in-progress" ${
+                  normalizeStatus(c.status) === "in-progress" ? "selected" : ""
+                }>in-progress</option>
+                <option value="resolved" ${
+                  normalizeStatus(c.status) === "resolved" ? "selected" : ""
+                }>resolved</option>
+                <option value="fake" ${
+                  normalizeStatus(c.status) === "fake" ? "selected" : ""
+                }>fake</option>
+              </select>
+
+              <button class="m-btn" type="button" data-action="view" data-id="${c.id}">Review</button>
+              <button class="m-btn m-btn-primary" type="button" data-action="update" data-id="${c.id}">Update</button>
+            </div>
+          </aside>
+        </article>
+      `;
+    })
+    .join("");
+
+  // Bind buttons
+  listEl.querySelectorAll("button[data-action='view']").forEach((b) => {
+    b.addEventListener("click", () => openModal(Number(b.dataset.id)));
+  });
+
+  listEl.querySelectorAll("button[data-action='update']").forEach((b) => {
+    b.addEventListener("click", async () => {
+      const id = Number(b.dataset.id);
+      const sel = listEl.querySelector(`.statusSelect[data-id='${id}']`);
+      if (!sel) return;
+
+      try {
+        b.disabled = true;
+        b.textContent = "Updating…";
+        await updateStatus(id, sel.value);
+        await reload();
+      } catch (e) {
+        console.error(e);
+        alert(`Update failed: ${e.message || e}`);
+      } finally {
+        b.disabled = false;
+        b.textContent = "Update";
+      }
+    });
+  });
+}
+
+async function updateStatus(id, status, note = null) {
+  const payload = { status: normalizeStatus(status) };
+  if (note && String(note).trim()) payload.note = String(note).trim();
+
+  const resp = await fetch(`/api/complaints/${id}/status`, {
+    method: "PATCH",
+    headers: getAuthHeaders({ "Content-Type": "application/json" }),
+    body: JSON.stringify(payload),
+  });
+
+  const data = await safeReadJson(resp);
+  if (!resp.ok) {
+    throw new Error(data?.message || data?.error || JSON.stringify(data));
+  }
+
+  return data;
+}
+
+function destroyModalMap() {
+  if (modalMap) {
+    try {
+      modalMap.remove();
+    } catch (_) {}
+    modalMap = null;
+  }
+}
+
+function initModalMap(lat, lng, accuracy = null) {
+  if (typeof L === "undefined") return;
+  const el = document.getElementById("modalMap");
+  if (!el) return;
+
+  destroyModalMap();
+
+  modalMap = L.map(el, { zoomControl: true, scrollWheelZoom: false });
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "&copy; OpenStreetMap",
+  }).addTo(modalMap);
+
+  const pos = [lat, lng];
+  L.marker(pos).addTo(modalMap);
+  if (accuracy && Number(accuracy) > 0) {
+    L.circle(pos, {
+      radius: Number(accuracy),
+      weight: 1,
+      fillOpacity: 0.12,
+    }).addTo(modalMap);
+  }
+
+  modalMap.setView(pos, 14);
+
+  setTimeout(() => {
+    try {
+      modalMap.invalidateSize();
+    } catch (_) {}
+  }, 50);
+}
+
+function openModal(id) {
+  selectedComplaint = allComplaints.find((c) => c.id === id);
+  if (!selectedComplaint) return;
+
+  modalKicker.textContent = `Priority: ${prioLabel(
+    selectedComplaint.priority
+  )} · Status: ${normalizeStatus(selectedComplaint.status)}`;
+  modalTitle.textContent = `Complaint #${selectedComplaint.id} — ${
+    selectedComplaint.category || ""
+  }`;
+
+  modalStatus.value = normalizeStatus(selectedComplaint.status);
+  modalNote.value = "";
+
+  modalBody.innerHTML = `
+    <div>
+      <div><b>Category:</b> ${escapeHtml(selectedComplaint.category || "-")}</div>
+      <div><b>Priority:</b> ${escapeHtml(prioLabel(selectedComplaint.priority))}</div>
+      <div><b>Status:</b> <span class="badge ${statusBadgeClass(
+        selectedComplaint.status
+      )}">${escapeHtml(normalizeStatus(selectedComplaint.status))}</span></div>
+      <div><b>Created:</b> ${escapeHtml(formatDate(selectedComplaint.createdAt))}</div>
+      <div><b>Thana:</b> ${escapeHtml(selectedComplaint.thana || "-")}</div>
+      <div><b>Route:</b> ${escapeHtml(selectedComplaint.route || "-")}</div>
+      <div><b>Bus:</b> ${escapeHtml(selectedComplaint.busName || "-")} (${escapeHtml(
+    selectedComplaint.busNumber || "-"
+  )})</div>
+      <div><b>Reporter Type:</b> ${escapeHtml(selectedComplaint.reporterType || "-")}</div>
+      <div style="grid-column:1/-1"><b>Description:</b><br/>${escapeHtml(
+        selectedComplaint.description || "-"
+      )}</div>
+
+      ${
+        selectedComplaint.latitude != null &&
+        selectedComplaint.longitude != null
+          ? `
+            <div class="modalMapWrap">
+              <b>Location:</b>
+              <div id="modalMap" class="modalMap" aria-label="Case location map"></div>
+              <div class="mapMeta">
+                <a class="mapLink" target="_blank" rel="noreferrer"
+                  href="https://www.google.com/maps?q=${encodeURIComponent(
+                    selectedComplaint.latitude
+                  )},${encodeURIComponent(selectedComplaint.longitude)}">
+                  Open in Google Maps
+                </a>
+              </div>
+            </div>
+          `
+          : ``
+      }
+
+      ${
+        selectedComplaint.imageUrl
+          ? `
+            <div class="modalImageWrap">
+              <b>Image:</b>
+              <div class="imageCard">
+                <img id="modalImage" class="modalImage" alt="Complaint evidence" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
+                <div class="imageMeta">
+                  <a class="imageLink" target="_blank" rel="noreferrer" href="${escapeHtml(
+                    selectedComplaint.imageUrl
+                  )}">Open image in new tab</a>
+                </div>
+              </div>
+            </div>
+          `
+          : ``
+      }
+    </div>
+  `;
+
+  if (selectedComplaint.imageUrl) {
+    const img = document.getElementById("modalImage");
+    if (img) {
+      img.src = selectedComplaint.imageUrl;
+      img.onerror = () => {
+        img.style.display = "none";
+        const card = img.closest(".imageCard");
+        if (card) card.classList.add("is-broken");
+      };
+    }
+  }
+
+  if (selectedComplaint.latitude != null && selectedComplaint.longitude != null) {
+    const lat = Number(selectedComplaint.latitude);
+    const lng = Number(selectedComplaint.longitude);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      initModalMap(lat, lng, selectedComplaint.accuracy);
+    }
+  }
+
+  modal.classList.remove("hidden");
+}
+
+function closeModal() {
+  destroyModalMap();
+  modal.classList.add("hidden");
+  selectedComplaint = null;
+}
+
+async function reload() {
+  await fetchComplaints();
+  renderList();
+}
+
+// Events
+searchInput?.addEventListener("input", renderList);
+statusFilter?.addEventListener("change", renderList);
+thanaFilter?.addEventListener("change", renderList);
+priorityFilter?.addEventListener("change", renderList);
+sortFilter?.addEventListener("change", renderList);
+
+refreshBtn?.addEventListener("click", () => reload().catch(console.error));
+
+clearFilters?.addEventListener("click", () => {
+  searchInput.value = "";
+  statusFilter.value = "all";
+  thanaFilter.value = "all";
+  priorityFilter.value = "all";
+  sortFilter.value = "newest";
+  renderList();
+});
+
+modalClose?.addEventListener("click", closeModal);
+modal?.addEventListener("click", (e) => {
+  if (e.target === modal) closeModal();
+});
+
+modalSave?.addEventListener("click", async () => {
+  if (!selectedComplaint) return;
+
+  try {
+    modalSave.disabled = true;
+    modalSave.textContent = "Updating…";
+
+    await updateStatus(selectedComplaint.id, modalStatus.value, modalNote.value);
+    closeModal();
+    await reload();
+  } catch (e) {
+    console.error(e);
+    alert(`Update failed: ${e.message || e}`);
+  } finally {
+    modalSave.disabled = false;
+    modalSave.textContent = "Update Status";
+  }
+});
+
+(async function init() {
+  try {
+    await reload();
+  } catch (e) {
+    console.error(e);
+    listEl.innerHTML = `<div class="empty"><strong>Failed to load complaints.</strong><br/>${escapeHtml(
+      String(e.message || e)
+    )}</div>`;
+  }
+})();

@@ -1,51 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <title>Jatri Ovijog – Report Issue</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-<!-- Global UI design system -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Global UI design system -->
   <link rel="stylesheet" href="./css/ui.css" />
   <!-- Styles -->
   <link rel="stylesheet" href="./css/report.css" />
   <link rel="stylesheet" href="./css/navbar.css" />
-  <link
-  rel="stylesheet"
-  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
 </head>
+
 <body>
 
   <!-- ======================= -->
   <!--   FULL NAVBAR (TOP)     -->
-<header class="full-navbar">
-  <div class="nav-left">
-    <a href="dashboard.html" class="brand-title"><span>Jatri_Ovijog</span></a>
-  </div>
-  <button class="nav-toggle" aria-label="Toggle navigation">
-    <span></span><span></span><span></span>
-  </button>
-  <div class="nav-collapsible">
-    <div class="nav-pill" id="nav-pill">
-      <div class="nav-slider" id="nav-slider"></div>
-      <a href="dashboard.html" class="nav-pill-link" data-page="dashboard"><span>Dashboard</span><span class="nav-pill-badge">4</span></a>
-      <a href="feed.html" class="nav-pill-link" data-page="feed"><span>Community</span></a>
-      <a href="report.html" class="nav-pill-link" data-page="report"><span>Report</span></a>
-      <a href="emergency.html" class="nav-pill-link" data-page="emergency"><span>Emergency</span></a>
+  <header class="full-navbar">
+    <div class="nav-left">
+      <a href="dashboard.html" class="brand-title"><span>Jatri_Ovijog</span></a>
     </div>
-    <div class="nav-right">
-      <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
-      <button class="nav-icon-btn" id="profile-btn" title="Profile">👤</button>
-      <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-collapsible">
+      <div class="nav-pill" id="nav-pill">
+        <div class="nav-slider" id="nav-slider"></div>
+        <a href="dashboard.html" class="nav-pill-link" data-page="dashboard"><span>Dashboard</span><span
+            class="nav-pill-badge">4</span></a>
+        <a href="feed.html" class="nav-pill-link" data-page="feed"><span>Community</span></a>
+        <a href="report.html" class="nav-pill-link" data-page="report"><span>Report</span></a>
+        <a href="emergency.html" class="nav-pill-link" data-page="emergency"><span>Emergency</span></a>
+      </div>
+      <div class="nav-right">
+        <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+        <button class="nav-icon-btn" id="profile-btn" title="Profile">👤</button>
+        <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
+          <svg class="nav-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+      </div>
     </div>
-  </div>
-</header>
-<div class="nav-backdrop" aria-hidden="true"></div>
+  </header>
+  <div class="nav-backdrop" aria-hidden="true"></div>
 
 
   <!-- ======================= -->
@@ -160,27 +167,52 @@
                 <label for="thana">Thana (Dhaka)</label>
                 <select id="thana" required>
                   <option value="">Select Thana</option>
+                  <option>Adabor</option>
                   <option>Airport</option>
                   <option>Badda</option>
                   <option>Banani</option>
+                  <option>Bangshal</option>
+                  <option>Bhashantek</option>
                   <option>Cantonment</option>
+                  <option>Chak Bazar</option>
+                  <option>Dakshinkhan</option>
+                  <option>Darus Salam</option>
                   <option>Demra</option>
                   <option>Dhanmondi</option>
+                  <option>Gendaria</option>
                   <option>Gulshan</option>
+                  <option>Hazaribagh</option>
                   <option>Jatrabari</option>
+                  <option>Kadamtali</option>
                   <option>Kafrul</option>
+                  <option>Kalabagan</option>
+                  <option>Kamrangirchar</option>
                   <option>Khilgaon</option>
                   <option>Khilkhet</option>
-                  <option>Mirpur</option>
+                  <option>Kotwali</option>
+                  <option>Lalbagh</option>
+                  <option>Mirpur Model</option>
                   <option>Mohammadpur</option>
                   <option>Motijheel</option>
+                  <option>New Market</option>
                   <option>Pallabi</option>
+                  <option>Paltan</option>
                   <option>Ramna</option>
+                  <option>Rampura</option>
                   <option>Sabujbagh</option>
+                  <option>Shah Ali</option>
                   <option>Shahbagh</option>
+                  <option>Sher-e-Bangla Nagar</option>
+                  <option>Shyampur</option>
+                  <option>Sutrapur</option>
                   <option>Tejgaon</option>
-                  <option>Uttara West</option>
+                  <option>Tejgaon Industrial</option>
+                  <option>Turag</option>
                   <option>Uttara East</option>
+                  <option>Uttara West</option>
+                  <option>Uttar Khan</option>
+                  <option>Vatara</option>
+                  <option>Wari</option>
                 </select>
               </div>
               <div class="field">
@@ -239,18 +271,18 @@
           <button id="getLocationBtn" class="ghost-cta">📍 Get Current Location</button>
           <button id="useMapBtn" class="ghost-cta" type="button">🗺️ Pick Location on Map</button>
 
-<div id="mapWrap" style="margin-top:12px; display:none;">
-  <div id="map" style="width:100%; height:260px; border-radius:12px; overflow:hidden;"></div>
+          <div id="mapWrap" style="margin-top:12px; display:none;">
+            <div id="map" style="width:100%; height:260px; border-radius:12px; overflow:hidden;"></div>
 
-  <div style="display:flex; gap:10px; margin-top:10px;">
-    <button id="confirmMapBtn" class="ghost-cta" type="button">✅ Use Selected Location</button>
-    <button id="clearMapBtn" class="ghost-cta" type="button">🧹 Clear</button>
-  </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+              <button id="confirmMapBtn" class="ghost-cta" type="button">✅ Use Selected Location</button>
+              <button id="clearMapBtn" class="ghost-cta" type="button">🧹 Clear</button>
+            </div>
 
-  <small style="display:block; margin-top:8px; opacity:.85;">
-    Tip: Click anywhere on the map to drop a pin.
-  </small>
-</div>
+            <small style="display:block; margin-top:8px; opacity:.85;">
+              Tip: Click anywhere on the map to drop a pin.
+            </small>
+          </div>
 
           <div id="locationStatus" class="location-status">
             Location not captured yet.
@@ -287,10 +319,11 @@
   <script src="./js/navbar.js"></script>
 
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="./js/report.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./js/report.js"></script>
 
 </body>
+
 </html>

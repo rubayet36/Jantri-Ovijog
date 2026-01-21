@@ -432,7 +432,7 @@
 /* prevent long URLs from causing horizontal scroll in modal */
 .modalBody a{ word-break: break-all; }
 
-.modalBody b{ color: var(--m-text); }
+.modalBody b{ color: #3296c7; }
 
 .modalFooter{
   padding: 12px 16px;

@@ -4,7 +4,7 @@
 
 :root{
   /* System tokens (fallbacks ensure feed.css works standalone) */
-  --bg: var(--bg-body, #F8FAFC);
+
   --surface: var(--bg-card, #FFFFFF);
   --surface-2: var(--bg-muted, #F1F5F9);
 
@@ -368,7 +368,7 @@ html, body {
 .map-col { position: sticky; top: calc(var(--nav-h) + 92px); height: calc(100vh - (var(--nav-h) + 110px)); }
 .map-panel {
   background: var(--surface);
-  border: 1px solid var(--border);
+     border: 10px solid #fdfeff;
   border-radius: var(--r-20);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
@@ -378,7 +378,7 @@ html, body {
 }
 .map-panel-header {
   padding: 14px 16px;
-  background: #fff;
+  background: #d9f5ff;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -621,4 +621,67 @@ body{
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
+}
+
+/* =========================
+   Skeleton loading (Feed)
+   ========================= */
+.feed-card.skeleton{
+  cursor: default;
+  pointer-events: none;
+}
+
+.sk{
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: 999px;
+}
+
+.sk::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.55) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  animation: sk-shimmer 1.2s infinite;
+}
+
+@keyframes sk-shimmer{
+  100%{ transform: translateX(100%); }
+}
+
+.sk-avatar{ width:44px; height:44px; border-radius: 12px; }
+.sk-line{ height: 12px; }
+.sk-line.sm{ height: 10px; opacity: 0.85; }
+.sk-line.lg{ height: 16px; border-radius: 10px; }
+.sk-chip{ height: 28px; width: 110px; border-radius: var(--r-pill); }
+
+.sk-w-40{ width: 40%; }
+.sk-w-55{ width: 55%; }
+.sk-w-65{ width: 65%; }
+.sk-w-80{ width: 80%; }
+.sk-w-90{ width: 90%; }
+
+.feed-card.skeleton .feed-top{
+  background-color: transparent;
+}
+
+.feed-card.skeleton .status-badge{
+  min-width: 92px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk::after{ animation: none !important; }
 }

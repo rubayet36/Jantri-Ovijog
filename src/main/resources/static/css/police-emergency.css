@@ -28,4 +28,202 @@
   background: rgba(34, 197, 94, 0.12);
   color: #065f46;
   border-color: rgba(34, 197, 94, 0.22);
+}/* ============================
+   POLICE EMERGENCY PORTAL UI
+   ============================ */
+
+.complaints-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Emergency card */
+.complaint-card {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.complaint-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+/* Content area */
+.complaint-content {
+  flex: 1;
+}
+
+/* Top row */
+.complaint-row-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.complaint-id {
+  font-weight: 700;
+  font-size: 15px;
+  color: #111827;
+}
+
+.complaint-bus {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Status badge */
+.status-badge {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid;
+  text-transform: capitalize;
+}
+
+.status-new {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.status-responding {
+  background: rgba(245, 158, 11, 0.15);
+  color: #92400e;
+  border-color: rgba(245, 158, 11, 0.3);
+}
+
+.status-resolved {
+  background: rgba(34, 197, 94, 0.15);
+  color: #065f46;
+  border-color: rgba(34, 197, 94, 0.3);
+}
+
+/* Tags */
+.complaint-tags {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.tag-pill {
+  background: #f3f4f6;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  color: #374151;
+}
+
+.tag-pill a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.tag-pill a:hover {
+  text-decoration: underline;
+}
+
+/* Description */
+.complaint-desc {
+  font-size: 14px;
+  color: #374151;
+  margin: 8px 0;
+}
+
+/* Audio */
+audio {
+  margin-top: 8px;
+  width: 100%;
+}
+
+/* Meta */
+.complaint-meta-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.complaint-meta {
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  gap: 12px;
+}
+
+/* Empty state */
+.empty-queue {
+  padding: 40px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 14px;
+}
+/* ============================
+   Emergency Map Panel (Leaflet)
+   ============================ */
+
+.emergency-map-card {
+  position: sticky;
+  top: 88px; /* keeps it visible while scrolling */
+}
+
+.map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.map-open-link {
+  font-size: 12px;
+  font-weight: 600;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.map-open-link:hover {
+  text-decoration: underline;
+}
+
+.emergency-map {
+  height: 320px;
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.map-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Make leaflet controls match your UI a bit */
+.leaflet-control-zoom a {
+  border-radius: 10px !important;
+}
+.tag-pill-btn {
+  border: 0;
+  cursor: pointer;
+  background: #f3f4f6;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.tag-pill-btn:hover {
+  background: #e5e7eb;
 }

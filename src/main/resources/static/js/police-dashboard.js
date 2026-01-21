@@ -123,38 +123,37 @@ async function fetchPoliceData() {
 // 3. BUILD HEATMAP POINTS
 // =========================================
 function buildIncidentPoints() {
- const geoComplaints = policeComplaints.filter(
-  (c) =>
-    c.latitude !== null &&
-    c.longitude !== null &&
-    c.status !== "fake"   // ❌ exclude fake cases
-);
-const grouped = {};
+  const geoComplaints = policeComplaints.filter(
+    (c) =>
+      c.latitude !== null &&
+      c.longitude !== null &&
+      c.status !== "fake" // ❌ exclude fake cases
+  );
+  const grouped = {};
 
-geoComplaints.forEach((c) => {
-  const key = c.thana || "Unknown";
+  geoComplaints.forEach((c) => {
+    const key = c.thana || "Unknown";
 
-  if (!grouped[key]) {
-    grouped[key] = {
-      thana: key,
-      lat: Number(c.latitude),
-      lng: Number(c.longitude),
-      high: 0,
-      medium: 0,
-      low: 0,
-      total: 0,
-    };
-  }
+    if (!grouped[key]) {
+      grouped[key] = {
+        thana: key,
+        lat: Number(c.latitude),
+        lng: Number(c.longitude),
+        high: 0,
+        medium: 0,
+        low: 0,
+        count: 0, // ✅ Fix: used "count" to match renderHotspots expectation
+      };
+    }
 
-  if (c.priority === "high") grouped[key].high++;
-  else if (c.priority === "medium") grouped[key].medium++;
-  else grouped[key].low++;
+    if (c.priority === "high") grouped[key].high++;
+    else if (c.priority === "medium") grouped[key].medium++;
+    else grouped[key].low++;
 
-  grouped[key].total++;
-});
+    grouped[key].count++; // ✅ Fix: increment count
+  });
 
-incidentPoints = Object.values(grouped);
-
+  incidentPoints = Object.values(grouped);
 }
 
 // =========================================
@@ -201,7 +200,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Keep Leaflet responsive (grid changes, orientation changes, navbar toggle)
   const invalidate = () => {
     if (heatMapLeaflet) {
-      try { heatMapLeaflet.invalidateSize(); } catch (_) {}
+      try { heatMapLeaflet.invalidateSize(); } catch (_) { }
     }
   };
 
@@ -425,30 +424,31 @@ function initHeatmap(forceReinit = false) {
   }).addTo(heatMapLeaflet);
 
   // Add circles (3-tier intensity to match legend)
-incidentPoints.forEach((p) => {
-  let color = "#0EA5E9"; // 🔵 Low (default)
+  incidentPoints.forEach((p) => {
+    let color = "#0EA5E9"; // 🔵 Low (default)
 
-  if (p.high > 0) color = "#EF4444";       // 🔴 High
-  else if (p.medium > 0) color = "#F59E0B"; // 🟠 Medium
+    if (p.high > 0) color = "#EF4444"; // 🔴 High
+    else if (p.medium > 0) color = "#F59E0B"; // 🟠 Medium
 
-  const radius = Math.max(150, p.total * 200);
+    // Use p.count (was p.total)
+    const radius = Math.max(150, p.count * 200);
 
-  L.circle([p.lat, p.lng], {
-    color,
-    fillColor: color,
-    fillOpacity: 0.4,
-    radius,
-    weight: 1,
-  })
-    .addTo(heatMapLeaflet)
-    .bindPopup(`
+    L.circle([p.lat, p.lng], {
+      color,
+      fillColor: color,
+      fillOpacity: 0.4,
+      radius,
+      weight: 1,
+    })
+      .addTo(heatMapLeaflet)
+      .bindTooltip(p.thana, { direction: "top", offset: [0, -10] }) // ✅ Show area name on hover
+      .bindPopup(`
       <b>${p.thana}</b><br>
       🔴 High: ${p.high}<br>
       🟠 Medium: ${p.medium}<br>
       🔵 Low: ${p.low}
     `);
-});
-;
+  });
 
   renderHotspots();
 }
@@ -470,13 +470,18 @@ function renderHotspots() {
   topSpots.forEach((p) => {
     const item = document.createElement("div");
     item.className = "hotspot-item";
+    // ✅ Determine risk label dynamically
+    let riskLabel = "Moderate Activity";
+    if (p.high > 0) riskLabel = "Critical High-Risk Zone";
+    else if (p.medium > p.low) riskLabel = "Medium Risk Zone";
+
     item.innerHTML = `
       <div>
         <div style="font-weight:600;">${p.thana}</div>
-        <div style="font-size:11px; color:#64748B;">${p.type}</div>
+        <div style="font-size:11px; color:#64748B;">${riskLabel}</div>
       </div>
       <div style="font-weight:800; color:#B91C1C;">${p.count}</div>
-    `;
+      `;
 
     item.addEventListener("click", () => {
       if (heatMapLeaflet) heatMapLeaflet.setView([p.lat, p.lng], 14);

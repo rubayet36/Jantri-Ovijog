@@ -19,10 +19,16 @@ body {
   /* Background: gradient + image */
   background:
     linear-gradient(135deg, rgba(15, 32, 39, 0.7), rgba(32, 58, 67, 0.7)),
-    url("https://images.pexels.com/photos/34088/pexels-photo.jpg") center/cover
-    no-repeat fixed;
+    url("https://i.postimg.cc/hG587yhb/dhaka-forest-20260119-185619.png")center/cover no-repeat fixed;
 
   color: #f9fafb;
+}
+
+html[data-theme="dark"] body {
+  background:
+    linear-gradient(135deg, rgba(2, 6, 23, 0.85), rgba(15, 23, 42, 0.8)),
+    url("https://i.postimg.cc/wBNJ7hRt/dhaka-blueprint-20260121-142616.png") center/cover no-repeat fixed;
+  color: #F0F9FF;
 }
 
 /* 4. Wrapper to keep padding on small screens */
@@ -39,18 +45,24 @@ body {
   max-width: 420px;
   padding: 32px 32px 26px;
 
-  background: rgba(255, 255, 255, 0.12);           /* translucent */
+  background: rgba(255, 255, 255, 0.12);
+  /* translucent */
   border-radius: 24px;
 
-  border: 1px solid rgba(255, 255, 255, 0.35);     /* glass border */
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  /* glass border */
   box-shadow:
-    -10px -10px 25px rgba(255, 255, 255, 0.25),    /* light side (neumorph) */
-     12px 12px 30px rgba(0, 0, 0, 0.45);           /* dark side (neumorph) */
+    -10px -10px 25px rgba(255, 255, 255, 0.25),
+    /* light side (neumorph) */
+    12px 12px 30px rgba(0, 0, 0, 0.45);
+  /* dark side (neumorph) */
 
-  backdrop-filter: blur(18px);                     /* GLASS BLUR */
+  backdrop-filter: blur(18px);
+  /* GLASS BLUR */
   -webkit-backdrop-filter: blur(18px);
 
-  animation: floatIn 0.7s ease-out;                /* entry animation */
+  animation: floatIn 0.7s ease-out;
+  /* entry animation */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -59,7 +71,7 @@ body {
   transform: translateY(-6px);
   box-shadow:
     -14px -14px 30px rgba(255, 255, 255, 0.3),
-     16px 16px 40px rgba(0, 0, 0, 0.55);
+    16px 16px 40px rgba(0, 0, 0, 0.55);
 }
 
 /* 6. Text headings */
@@ -107,7 +119,7 @@ body {
     inset 4px 4px 8px rgba(15, 23, 42, 0.9);
 
   transition: border-color 0.25s ease, box-shadow 0.25s ease,
-              background 0.25s ease, transform 0.1s ease;
+    background 0.25s ease, transform 0.1s ease;
 }
 
 /* Input focus animation */
@@ -133,7 +145,8 @@ body {
 
   background: linear-gradient(135deg, #4f46e5, #06b6d4);
   border: none;
-  border-radius: 999px; /* pill shape */
+  border-radius: 999px;
+  /* pill shape */
   color: #f9fafb;
   font-weight: 600;
   font-size: 15px;
@@ -145,7 +158,7 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.1);
 
   transition: transform 0.15s ease, box-shadow 0.15s ease,
-              filter 0.15s ease;
+    filter 0.15s ease;
 }
 
 /* Button hover + active (animation) */
@@ -195,6 +208,7 @@ a:hover {
     opacity: 0;
     transform: translateY(24px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -203,15 +217,21 @@ a:hover {
 
 /* 11. Basic responsiveness */
 @media (max-width: 480px) {
+  .auth-wrapper {
+    padding: 16px;
+  }
+
   .auth-card {
     padding: 24px 20px 18px;
     border-radius: 18px;
+    width: 100%;
   }
 
   .auth-title {
     font-size: 24px;
   }
 }
+
 /* Role selector layout */
 .role-options {
   display: flex;
@@ -225,7 +245,8 @@ a:hover {
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  color: #e5e7eb; /* same tone as other labels */
+  color: #e5e7eb;
+  /* same tone as other labels */
 }
 
 /* Don’t stretch radio buttons like text inputs */
@@ -233,6 +254,7 @@ a:hover {
   width: auto;
   margin: 0;
 }
+
 /* ===============================
    Emergency Button (CRITICAL CTA)
 ================================ */
@@ -242,11 +264,9 @@ a:hover {
   margin-top: 12px;
   padding: 11px;
 
-  background: linear-gradient(
-    135deg,
-    #dc2626,
-    #ef4444
-  );
+  background: linear-gradient(135deg,
+      #dc2626,
+      #ef4444);
   border: none;
   border-radius: 999px;
 
@@ -294,11 +314,13 @@ a:hover {
       0 10px 26px rgba(220, 38, 38, 0.45),
       inset 0 0 0 1px rgba(255, 255, 255, 0.15);
   }
+
   50% {
     box-shadow:
       0 14px 36px rgba(220, 38, 38, 0.75),
       inset 0 0 0 1px rgba(255, 255, 255, 0.25);
   }
+
   100% {
     box-shadow:
       0 10px 26px rgba(220, 38, 38, 0.45),

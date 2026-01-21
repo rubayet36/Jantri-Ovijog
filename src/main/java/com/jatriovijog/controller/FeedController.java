@@ -32,8 +32,7 @@ public class FeedController {
     public Mono<Map<String, Object>> addComment(
             @PathVariable Long id,
             @RequestBody Map<String, Object> payload,
-            @RequestHeader(value = "Authorization", required = false) String authHeader
-    ) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         // ✅ whitelist fields to prevent mass-assignment
         Map<String, Object> fixed = new HashMap<>();
         fixed.put("complaint_id", id);
@@ -49,6 +48,18 @@ public class FeedController {
         Long userId = extractUserId(authHeader);
         if (userId != null) {
             fixed.put("user_id", userId);
+
+            // ✅ Fetch real user name from DB
+            return supabase.getUserById(userId)
+                    .flatMap(users -> {
+                        if (!users.isEmpty()) {
+                            String realName = (String) users.get(0).get("name");
+                            if (realName != null && !realName.isBlank()) {
+                                fixed.put("author_name", realName);
+                            }
+                        }
+                        return supabase.createComment(fixed);
+                    });
         }
 
         return supabase.createComment(fixed);
@@ -57,8 +68,7 @@ public class FeedController {
     @GetMapping("/complaints/{id}/reactions")
     public Mono<Map<String, Object>> getReactionCounts(
             @PathVariable Long id,
-            @RequestParam(required = false) String clientId
-    ) {
+            @RequestParam(required = false) String clientId) {
         return supabase.getReactionCounts(id, clientId);
     }
 
@@ -66,8 +76,7 @@ public class FeedController {
     public Mono<Map<String, Object>> toggleReaction(
             @PathVariable Long id,
             @RequestBody Map<String, Object> payload,
-            @RequestHeader(value = "Authorization", required = false) String authHeader
-    ) {
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         // ✅ whitelist fields (and enforce clientId)
         Map<String, Object> fixed = new HashMap<>();
         fixed.put("complaint_id", id);
@@ -93,7 +102,8 @@ public class FeedController {
     }
 
     private Long extractUserId(String authHeader) {
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) return null;
+        if (authHeader == null || !authHeader.startsWith("Bearer "))
+            return null;
         try {
             Claims claims = jwtUtil.validateToken(authHeader.substring("Bearer ".length()).trim());
             Object uid = claims.get("userId");

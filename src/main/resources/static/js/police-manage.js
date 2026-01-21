@@ -170,10 +170,26 @@ async function fetchComplaints() {
 }
 
 function hydrateThanaFilter() {
-  const thanas = [
-    ...new Set(allComplaints.map((c) => String(c.thana || "-").trim())),
-  ]
+  // ✅ UPDATED: Full list of Dhaka Thanas (static + dynamic merge)
+  const knownThanas = [
+    "Adabor", "Airport", "Badda", "Banani", "Bangshal", "Bhashantek",
+    "Cantonment", "Chak Bazar", "Dakshinkhan", "Darus Salam", "Demra",
+    "Dhanmondi", "Gendaria", "Gulshan", "Hazaribagh", "Jatrabari",
+    "Kadamtali", "Kafrul", "Kalabagan", "Kamrangirchar", "Khilgaon",
+    "Khilkhet", "Kotwali", "Lalbagh", "Mirpur Model", "Mohammadpur",
+    "Motijheel", "New Market", "Pallabi", "Paltan", "Ramna", "Rampura",
+    "Sabujbagh", "Shah Ali", "Shahbagh", "Sher-e-Bangla Nagar",
+    "Shyampur", "Sutrapur", "Tejgaon", "Tejgaon Industrial", "Turag",
+    "Uttara East", "Uttara West", "Uttar Khan", "Vatara", "Wari"
+  ];
+
+  // Merge with any existing values in data (case-insensitive dedupe)
+  const dataThanas = allComplaints.map((c) => String(c.thana || "-").trim());
+  const combined = new Set([...knownThanas, ...dataThanas]);
+
+  const thanas = [...combined]
     .filter(Boolean)
+    .filter(t => t !== "-")
     .sort((a, b) => a.localeCompare(b));
 
   const current = thanaFilter.value || "all";
@@ -244,11 +260,10 @@ function renderList() {
       const safeTitle = escapeHtml(c.category || "-");
       const safeThana = escapeHtml(c.thana || "-");
       const safeRoute = escapeHtml(c.route || "-");
-      const bus = `${escapeHtml(c.busName || "-")}${
-        c.busNumber
+      const bus = `${escapeHtml(c.busName || "-")}${c.busNumber
           ? ` · <span style="opacity:.75">${escapeHtml(c.busNumber)}</span>`
           : ""
-      }`;
+        }`;
       const desc = escapeHtml(c.description || "-");
       const created = formatDate(c.createdAt);
 
@@ -284,24 +299,18 @@ function renderList() {
 
             <div class="quick-actions">
               <select class="statusSelect" data-id="${c.id}" aria-label="Change status">
-                <option value="new" ${
-                  normalizeStatus(c.status) === "new" ? "selected" : ""
-                }>new</option>
-                <option value="pending" ${
-                  normalizeStatus(c.status) === "pending" ? "selected" : ""
-                }>pending</option>
-                <option value="working" ${
-                  normalizeStatus(c.status) === "working" ? "selected" : ""
-                }>working</option>
-                <option value="in-progress" ${
-                  normalizeStatus(c.status) === "in-progress" ? "selected" : ""
-                }>in-progress</option>
-                <option value="resolved" ${
-                  normalizeStatus(c.status) === "resolved" ? "selected" : ""
-                }>resolved</option>
-                <option value="fake" ${
-                  normalizeStatus(c.status) === "fake" ? "selected" : ""
-                }>fake</option>
+                <option value="new" ${normalizeStatus(c.status) === "new" ? "selected" : ""
+        }>new</option>
+                <option value="pending" ${normalizeStatus(c.status) === "pending" ? "selected" : ""
+        }>pending</option>
+                <option value="working" ${normalizeStatus(c.status) === "working" ? "selected" : ""
+        }>working</option>
+                <option value="in-progress" ${normalizeStatus(c.status) === "in-progress" ? "selected" : ""
+        }>in-progress</option>
+                <option value="resolved" ${normalizeStatus(c.status) === "resolved" ? "selected" : ""
+        }>resolved</option>
+                <option value="fake" ${normalizeStatus(c.status) === "fake" ? "selected" : ""
+        }>fake</option>
               </select>
 
               <button class="m-btn" type="button" data-action="view" data-id="${c.id}">Review</button>
@@ -362,7 +371,7 @@ function destroyModalMap() {
   if (modalMap) {
     try {
       modalMap.remove();
-    } catch (_) {}
+    } catch (_) { }
     modalMap = null;
   }
 }
@@ -394,7 +403,7 @@ function initModalMap(lat, lng, accuracy = null) {
   setTimeout(() => {
     try {
       modalMap.invalidateSize();
-    } catch (_) {}
+    } catch (_) { }
   }, 50);
 }
 
@@ -405,9 +414,8 @@ function openModal(id) {
   modalKicker.textContent = `Priority: ${prioLabel(
     selectedComplaint.priority
   )} · Status: ${normalizeStatus(selectedComplaint.status)}`;
-  modalTitle.textContent = `Complaint #${selectedComplaint.id} — ${
-    selectedComplaint.category || ""
-  }`;
+  modalTitle.textContent = `Complaint #${selectedComplaint.id} — ${selectedComplaint.category || ""
+    }`;
 
   modalStatus.value = normalizeStatus(selectedComplaint.status);
   modalNote.value = "";
@@ -417,8 +425,8 @@ function openModal(id) {
       <div><b>Category:</b> ${escapeHtml(selectedComplaint.category || "-")}</div>
       <div><b>Priority:</b> ${escapeHtml(prioLabel(selectedComplaint.priority))}</div>
       <div><b>Status:</b> <span class="badge ${statusBadgeClass(
-        selectedComplaint.status
-      )}">${escapeHtml(normalizeStatus(selectedComplaint.status))}</span></div>
+    selectedComplaint.status
+  )}">${escapeHtml(normalizeStatus(selectedComplaint.status))}</span></div>
       <div><b>Created:</b> ${escapeHtml(formatDate(selectedComplaint.createdAt))}</div>
       <div><b>Thana:</b> ${escapeHtml(selectedComplaint.thana || "-")}</div>
       <div><b>Route:</b> ${escapeHtml(selectedComplaint.route || "-")}</div>
@@ -427,46 +435,44 @@ function openModal(id) {
   )})</div>
       <div><b>Reporter Type:</b> ${escapeHtml(selectedComplaint.reporterType || "-")}</div>
       <div style="grid-column:1/-1"><b>Description:</b><br/>${escapeHtml(
-        selectedComplaint.description || "-"
-      )}</div>
+    selectedComplaint.description || "-"
+  )}</div>
 
-      ${
-        selectedComplaint.latitude != null &&
-        selectedComplaint.longitude != null
-          ? `
+      ${selectedComplaint.latitude != null &&
+      selectedComplaint.longitude != null
+      ? `
             <div class="modalMapWrap">
               <b>Location:</b>
               <div id="modalMap" class="modalMap" aria-label="Case location map"></div>
               <div class="mapMeta">
                 <a class="mapLink" target="_blank" rel="noreferrer"
                   href="https://www.google.com/maps?q=${encodeURIComponent(
-                    selectedComplaint.latitude
-                  )},${encodeURIComponent(selectedComplaint.longitude)}">
+        selectedComplaint.latitude
+      )},${encodeURIComponent(selectedComplaint.longitude)}">
                   Open in Google Maps
                 </a>
               </div>
             </div>
           `
-          : ``
-      }
+      : ``
+    }
 
-      ${
-        selectedComplaint.imageUrl
-          ? `
+      ${selectedComplaint.imageUrl
+      ? `
             <div class="modalImageWrap">
               <b>Image:</b>
               <div class="imageCard">
                 <img id="modalImage" class="modalImage" alt="Complaint evidence" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
                 <div class="imageMeta">
                   <a class="imageLink" target="_blank" rel="noreferrer" href="${escapeHtml(
-                    selectedComplaint.imageUrl
-                  )}">Open image in new tab</a>
+        selectedComplaint.imageUrl
+      )}">Open image in new tab</a>
                 </div>
               </div>
             </div>
           `
-          : ``
-      }
+      : ``
+    }
     </div>
   `;
 

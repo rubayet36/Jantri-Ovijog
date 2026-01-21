@@ -58,6 +58,26 @@ document.addEventListener("DOMContentLoaded", () => {
       locationMapLink
     );
 
+    // 1.5) Capture Image (Parallel or Sequential - let's do sequential for simplicity)
+    const imageInfo = document.getElementById("imageInfo");
+    const imagePreview = document.getElementById("imagePreview");
+    if (imageInfo) imageInfo.textContent = "Capturing image...";
+
+    let imageBlob = null;
+    try {
+      imageBlob = await captureImage();
+      if (imageBlob && imagePreview) {
+        const imgUrl = URL.createObjectURL(imageBlob);
+        imagePreview.src = imgUrl;
+        imagePreview.style.display = "block";
+        if (imageInfo) imageInfo.textContent = "Image captured.";
+      } else {
+        if (imageInfo) imageInfo.textContent = "Image capture failed or denied.";
+      }
+    } catch (e) {
+      console.error("Image capture error", e);
+    }
+
     // 2) Start 10s recording
     const stream = await getAudioStreamSafe(recordingStatus);
 
@@ -83,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 3) Send to backend
         sendingStatus.textContent = "Sending...";
-        sendEmergencyToBackend(currentLocation, audioBlob)
+        sendEmergencyToBackend(currentLocation, audioBlob, imageBlob)
           .then(() => {
             sendingStatus.textContent = "Emergency alert sent successfully.";
           })
@@ -264,27 +284,70 @@ async function blobToBase64(blob) {
 }
 
 // ===============================
+// IMAGE HELPERS
+// ===============================
+async function captureImage() {
+  const video = document.getElementById("hiddenVideo");
+  const canvas = document.getElementById("hiddenCanvas");
+
+  // Request camera
+  let stream = null;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+    video.srcObject = stream;
+    // Wait for video to be ready
+    await new Promise(resolve => video.onloadedmetadata = resolve);
+    video.play();
+
+    // Wait a brief moment for auto-exposure
+    await new Promise(r => setTimeout(r, 500));
+
+    // Draw to canvas
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Stop stream
+    stream.getTracks().forEach(t => t.stop());
+
+    // Convert to Blob
+    return new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.7));
+  } catch (err) {
+    console.warn("Camera capture failed:", err);
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    return null;
+  }
+}
+
+// ===============================
 // Send emergency report to backend
 // ===============================
-function sendEmergencyToBackend(location, audioBlob) {
+function sendEmergencyToBackend(location, audioBlob, imageBlob) {
   return new Promise(async (resolve, reject) => {
     try {
       const token = localStorage.getItem("token");
 
-      // Convert audio to base64 string (optional). You could instead upload blob to storage and send URL.
+      // Convert audio to base64 string (optional)
       const audioBase64 = await blobToBase64(audioBlob);
 
-      // Derive current user name, if available, for display on police portal
+      let imageBase64 = null;
+      if (imageBlob) {
+        imageBase64 = await blobToBase64(imageBlob);
+      }
+
+      // Derive current user name
       let currentUser = null;
       try {
         currentUser = JSON.parse(localStorage.getItem("currentUser"));
-      } catch (_) {}
+      } catch (_) { }
 
       const payload = {
         latitude: location ? location.latitude : null,
         longitude: location ? location.longitude : null,
         accuracy: location ? location.accuracy : null,
         audio: audioBase64,
+        image: imageBase64,
         createdAt: new Date().toISOString(),
         status: "new",
         passenger: currentUser && currentUser.name ? currentUser.name : "Unknown",

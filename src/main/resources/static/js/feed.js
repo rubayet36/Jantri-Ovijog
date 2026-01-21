@@ -18,7 +18,7 @@
   }
 
   let issues = [];
-  let currentFilter = "all";     // all | new | working | resolved | fake
+  let currentFilter = "all";     // all | new | working | resolved (fake posts are never shown)
   let currentSort = "recent";    // recent | top-react | top-comment
 
   // Map
@@ -103,6 +103,55 @@
     `;
   }
 
+  // --------------------
+  // Skeleton loading
+  // --------------------
+  function renderSkeleton(count = 6) {
+    const feedList = document.getElementById("feed-list");
+    if (!feedList) return;
+
+    feedList.innerHTML = Array.from({ length: count }).map(() => {
+      return `
+        <article class="feed-card skeleton" aria-hidden="true">
+          <div class="feed-card-body">
+            <div class="feed-top">
+              <div class="feed-user">
+                <div class="sk sk-avatar" aria-hidden="true"></div>
+                <div class="user-meta" style="width:100%">
+                  <div class="sk sk-line lg sk-w-55"></div>
+                  <div style="height:10px"></div>
+                  <div class="sk sk-line sm sk-w-40"></div>
+                </div>
+              </div>
+              <div class="status-badge"><span class="sk sk-line sm" style="width:70px; height:12px;"></span></div>
+            </div>
+
+            <div style="height:12px"></div>
+            <div class="sk sk-line lg sk-w-65"></div>
+
+            <div class="meta-row" style="margin-top:14px">
+              <span class="sk sk-chip"></span>
+              <span class="sk sk-chip" style="width: 140px"></span>
+              <span class="sk sk-chip" style="width: 120px"></span>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:10px; margin-top:12px">
+              <div class="sk sk-line sk-w-90"></div>
+              <div class="sk sk-line sk-w-80"></div>
+              <div class="sk sk-line sk-w-55"></div>
+            </div>
+
+            <div class="engagement-row" style="margin-top:18px">
+              <span class="sk sk-chip" style="width: 140px"></span>
+              <span class="sk sk-chip" style="width: 120px"></span>
+              <span class="sk sk-chip" style="width: 110px"></span>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
   async function loadIssues() {
     const token = localStorage.getItem("token");
     const resp = await fetch("/api/complaints", {
@@ -116,7 +165,17 @@
       return;
     }
 
-    issues = (Array.isArray(data) ? data : []).map((c) => {
+    const raw = (Array.isArray(data) ? data : []);
+
+    // ✅ Hard block: never allow fake/declared-fake posts to reach UI
+    // Supports multiple possible backend fields.
+    const nonFake = raw.filter((c) => {
+      const status = String(c?.status || "").toLowerCase();
+      const isFakeFlag = (c?.is_fake ?? c?.isFake ?? c?.fake ?? false) === true;
+      return status !== "fake" && !isFakeFlag;
+    });
+
+    issues = nonFake.map((c) => {
       const created = c.created_at || c.createdAt || null;
       const createdDate = created ? new Date(created) : new Date();
 
@@ -243,6 +302,12 @@
 
   function applyFilterAndSort() {
     let filtered = [...issues];
+
+    // Safety: if UI somehow sets 'fake' filter, reset to all.
+    if (currentFilter === "fake") currentFilter = "all";
+
+    // Safety: if UI somehow tries to set fake, force back to all.
+    if (currentFilter === "fake") currentFilter = "all";
 
     if (currentFilter !== "all") {
       filtered = filtered.filter((issue) => issue.status === currentFilter);
@@ -558,6 +623,16 @@
   document.addEventListener("DOMContentLoaded", async () => {
     initGlobalMap();
 
+    // show skeletons immediately
+    renderSkeleton(6);
+
+    // If your HTML still has a "fake" option, remove it (fake posts are blocked in UI anyway)
+    const statusSelect = document.getElementById("status-filter");
+    if (statusSelect) {
+      const fakeOpt = statusSelect.querySelector('option[value="fake"], option[value="Fake"], option[value="FAKE"]');
+      if (fakeOpt) fakeOpt.remove();
+    }
+
     await loadIssues();
     applyFilterAndSort();
 
@@ -577,7 +652,6 @@
     });
 
     // status filter select
-    const statusSelect = document.getElementById("status-filter");
     if (statusSelect) {
       statusSelect.addEventListener("change", () => {
         currentFilter = statusSelect.value;
