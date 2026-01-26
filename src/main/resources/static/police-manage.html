@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Jatri Ovijog – Police Manage</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+
+  <!-- ✅ Same global design system as police-dashboard.html -->
+  <link rel="stylesheet" href="./css/ui.css" />
+  <link rel="stylesheet" href="./css/navbar.css" />
+  <link rel="stylesheet" href="./css/police-dashboard.css" />
+
+  <!-- ✅ Manage page addon (modern) -->
+  <link rel="stylesheet" href="./css/police-manage.css" />
+  <script src="./js/auth-guard.js"></script>
+</head>
+
+<body>
+
+  <header class="full-navbar">
+    <div class="nav-left">
+      <a href="police-dashboard.html" class="brand-title"><span>🛡️ Jatri_Ovijog</span></a>
+    </div>
+    <button class="nav-toggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-collapsible">
+      <div class="nav-pill" id="nav-pill">
+        <div class="nav-slider" id="nav-slider"></div>
+        <a href="police-dashboard.html" class="nav-pill-link" data-page="police-dashboard"><span>Command</span></a>
+        <a href="police-complaints.html" class="nav-pill-link" data-page="police-complaints"><span>Complaints</span></a>
+        <a href="police-emergency.html" class="nav-pill-link" data-page="police-emergency"><span>Emergency</span></a>
+        <a href="police-manage.html" class="nav-pill-link" data-page="police-manage"><span>Manage</span></a>
+        <a href="police-chat.html" class="nav-pill-link" data-page="police-chat"><span>Team Chat</span></a>
+      </div>
+      <div class="nav-right">
+        <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">🌙</button>
+
+        <button class="nav-icon-btn" id="logout-btn" title="Sign Out">⎋</button>
+      </div>
+    </div>
+  </header>
+  <div class="nav-backdrop" aria-hidden="true"></div>
+
+  <main class="manage-main">
+    <header class="manage-header">
+      <div>
+        <h1 class="manage-title">Manage Submitted Reports</h1>
+        <p class="manage-subtitle">Verify reports, mark fake, assign priority, and update case status.</p>
+      </div>
+      <div class="manage-actions">
+        <button id="refreshBtn" class="m-btn m-btn-ghost">Refresh</button>
+      </div>
+    </header>
+
+    <section class="manage-filters" aria-label="Filters">
+      <div class="filter-row">
+        <div class="field field-search">
+          <label class="field-label" for="searchInput">Search</label>
+          <input id="searchInput" type="text" placeholder="Search by thana, route, bus, category, id…" />
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="statusFilter">Status</label>
+          <select id="statusFilter">
+            <option value="all">All</option>
+            <option value="new">New</option>
+            <option value="pending">Pending</option>
+            <option value="working">Working</option>
+            <option value="in-progress">In Progress</option>
+            <option value="resolved">Resolved</option>
+            <option value="fake">Fake</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="thanaFilter">Thana</label>
+          <select id="thanaFilter">
+            <option value="all">All</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="field-label" for="priorityFilter">Priority</label>
+          <select id="priorityFilter">
+            <option value="all">All</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+
+        <div class="field field-compact">
+          <label class="field-label" for="sortFilter">Sort</label>
+          <select id="sortFilter">
+            <option value="newest" selected>Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="priority">Priority</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="filter-meta">
+        <div class="meta-left">
+          <span class="meta-pill" id="resultCount">0 results</span>
+          <span class="meta-pill meta-muted" id="lastSynced">Sync: --</span>
+        </div>
+        <div class="meta-right">
+          <button id="clearFilters" class="m-link" type="button">Clear filters</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="manage-list-card">
+      <div id="reportsList" class="reports-list" aria-live="polite"></div>
+    </section>
+
+    <!-- Modal (kept, modernized styles) -->
+    <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modalBox">
+        <div class="modalHeader">
+          <div>
+            <div class="modalKicker" id="modalKicker">Complaint</div>
+            <h2 id="modalTitle">Complaint</h2>
+          </div>
+          <button id="modalClose" class="iconBtn" aria-label="Close">✕</button>
+        </div>
+
+        <div id="modalBody" class="modalBody"></div>
+
+        <div class="modalFooter">
+          <div class="modalControls">
+            <div class="field field-inline">
+              <label class="field-label" for="modalStatus">Status</label>
+              <select id="modalStatus">
+                <option value="new">New</option>
+                <option value="pending">Pending</option>
+                <option value="working">Working</option>
+                <option value="in-progress">In Progress</option>
+                <option value="resolved">Resolved</option>
+                <option value="fake">Fake</option>
+              </select>
+            </div>
+
+            <div class="field field-inline">
+              <label class="field-label" for="modalNote">Note</label>
+              <input id="modalNote" type="text" placeholder="Optional note" />
+            </div>
+          </div>
+
+          <button id="modalSave" class="m-btn m-btn-primary">Update Status</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./js/navbar.js"></script>
+  <script src="./js/police-manage.js"></script>
+</body>
+
+</html>
