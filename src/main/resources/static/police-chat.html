@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jatri Ovijog – Police Chat & Cases</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Shared styles -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Global UI design system -->
+    <link rel="stylesheet" href="./css/ui.css" />
+    <link rel="stylesheet" href="./css/dashboard.css" />
+    <link rel="stylesheet" href="./css/navbar.css?v=2" />
+
+    <!-- Page specific -->
+    <link rel="stylesheet" href="./css/police-chat.css" />
+    <script src="./js/auth-guard.js"></script>
+  </head>
+
+  <body>
+    <header class="full-navbar">
+      <div class="nav-left">
+        <a href="police-dashboard.html" class="brand-title"
+          ><span>🛡️ Jatri_Ovijog</span></a
+        >
+      </div>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-collapsible">
+        <div class="nav-wrap">
+          <div class="bubble active"></div>
+          <div class="nav" id="nav-container">
+            <a
+              href="police-dashboard.html"
+              class="nav-link active"
+              data-page="police-dashboard"
+            >
+              <span>Command</span>
+            </a>
+            <a
+              href="police-complaints.html"
+              class="nav-link"
+              data-page="police-complaints"
+            >
+              <span>Complaints</span>
+            </a>
+            <a
+              href="police-emergency.html"
+              class="nav-link"
+              data-page="police-emergency"
+            >
+              <span>Emergency</span>
+            </a>
+            <a href="police-chat.html" class="nav-link" data-page="police-chat">
+              <span>Team Chat</span>
+            </a>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">
+            🌙
+          </button>
+
+          <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
+            <svg
+              class="nav-icon-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    >
+    <div class="nav-backdrop" aria-hidden="true"></div>
+
+    <main class="dashboard-main police-chat-main">
+      <header class="chat-page-header">
+        <div>
+          <h1 class="page-title">Team Chat & Case Handoff</h1>
+          <p class="chat-subtitle">
+            Coordinate with other units, share images, and assign cases directly
+            from the chat.
+          </p>
+        </div>
+        <div class="chat-badge">
+          🔐 Internal use only – messages are not visible to passengers.
+        </div>
+      </header>
+
+      <section class="chat-layout card">
+        <!-- LEFT: conversation list -->
+        <aside class="chat-sidebar">
+          <div class="chat-sidebar-header">
+            <h2>Channels</h2>
+            <button id="newChannelBtn" class="small-soft-btn">+ New</button>
+          </div>
+
+          <div id="channelList" class="channel-list">
+            <!-- Filled by JS -->
+          </div>
+        </aside>
+
+        <!-- CENTER: chat window -->
+        <section class="chat-main">
+          <header class="chat-main-header">
+            <div>
+              <h2 id="currentChannelName">Select a channel</h2>
+              <p id="currentChannelMeta" class="chat-meta"></p>
+            </div>
+            <div class="chat-main-tags">
+              <span id="currentChannelType" class="channel-type-pill"></span>
+            </div>
+          </header>
+
+          <div id="messageList" class="message-list">
+            <!-- Messages injected by JS -->
+          </div>
+
+          <footer class="chat-input-bar">
+            <div class="chat-input-left">
+              <textarea
+                id="chatInput"
+                placeholder="Type a message for your team…"
+                rows="1"
+              ></textarea>
+            </div>
+            <div class="chat-input-right">
+              <label class="file-label">
+                📎
+                <input type="file" id="imageInput" accept="image/*" hidden />
+              </label>
+              <button id="sendBtn" class="send-btn">Send</button>
+            </div>
+          </footer>
+        </section>
+
+        <!-- RIGHT: assign cases panel -->
+        <aside class="chat-right">
+          <section class="case-panel">
+            <div class="case-panel-header">
+              <h2>Case Queue</h2>
+              <span class="case-panel-sub">Assign to current channel</span>
+            </div>
+            <div id="caseList" class="case-list">
+              <!-- filled by JS -->
+            </div>
+          </section>
+
+          <section class="case-panel mini-summary">
+            <h2>Assignment Summary</h2>
+            <ul id="caseSummaryList" class="case-summary-list"></ul>
+            <p class="case-summary-note">
+              This is a front-end demo. Later you can sync assignments with
+              Spring Boot.
+            </p>
+          </section>
+        </aside>
+      </section>
+    </main>
+    <!-- Case timeline + notes modal -->
+    <div id="caseModal" class="chat-case-modal">
+      <div class="chat-case-modal-backdrop"></div>
+      <div class="chat-case-modal-dialog">
+        <button class="case-modal-close" id="caseModalCloseBtn">×</button>
+
+        <div class="case-modal-header">
+          <h2 id="caseModalTitle">Case #</h2>
+          <span id="caseModalStatus" class="case-status-pill"></span>
+        </div>
+
+        <p class="case-modal-subtitle" id="caseModalSubtitle"></p>
+
+        <section class="case-modal-section">
+          <h3>Assignment</h3>
+          <div class="case-modal-assignment-row">
+            <label>
+              Officer / Team
+              <select id="caseModalAssigneeSelect"></select>
+            </label>
+            <label>
+              Status
+              <select id="caseModalStatusSelect">
+                <option value="open">Open</option>
+                <option value="progress">In progress</option>
+                <option value="resolved">Resolved</option>
+              </select>
+            </label>
+            <button id="caseModalSaveAssignment" class="case-modal-primary-btn">
+              Save
+            </button>
+          </div>
+        </section>
+
+        <section class="case-modal-section">
+          <h3>Timeline</h3>
+          <ul id="caseModalTimeline" class="case-timeline-list"></ul>
+        </section>
+
+        <section class="case-modal-section">
+          <h3>Internal Notes</h3>
+          <div id="caseModalNotesList" class="case-notes-list"></div>
+          <div class="case-notes-input-row">
+            <textarea
+              id="caseModalNoteInput"
+              rows="2"
+              placeholder="Add a note for your team…"
+            ></textarea>
+            <button id="caseModalAddNote" class="case-modal-secondary-btn">
+              Add Note
+            </button>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="./js/navbar.js"></script>
+    <script src="./js/police-chat.js"></script>
+  </body>
+</html>

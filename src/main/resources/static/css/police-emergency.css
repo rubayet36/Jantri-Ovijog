@@ -1,0 +1,387 @@
+/* police-emergency.css (Modern Grid 2026 - Aligned with Complaints) */
+
+:root {
+  --m-bg: #f3f4f6;
+  --m-card: #ffffff;
+  --m-text: #1f2937;
+  --m-muted: #6b7280;
+  --m-border: #e5e7eb;
+  --m-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --m-radius: 12px;
+  --m-radius-sm: 8px;
+
+  --m-blue: #2563eb;
+  --m-blue-weak: #eff6ff;
+  --m-red: #dc2626;
+  --m-amber: #d97706;
+  --m-green: #10b981;
+}
+
+body {
+  background: var(--m-bg);
+  color: var(--m-text);
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.police-main {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Header */
+.manage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--m-border);
+}
+
+.manage-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.manage-subtitle {
+  margin: 6px 0 0;
+  color: var(--m-muted);
+  font-size: 15px;
+}
+
+/* Filters Bar */
+.manage-filters {
+  background: var(--m-card);
+  border-radius: var(--m-radius);
+  box-shadow: var(--m-shadow);
+  padding: 16px;
+  margin-bottom: 24px;
+  border: 1px solid var(--m-border);
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  align-items: end;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--m-radius-sm);
+  border: 1px solid var(--m-border);
+  background: #f9fafb;
+  color: var(--m-text);
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+  background: white;
+  border-color: var(--m-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Reports Grid */
+.reports-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+/* Modern Card (Copied from Complaints style) */
+.report-item {
+  background: var(--m-card);
+  border: 1px solid var(--m-border);
+  border-radius: 16px;
+  box-shadow: var(--m-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.report-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.report-top {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.report-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.report-id {
+  font-size: 11px;
+  font-weight: 800;
+  color: #9ca3af;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+/* Status Colors */
+.status-new {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.status-working {
+  background: #fff7ed;
+  color: #c2410c;
+}
+.status-resolved {
+  background: #f0fdf4;
+  color: #15803d;
+}
+
+/* Priority Colors (Mapped from Severity) */
+.prio-critical {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+.prio-high {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
+}
+.prio-normal {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.report-main {
+  padding: 16px;
+  flex: 1;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  font-size: 13px;
+  color: #4b5563;
+  margin-bottom: 12px;
+}
+
+.meta-icon {
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+}
+
+.report-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #374151;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px dashed #e5e7eb;
+}
+
+/* Actions Footer */
+.report-actions {
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-top: 1px solid var(--m-border);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.statusSelect {
+  width: 100%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--m-border);
+  padding: 0 8px;
+  font-size: 13px;
+  background: white;
+}
+
+.m-btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid var(--m-border);
+  background: white;
+  color: #374151;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.m-btn:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.m-btn-primary {
+  background: var(--m-blue);
+  border-color: var(--m-blue);
+  color: white;
+}
+
+.m-btn-primary:hover {
+  background: #1d4ed8;
+}
+
+/* ============================
+   MODAL (Copied & Adapted)
+   ============================ */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.modal.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal.hidden {
+  display: none;
+}
+
+.modalBox {
+  width: min(1000px, 94vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  color: var(--m-text);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+  transform: scale(0.96);
+  transition: transform 0.2s;
+}
+
+.modal.visible .modalBox {
+  transform: scale(1);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--m-border);
+}
+
+.modalClose {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modalClose:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.modalBody {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+  background: #f8fafc;
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 32px;
+}
+
+.modalMap {
+  height: 300px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  border: 1px solid var(--m-border);
+}
+
+.detail-block {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin-bottom: 24px;
+}

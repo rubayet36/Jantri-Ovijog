@@ -1,0 +1,17 @@
+# Environment variables (secrets)
+.env
+
+# Maven build output
+target/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db

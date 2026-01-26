@@ -1,0 +1,681 @@
+/* police-complaints.css (Modern Grid 2026) */
+
+:root {
+  --m-bg: #f3f4f6;
+  --m-card: #ffffff;
+  --m-text: #1f2937;
+  --m-muted: #6b7280;
+  --m-border: #e5e7eb;
+  --m-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --m-radius: 12px;
+  --m-radius-sm: 8px;
+
+  --m-blue: #2563eb;
+  --m-blue-weak: #eff6ff;
+  --m-red: #dc2626;
+  --m-amber: #d97706;
+  --m-green: #10b981;
+}
+
+/* Page Shell */
+.manage-main {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Header */
+.manage-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--m-border);
+}
+
+.manage-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.manage-subtitle {
+  margin: 6px 0 0;
+  color: var(--m-muted);
+  font-size: 15px;
+}
+
+/* Filters Bar */
+.manage-filters {
+  background: var(--m-card);
+  border-radius: var(--m-radius);
+  box-shadow: var(--m-shadow);
+  padding: 16px;
+  margin-bottom: 24px;
+  border: 1px solid var(--m-border);
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 3fr repeat(4, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+}
+
+.field-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--m-muted);
+  margin-bottom: 6px;
+  letter-spacing: 0.05em;
+}
+
+.field input,
+.field select {
+  width: 100%;
+  height: 42px;
+  border-radius: var(--m-radius-sm);
+  border: 1px solid var(--m-border);
+  background: #f9fafb;
+  color: var(--m-text);
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s;
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+  background: white;
+  border-color: var(--m-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filter-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--m-border);
+}
+
+.meta-pill {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--m-muted);
+  background: #f3f4f6;
+  padding: 4px 12px;
+  border-radius: 99px;
+}
+
+.m-link {
+  background: none;
+  border: none;
+  color: var(--m-blue);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.m-link:hover {
+  text-decoration: underline;
+}
+
+/* Grid Layout for Reports */
+.manage-list-card {
+  background: transparent;
+  box-shadow: none;
+  border: none;
+  overflow: visible;
+}
+
+.reports-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 20px;
+  align-items: start; /* Prevents stretching */
+}
+
+/* Modern Card */
+.report-item {
+  background: var(--m-card);
+  border: 1px solid var(--m-border);
+  border-radius: 16px;
+  box-shadow: var(--m-shadow);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+  min-height: 320px;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+
+.report-item:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Header */
+.report-top {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.report-id {
+  font-size: 11px;
+  font-weight: 800;
+  color: #9ca3af; /* lighter gray */
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.report-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.4;
+  margin: 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.badges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1;
+}
+
+/* Status Colors */
+.status-new {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+.status-working {
+  background: #fff7ed;
+  color: #c2410c;
+}
+.status-resolved {
+  background: #f0fdf4;
+  color: #15803d;
+}
+.status-fake {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+/* Priority Colors */
+.prio-high {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+}
+.prio-medium {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+.prio-low {
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+/* Card Content */
+.report-main {
+  padding: 16px;
+  flex: 1;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  font-size: 13px;
+  color: #4b5563;
+  margin-bottom: 12px;
+}
+
+.meta-icon {
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+}
+
+.report-desc {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #374151;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  padding-top: 12px;
+  border-top: 1px dashed #e5e7eb;
+}
+
+/* Card Actions (Footer) */
+.report-actions {
+  padding: 12px 16px;
+  background: #f9fafb;
+  border-top: 1px solid var(--m-border);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+
+.statusCheck {
+  width: 100%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--m-border);
+  padding: 0 8px;
+  font-size: 13px;
+  background: white;
+}
+
+.m-btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid var(--m-border);
+  background: white;
+  color: #374151;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.m-btn:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.m-btn-primary {
+  background: var(--m-blue);
+  border-color: var(--m-blue);
+  color: white;
+}
+
+.m-btn-primary:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* Grouped Style */
+.complaint-group {
+  grid-column: 1 / -1; /* Span full width within grid but actually we might want cards */
+  /* Wait, for groups, let's make them look like a folder */
+  background: white;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  margin-bottom: 0;
+  overflow: hidden;
+  position: relative;
+}
+/* Ideally groups should also fit in the grid or span full width. 
+   Let's keep groups as full width dividers between grid sections OR make groups render as a distinctive card.
+   Better: Render groups as a special card that says "5 Reports - Bus X".
+*/
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .reports-list {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .filter-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .field-search {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .reports-list {
+    grid-template-columns: 1fr;
+  }
+  .manage-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+/* Modal Styles (Modern Premium 2026) */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 9999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modalBox {
+  width: min(1000px, 94vw);
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  color: var(--m-text);
+  border-radius: 24px;
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transform: scale(0.96) translateY(10px);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal.visible .modalBox {
+  transform: scale(1) translateY(0);
+}
+
+.modalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--m-border);
+}
+
+h2#modalTitle {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.modalKicker {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--m-blue);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modalClose {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  background: #f1f5f9;
+  color: #64748b;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.modalClose:hover {
+  background: #fee2e2;
+  color: #ef4444;
+  border-color: #fca5a5;
+  transform: rotate(90deg);
+}
+
+.modalBody {
+  padding: 32px;
+  overflow-y: auto;
+  flex: 1;
+  background: #f8fafc; /* Light gray bg for contrast with white blocks */
+}
+
+/* Review Grid Layout */
+.review-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 32px;
+}
+
+.review-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.review-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Detail Blocks - The "Cards" inside modal */
+.detail-block {
+  background: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Add a subtle top accent to blocks for "highlight" */
+.review-main .detail-block {
+  border-top: 4px solid var(--m-blue);
+}
+
+.review-sidebar .detail-block {
+  border-top: 4px solid var(--m-amber);
+}
+
+/* Info Rows */
+.detail-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px 32px;
+  margin-bottom: 24px;
+}
+
+.detail-item {
+  position: relative;
+}
+
+.detail-item label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.detail-item div {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  line-height: 1.5;
+}
+
+.detail-desc {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #334155;
+  white-space: pre-wrap;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--m-border);
+}
+
+/* Map & Image */
+.modalMap {
+  width: 100%;
+  height: 280px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--m-border);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.modalImage {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid var(--m-border);
+  object-fit: cover;
+  transition: transform 0.3s;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.modalImage:hover {
+  cursor: zoom-in;
+}
+
+.modalBody a {
+  color: var(--m-blue);
+  text-decoration: none;
+  font-weight: 700;
+  border-bottom: 2px solid rgba(37, 99, 235, 0.2);
+  transition: all 0.2s;
+}
+
+.modalBody a:hover {
+  border-color: var(--m-blue);
+  color: #1d4ed8;
+}
+
+.modalFooter {
+  padding: 20px 32px;
+  border-top: 1px solid var(--m-border);
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  background: #ffffff;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.modalControls {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.field-inline {
+  min-width: 240px;
+  flex: 1;
+}
+
+/* History List Modernized */
+.history-list {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px;
+  scrollbar-width: thin;
+}
+
+.history-item {
+  min-width: 160px;
+  max-width: 160px;
+  background: #ffffff;
+  border: 1px solid var(--m-border);
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.history-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: transparent;
+  transition: background 0.2s;
+}
+
+.history-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #cbd5e1;
+}
+
+.history-item.is-current {
+  border-color: var(--m-blue);
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.history-item.is-current::before {
+  background: var(--m-blue);
+}
+
+@media (max-width: 900px) {
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+  .modalFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jatri Ovijog – Emergency Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Global UI design system -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <link rel="stylesheet" href="./css/ui.css" />
+    <!-- Navbar styles -->
+    <link rel="stylesheet" href="./css/navbar.css?v=2" />
+    <!-- Reuse police dashboard and complaints styles for layout and cards -->
+    <link rel="stylesheet" href="./css/police-dashboard.css" />
+    <link rel="stylesheet" href="./css/police-complaints.css" />
+    <!-- Emergency specific styles -->
+    <link rel="stylesheet" href="./css/police-emergency.css" />
+    <script src="./js/auth-guard.js"></script>
+  </head>
+
+  <body>
+    <header class="full-navbar">
+      <div class="nav-left">
+        <a href="police-dashboard.html" class="brand-title"
+          ><span>🛡️ Jatri_Ovijog</span></a
+        >
+      </div>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-collapsible">
+        <div class="nav-wrap">
+          <div class="bubble active"></div>
+          <div class="nav" id="nav-container">
+            <a
+              href="police-dashboard.html"
+              class="nav-link active"
+              data-page="police-dashboard"
+            >
+              <span>Command</span>
+            </a>
+            <a
+              href="police-complaints.html"
+              class="nav-link"
+              data-page="police-complaints"
+            >
+              <span>Complaints</span>
+            </a>
+            <a
+              href="police-emergency.html"
+              class="nav-link"
+              data-page="police-emergency"
+            >
+              <span>Emergency</span>
+            </a>
+            <a href="police-chat.html" class="nav-link" data-page="police-chat">
+              <span>Team Chat</span>
+            </a>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">
+            🌙
+          </button>
+
+          <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
+            <svg
+              class="nav-icon-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    <div class="nav-backdrop" aria-hidden="true"></div>
+
+    <main class="police-main">
+      <div class="manage-header">
+        <div>
+          <h1 class="manage-title">Emergency Portal</h1>
+          <p class="manage-subtitle">
+            View and respond to passenger emergency reports.
+          </p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="manage-filters">
+        <div class="filter-row">
+          <div class="field">
+            <input
+              type="text"
+              id="emergencySearch"
+              placeholder="Search ID, Passenger, Location..."
+            />
+          </div>
+          <div class="field">
+            <select id="emergencyStatusFilter">
+              <option value="all">All Status</option>
+              <option value="new">New</option>
+              <option value="responding">Responding</option>
+              <option value="resolved">Resolved</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Emergency Grid (No sidebar) -->
+      <div id="emergencyList" class="reports-list"></div>
+    </main>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="./js/police-emergency.js"></script>
+    <script src="./js/navbar.js"></script>
+  </body>
+</html>

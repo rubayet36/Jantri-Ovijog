@@ -1,0 +1,342 @@
+/* 1. Modern font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+/* 2. Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 3. Modern Background */
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Background: gradient + image (Restored) */
+  background:
+    linear-gradient(135deg, rgba(15, 32, 39, 0.7), rgba(32, 58, 67, 0.7)),
+    url("https://i.postimg.cc/hG587yhb/dhaka-forest-20260119-185619.png") center/cover no-repeat fixed;
+  background-size: cover;
+  color: #f8fafc;
+  overflow: hidden;
+  /* Prevent scroll */
+}
+
+html[data-theme="dark"] body {
+  background:
+    linear-gradient(135deg, rgba(2, 6, 23, 0.85), rgba(15, 23, 42, 0.8)),
+    url("https://i.postimg.cc/wBNJ7hRt/dhaka-blueprint-20260121-142616.png") center/cover no-repeat fixed;
+  color: #F0F9FF;
+}
+
+/* Full Screen Map Background */
+.map-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  /* Blur and disable interaction */
+  filter: blur(4px);
+  transform: scale(1.05);
+  /* Prevent white edges from blur */
+  pointer-events: none;
+}
+
+/* Ensure map controls are clickable */
+#loginMap {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Map Overlay Text - positioned absolute on screen */
+.map-overlay-text {
+  position: fixed;
+  top: 32px;
+  left: 32px;
+  z-index: 5;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  padding: 16px 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  color: white;
+  pointer-events: none;
+  /* Let clicks pass through if needed, but text selectable? No. */
+}
+
+.map-overlay-text h2 {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 2px;
+}
+
+.map-overlay-text p {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Auth Wrapper - Centered over map */
+.auth-wrapper {
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: none;
+  /* Let clicks pass through outside card */
+}
+
+/* ... existing styles ... */
+
+/* Mobile */
+@media (max-width: 900px) {
+  /* No split layout to hide */
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 32px 24px;
+  }
+
+  .auth-title {
+    font-size: 28px;
+  }
+}
+
+/* 5. Modern Glass Card */
+/* Light Mode Card on Map */
+.auth-card {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 400px;
+  padding: 40px;
+
+  /* White Glass */
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 24px;
+
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #0f172a;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 6. Typography */
+/* Light Mode Typography */
+.auth-title {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: none;
+  -webkit-text-fill-color: initial;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.auth-subtitle {
+  text-align: center;
+  font-size: 15px;
+  color: #64748b;
+  margin-bottom: 32px;
+  line-height: 1.5;
+}
+
+/* 7. Forms */
+.field {
+  margin-bottom: 20px;
+}
+
+/* Light Mode Inputs */
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.field input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f1f5f9;
+  color: #0f172a;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.field input:focus {
+  border-color: #4f46e5;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  transform: none;
+}
+
+.field input::placeholder {
+  color: #94a3b8;
+}
+
+/* Role Selector */
+/* Light Mode Role Selector */
+.role-options {
+  display: flex;
+  gap: 20px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.role-options label {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px;
+  margin: 0;
+  cursor: pointer;
+  border-radius: 8px;
+  color: #64748b;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.role-options label:has(:checked) {
+  background: #fff;
+  color: #0f172a;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.role-options input {
+  display: none;
+}
+
+/* 8. Buttons */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: #4f46e5;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+
+.btn-primary:hover {
+  background: #4338ca;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+}
+
+.btn-emergency {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  animation: subtlePulse 3s infinite;
+}
+
+@keyframes subtlePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2);
+  }
+
+  70% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.btn-emergency:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+
+/* 9. Extras */
+.auth-extra {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.auth-extra a {
+  color: #818cf8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-extra a:hover {
+  text-decoration: underline;
+}
+
+.auth-footer {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 12px;
+  color: #475569;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 32px 24px;
+  }
+
+  .auth-title {
+    font-size: 28px;
+  }
+}

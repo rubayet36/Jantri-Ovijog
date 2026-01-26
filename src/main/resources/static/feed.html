@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jatri Ovijog – Community Feed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <!-- Global UI design system -->
+    <link rel="stylesheet" href="./css/ui.css" />
+    <link rel="stylesheet" href="./css/feed.css" />
+    <link rel="stylesheet" href="./css/navbar.css" />
+    <script src="./js/auth-guard.js"></script>
+  </head>
+
+  <body>
+    <nav class="full-navbar">
+      <div class="nav-left">
+        <a href="dashboard.html" class="brand-title">
+          <span>Jatri Ovijog</span>
+        </a>
+      </div>
+
+      <button class="nav-toggle nav-dots" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <div class="nav-collapsible">
+        <div class="nav-wrap">
+          <div class="bubble active"></div>
+          <div class="nav" id="nav-container">
+            <a
+              href="dashboard.html"
+              class="nav-link active"
+              data-page="dashboard"
+            >
+              <span>Dashboard</span>
+              <span class="nav-pill-badge">4</span>
+            </a>
+
+            <a href="feed.html" class="nav-link" data-page="feed">
+              <span>Community</span>
+            </a>
+
+            <a href="report.html" class="nav-link" data-page="report">
+              <span>Report</span>
+            </a>
+
+            <a href="emergency.html" class="nav-link" data-page="emergency">
+              <span>Emergency</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="nav-right">
+          <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">
+            🌙
+          </button>
+
+          <button class="nav-icon-btn" id="profile-btn" title="Profile">
+            <svg
+              class="nav-icon-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </button>
+
+          <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
+            <svg
+              class="nav-icon-svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <div class="nav-backdrop" aria-hidden="true"></div>
+
+    <main class="feed-main">
+      <header class="feed-hero">
+        <div class="feed-hero-left">
+          <h1 class="feed-h1">Community Feed</h1>
+          <p class="feed-subtitle">
+            Verified commuter reports across Dhaka. Scan fast. Act faster.
+          </p>
+        </div>
+
+        <div class="feed-hero-right">
+          <button
+            class="btn-primary"
+            onclick="window.location.href = 'report.html'"
+          >
+            + Report Issue
+          </button>
+        </div>
+      </header>
+
+      <section class="feed-toolbar" aria-label="Feed controls">
+        <div class="toolbar-row">
+          <div class="control-group">
+            <div class="control-label">Sort</div>
+            <div class="segmented" role="tablist" aria-label="Sort options">
+              <button
+                class="seg-btn active"
+                data-sort="recent"
+                role="tab"
+                aria-selected="true"
+              >
+                Recent
+              </button>
+              <button
+                class="seg-btn"
+                data-sort="top-react"
+                role="tab"
+                aria-selected="false"
+              >
+                Popular
+              </button>
+              <button
+                class="seg-btn"
+                data-sort="top-comment"
+                role="tab"
+                aria-selected="false"
+              >
+                Comments
+              </button>
+            </div>
+          </div>
+
+          <div class="control-group">
+            <div class="control-label">Status</div>
+            <select
+              id="status-filter"
+              class="select"
+              aria-label="Filter by status"
+            >
+              <option value="all" selected>All</option>
+              <option value="new">New</option>
+              <option value="working">In Progress</option>
+              <option value="resolved">Resolved</option>
+              <option value="fake">Fake</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- NEW: Two-column layout -->
+      <section class="feed-grid">
+        <div class="feed-col">
+          <section id="feed-list" class="feed-list"></section>
+        </div>
+
+        <aside class="map-col" aria-label="Map view">
+          <div class="map-panel">
+            <div class="map-panel-header">
+              <div>
+                <div class="map-panel-title">Map</div>
+                <div class="map-panel-sub">
+                  Pins update based on your filters
+                </div>
+              </div>
+              <div class="map-panel-badge" id="map-count">0 pins</div>
+            </div>
+            <div id="global-map" class="global-map"></div>
+          </div>
+        </aside>
+      </section>
+    </main>
+
+    <!-- NEW: Detail modal (reactions + comments live here) -->
+    <div class="modal-backdrop" id="modal-backdrop" aria-hidden="true"></div>
+
+    <div
+      class="modal"
+      id="detail-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="detail-title"
+    >
+      <div class="modal-card">
+        <div class="modal-header">
+          <div class="modal-title-wrap">
+            <div class="status-badge new" id="detail-status">New</div>
+            <h2 class="modal-title" id="detail-title">Report</h2>
+            <div class="modal-sub" id="detail-sub">—</div>
+          </div>
+          <button class="modal-close" id="modal-close" aria-label="Close">
+            ✕
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <div class="detail-meta" id="detail-meta"></div>
+
+          <p class="detail-desc" id="detail-desc"></p>
+
+          <div
+            class="detail-image-wrap"
+            id="detail-image-wrap"
+            style="display: none"
+          >
+            <img id="detail-image" alt="Report evidence" loading="lazy" />
+          </div>
+
+          <div class="detail-actions">
+            <button
+              class="btn reaction-btn"
+              data-type="support"
+              id="detail-support"
+            >
+              Support <span class="count" id="detail-support-count">0</span>
+            </button>
+            <button
+              class="btn reaction-btn"
+              data-type="angry"
+              id="detail-angry"
+            >
+              Angry <span class="count" id="detail-angry-count">0</span>
+            </button>
+            <button
+              class="btn reaction-btn"
+              data-type="watch"
+              id="detail-watch"
+            >
+              Watch <span class="count" id="detail-watch-count">0</span>
+            </button>
+          </div>
+
+          <div class="detail-comments">
+            <div class="detail-comments-head">
+              <div class="detail-comments-title">Comments</div>
+              <div class="detail-comments-count" id="detail-comments-count">
+                0
+              </div>
+            </div>
+
+            <div class="comment-list" id="detail-comment-list"></div>
+
+            <form class="comment-form" id="detail-comment-form">
+              <input
+                class="comment-input"
+                id="detail-comment-input"
+                type="text"
+                placeholder="Write a comment…"
+              />
+              <button class="comment-submit" type="submit">Post</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="./js/navbar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="./js/feed.js"></script>
+  </body>
+</html>

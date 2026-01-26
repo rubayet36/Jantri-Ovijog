@@ -1,0 +1,687 @@
+/* =========================================
+   FEED THEME (uses ui.css tokens w/ fallbacks)
+   ========================================= */
+
+:root{
+  /* System tokens (fallbacks ensure feed.css works standalone) */
+
+  --surface: var(--bg-card, #FFFFFF);
+  --surface-2: var(--bg-muted, #F1F5F9);
+
+  --border: var(--border-light, #E2E8F0);
+  --shadow-sm: var(--shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.06));
+  --shadow-md: var(--shadow-md, 0 10px 30px rgba(15, 23, 42, 0.08));
+
+  --text: var(--text-main, #0F172A);
+  --text-2: var(--text-secondary, #475569);
+  --muted: var(--text-muted, #64748B);
+
+  --primary: var(--accent, #2563EB);
+  --primary-hover: var(--accent-hover, #1D4ED8);
+  --ring: rgba(37, 99, 235, 0.35);
+
+  --danger: var(--danger, #DC2626);
+  --warning: var(--warning, #F59E0B);
+  --success: var(--success, #16A34A);
+
+  --r-12: 12px;
+  --r-16: 16px;
+  --r-20: 20px;
+  --r-pill: 999px;
+
+  --s-2: 10px;
+  --s-3: 14px;
+  --s-4: 18px;
+  --s-5: 24px;
+  --s-6: 30px;
+
+  --font: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  /* Navbar height (used for sticky toolbar + modal positioning) */
+  --nav-h: 72px;
+}
+
+html, body{
+  background: var(--bg);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.feed-main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px var(--s-4) 64px;
+}
+
+/* Hero */
+.feed-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: 8px 0 var(--s-5);
+}
+.feed-h1 {
+  margin: 0;
+  font-size: clamp(26px, 3.4vw, 40px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  font-weight: 800;
+}
+.feed-subtitle {
+  margin: 10px 0 0;
+  max-width: 70ch;
+  color: var(--text-2);
+  line-height: 1.55;
+  font-weight: 500;
+}
+
+.btn-primary {
+  appearance: none;
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: var(--r-pill);
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: 140ms ease;
+  white-space: nowrap;
+}
+.btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
+.btn-primary:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+
+/* Toolbar */
+.feed-toolbar {
+  position: sticky;
+  top: calc(var(--nav-h) + 12px);
+  z-index: 50;
+  background: #FFFFFF;
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  padding: var(--s-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.control-group { min-width: 240px; }
+.control-label {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.segmented {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.seg-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 10px 14px;
+  font-weight: 700;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: 140ms ease;
+}
+.seg-btn:hover { background: var(--surface-2); color: var(--text); }
+.seg-btn.active { background: rgba(37, 99, 235, 0.12); color: var(--text); }
+.seg-btn:focus-visible { outline: none; box-shadow: inset 0 0 0 2px rgba(37, 99, 235, 0.35); }
+
+.select {
+  width: 100%;
+  max-width: 260px;
+  appearance: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-12);
+  padding: 11px 12px;
+  font-weight: 650;
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
+.select:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+
+/* NEW: grid layout */
+.feed-grid {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: var(--s-5);
+  margin-top: 18px;
+}
+
+.feed-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+/* Cards (list view stays clean) */
+.feed-card {
+  background: #fcfcfc;
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: 160ms ease;
+  cursor: pointer;
+}
+
+.feed-card:hover { transform: translateY(-1px); }
+
+/* ================================
+   New card structure
+   The feed cards use a distinct header and content section. The header has a tinted
+   background to separate user information and status from the body. The content
+   section contains the title, meta chips, description and engagement row. Both
+   sections inherit the card's rounded corners for a seamless look.
+================================ */
+.feed-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: 16px 20px;
+  background: rgba(37, 99, 235, 0.06);
+  border-top-left-radius: var(--r-20);
+  border-top-right-radius: var(--r-20);
+  border-bottom: 1px solid var(--border);
+}
+
+.feed-card-content {
+  padding: 20px;
+  border-bottom-left-radius: var(--r-20);
+  border-bottom-right-radius: var(--r-20);
+}
+
+.feed-card-body { padding: 20px; }
+
+.feed-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-bottom: var(--s-4);
+  background-color: #e9eefa;
+  border-radius: 15px;
+  
+}
+
+.feed-user {
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  /* Avatar background uses a pastel variant of the primary color for consistency */
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--primary);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  border: 1px solid rgba(37, 99, 235, 0.25);
+  flex: 0 0 auto;
+}
+.user-meta { min-width: 0; }
+.user-name {
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.user-sub {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-badge {
+  border-radius: var(--r-pill);
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.status-badge.new {
+  background: rgba(37, 99, 235, 0.10);
+  border-color: rgba(37, 99, 235, 0.35);
+  color: var(--text);
+}
+.status-badge.working {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.45);
+  color: var(--text);
+}
+.status-badge.resolved {
+  background: rgba(22, 163, 74, 0.14);
+  border-color: rgba(22, 163, 74, 0.45);
+  color: var(--text);
+}
+.status-badge.fake {
+  background: rgba(220, 38, 38, 0.12);
+  border-color: rgba(220, 38, 38, 0.50);
+  color: #7F1D1D;
+}
+
+.feed-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  font-weight: 850;
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 10px;
+}
+.meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-2);
+  font-weight: 650;
+  font-size: 13px;
+}
+.category {
+  border-color: rgba(37, 99, 235, 0.22);
+  background: #bed9fb;
+  color: var(--text);
+}
+
+/* description clamp */
+.feed-body {
+  color: var(--text-2);
+  line-height: 1.65;
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* NEW: compact engagement row */
+.engagement-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: var(--s-4);
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 13px;
+}
+.engagement-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* RIGHT: map panel */
+.map-col { position: sticky; top: calc(var(--nav-h) + 92px); height: calc(100vh - (var(--nav-h) + 110px)); }
+.map-panel {
+  background: var(--surface);
+     border: 10px solid #fdfeff;
+  border-radius: var(--r-20);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.map-panel-header {
+  padding: 14px 16px;
+  background: #d9f5ff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.map-panel-title { font-weight: 900; letter-spacing: -0.02em; }
+.map-panel-sub { color: var(--muted); font-weight: 650; font-size: 12px; margin-top: 2px; }
+.map-panel-badge {
+  padding: 8px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-weight: 800;
+  font-size: 12px;
+  color: var(--text);
+}
+.global-map { flex: 1; min-height: 420px; background: var(--surface-2); }
+
+/* Empty state */
+.feed-state {
+  background: var(--surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-20);
+  padding: 40px 22px;
+  text-align: center;
+  color: var(--text-2);
+  box-shadow: var(--shadow-sm);
+}
+.feed-state h3 { margin: 0 0 6px; color: var(--text); font-weight: 850; }
+.feed-state p { margin: 0; font-weight: 600; }
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: none;
+  z-index: 200;
+}
+.modal-backdrop.open { display: block; }
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 210;
+  padding: 24px;
+}
+.modal.open { display: grid; place-items: center; }
+
+.modal-card {
+  width: min(860px, 96vw);
+  max-height: 92vh;
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-20);
+  box-shadow: var(--shadow-sm);
+}
+.modal-header {
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.modal-title-wrap { display: flex; flex-direction: column; gap: 8px; }
+.modal-title { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
+.modal-sub { color: var(--muted); font-weight: 700; font-size: 13px; }
+.modal-close {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--r-pill);
+  padding: 10px 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.modal-body { padding: 16px; }
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.detail-desc {
+  color: var(--text-2);
+  line-height: 1.7;
+  font-weight: 550;
+  margin: 0 0 14px;
+}
+
+.detail-image-wrap {
+  border: 1px solid var(--border);
+  border-radius: var(--r-16);
+  overflow: hidden;
+  background: var(--surface-2);
+  margin-bottom: 14px;
+}
+.detail-image-wrap img { width: 100%; display: block; max-height: 520px; object-fit: cover; }
+
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 12px;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--r-pill);
+  padding: 10px 12px;
+  font-weight: 750;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 140ms ease;
+  box-shadow: var(--shadow-sm);
+}
+.btn:hover { background: var(--surface-2); }
+.btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.btn .count { color: var(--muted); font-weight: 900; margin-left: 6px; }
+.reaction-btn.active {
+  background: rgba(37, 99, 235, 0.12);
+  border-color: rgba(37, 99, 235, 0.25);
+}
+
+.detail-comments { margin-top: 14px; }
+.detail-comments-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.detail-comments-title { font-weight: 900; }
+.detail-comments-count {
+  padding: 6px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  font-weight: 900;
+  font-size: 12px;
+}
+
+.comment-item {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--r-12);
+  background: var(--surface-2);
+  margin-bottom: 10px;
+  color: var(--text-2);
+  line-height: 1.55;
+  font-size: 13px;
+}
+.comment-author { font-weight: 900; color: var(--text); margin-right: 6px; }
+
+.comment-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.comment-input {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--r-pill);
+  padding: 11px 14px;
+  font-weight: 650;
+  background: var(--surface);
+}
+.comment-input:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--ring); }
+.comment-submit {
+  border-radius: var(--r-pill);
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: #fff;
+  padding: 11px 14px;
+  font-weight: 900;
+  cursor: pointer;
+}
+.comment-submit:hover { background: var(--primary-hover); }
+
+/* Responsive */
+@media (max-width: 980px) {
+  .feed-grid { grid-template-columns: 1fr; }
+  .map-col { position: relative; top: auto; height: 420px; }
+  .global-map { min-height: 360px; }
+}
+
+@media (max-width: 720px) {
+  .feed-main { padding: var(--s-5) var(--s-3) 52px; }
+  .feed-hero { flex-direction: column; align-items: flex-start; }
+  .btn-primary { width: 100%; }
+  .control-group { min-width: 100%; }
+  .select { max-width: 100%; }
+  .feed-card-body { padding: var(--s-4); }
+}
+/* =========================
+   FIX: Navbar covering modal
+   ========================= */
+
+/* 1) Define your navbar height (adjust if your navbar is taller) */
+:root{
+  --nav-h: 72px;
+}
+
+/* 2) Make sure modal ALWAYS sits above navbar (z-index war fix) */
+.modal-backdrop{
+  z-index: 9998 !important;
+}
+.modal{
+  z-index: 9999 !important;
+
+  /* 3) Push modal content below the fixed/sticky navbar */
+  padding-top: calc(var(--nav-h) + 16px) !important;
+}
+
+/* 4) Prevent modal card from going under navbar and keep it scrollable */
+.modal-card{
+  max-height: calc(100vh - var(--nav-h) - 32px) !important;
+}
+
+/* 5) If your navbar is fixed and your page content is also going under it,
+      uncomment this (optional) */
+/*
+body{
+  padding-top: var(--nav-h);
+}
+*/
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+/* =========================
+   Skeleton loading (Feed)
+   ========================= */
+.feed-card.skeleton{
+  cursor: default;
+  pointer-events: none;
+}
+
+.sk{
+  position: relative;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: 999px;
+}
+
+.sk::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.55) 50%,
+    rgba(255,255,255,0) 100%
+  );
+  animation: sk-shimmer 1.2s infinite;
+}
+
+@keyframes sk-shimmer{
+  100%{ transform: translateX(100%); }
+}
+
+.sk-avatar{ width:44px; height:44px; border-radius: 12px; }
+.sk-line{ height: 12px; }
+.sk-line.sm{ height: 10px; opacity: 0.85; }
+.sk-line.lg{ height: 16px; border-radius: 10px; }
+.sk-chip{ height: 28px; width: 110px; border-radius: var(--r-pill); }
+
+.sk-w-40{ width: 40%; }
+.sk-w-55{ width: 55%; }
+.sk-w-65{ width: 65%; }
+.sk-w-80{ width: 80%; }
+.sk-w-90{ width: 90%; }
+
+.feed-card.skeleton .feed-top{
+  background-color: transparent;
+}
+
+.feed-card.skeleton .status-badge{
+  min-width: 92px;
+  height: 30px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk::after{ animation: none !important; }
+}

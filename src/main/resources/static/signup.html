@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jatri Ovijog - Sign up</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Modern glassmorphism signup page" />
+  <link rel="stylesheet" href="./css/ui.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <main class="auth-wrapper">
+    <section class="auth-card">
+      <h1 class="auth-title">Create account</h1>
+      <p class="auth-subtitle">Join Jatri Ovijog and get started.</p>
+
+      <form id="signupForm" action="/signup" method="POST">
+        <div class="field">
+          <label for="name">Full name</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Your name"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="you@example.com"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="At least 6 characters"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Confirm password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Repeat your password"
+            required
+          />
+        </div>
+
+        <div class="field">
+          <label>Sign up as</label>
+          <div class="role-options">
+            <label>
+              <input type="radio" name="accountType" value="user" checked required />
+              User
+            </label>
+            <label>
+              <input type="radio" name="accountType" value="police" required />
+              Police
+            </label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label style="display:flex; gap:8px; align-items:flex-start; font-size:12px;">
+            <input type="checkbox" id="terms" name="terms" style="width:auto; margin-top:3px;" />
+            <span>I agree to the <a href="#" target="_blank">Terms &amp; Conditions</a>.</span>
+          </label>
+        </div>
+
+        <button type="submit" class="btn-primary">Sign up</button>
+      </form>
+
+      <div class="google-auth-wrapper" style="margin-top: 1.5rem; text-align: center;">
+        <div style="font-size: 0.9rem; opacity: 0.7; margin-bottom: 10px;">Or sign up with</div>
+        
+        <div id="g_id_onload"
+             data-client_id="501224851869-jaolahogmj9g2s72ktcr26olqvh2lbbd.apps.googleusercontent.com"
+             data-callback="handleGoogleCredential"
+             data-auto_prompt="false">
+        </div>
+        <div class="g_id_signin"
+             data-type="standard"
+             data-size="large"
+             data-theme="outline"
+             data-text="signup_with"
+             data-shape="rectangular"
+             data-logo_alignment="left"
+             data-width="100%">
+        </div>
+      </div>
+
+      <p class="auth-extra">
+        Already have an account?
+        <a href="index.html">Log in</a>
+      </p>
+
+      <footer class="auth-footer">
+        &copy; 2025 Your Name
+      </footer>
+    </section>
+  </main>
+
+  <script src="./js/signup.js"></script>
+</body>
+</html>

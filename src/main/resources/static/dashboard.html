@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Jatri Ovijog – Passenger Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Global UI design system -->
+    <link rel="stylesheet" href="./css/ui.css" />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="./css/navbar.css?v=2" />
+    <link rel="stylesheet" href="./css/dashboard.css" />
+    <script src="./js/auth-guard.js"></script>
+
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body>
+    <!-- Navbar (keeps existing IDs for navbar.js) -->
+    <header>
+      <nav class="full-navbar">
+        <div class="nav-left">
+          <a
+            href="dashboard.html"
+            class="brand-title"
+            aria-label="Jatri Ovijog Home"
+          >
+            <span>Jatri Ovijog</span>
+          </a>
+        </div>
+
+        <button class="nav-toggle" aria-label="Toggle navigation">
+          <span></span><span></span><span></span>
+        </button>
+
+        <div class="nav-collapsible">
+          <div class="nav-wrap">
+            <div class="bubble active"></div>
+            <div class="nav" id="nav-container">
+              <a
+                href="dashboard.html"
+                class="nav-link active"
+                data-page="dashboard"
+              >
+                <span>Dashboard</span>
+                <span class="nav-pill-badge">4</span>
+              </a>
+              <a href="feed.html" class="nav-link" data-page="feed">
+                <span>Community</span>
+              </a>
+              <a href="report.html" class="nav-link" data-page="report">
+                <span>Report</span>
+              </a>
+              <a href="emergency.html" class="nav-link" data-page="emergency">
+                <span>Emergency</span>
+              </a>
+            </div>
+          </div>
+
+          <div class="nav-right">
+            <a class="nav-cta" href="report.html">Report Issue</a>
+            <button class="nav-icon-btn" id="theme-toggle" title="Toggle Theme">
+              🌙
+            </button>
+            <button class="nav-icon-btn" id="profile-btn" title="Profile">
+              👤
+            </button>
+            <button class="nav-icon-btn" id="logout-btn" title="Sign Out">
+              <svg
+                class="nav-icon-svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </nav>
+      <div class="nav-backdrop" aria-hidden="true"></div>
+    </header>
+
+    <!-- ======================= -->
+    <!--    DASHBOARD CONTENT    -->
+    <!-- ======================= -->
+    <main class="dashboard-main">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Passenger Dashboard</h1>
+          <div class="page-subtitle">
+            Track your reports, review trusted routes, and monitor system-wide
+            trends.
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <!-- LEFT COLUMN -->
+        <section class="column-left">
+          <!-- Hero: Stats + Actions -->
+          <section class="card">
+            <div class="hero-row">
+              <div>
+                <h2 class="card-title">Your Stats</h2>
+                <div class="stats-grid">
+                  <div class="stat-item">
+                    <div class="stat-icon stat-icon-blue">📄</div>
+                    <div class="stat-number" id="stat-total">0</div>
+                    <div class="stat-label">Total Reports</div>
+                  </div>
+
+                  <div class="stat-item">
+                    <div class="stat-icon stat-icon-orange">⏳</div>
+                    <div class="stat-number" id="stat-pending">0</div>
+                    <div class="stat-label">Pending</div>
+                  </div>
+
+                  <div class="stat-item">
+                    <div class="stat-icon stat-icon-green">✔️</div>
+                    <div class="stat-number" id="stat-resolved">0</div>
+                    <div class="stat-label">Resolved</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="actions-panel">
+                <p class="actions-title">Quick Actions</p>
+                <div class="actions-grid">
+                  <a class="action-btn primary" href="report.html"
+                    >📝 Report Issue</a
+                  >
+                  <button
+                    class="action-btn"
+                    id="btnCalculateFare"
+                    type="button"
+                  >
+                    🧮 Calculate Fare
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Complaints Overview Chart -->
+          <section class="card">
+            <h2 class="card-title">Complaints Overview</h2>
+            <div class="chart-wrapper">
+              <canvas id="complaintsOverviewChart"></canvas>
+            </div>
+          </section>
+          <!-- Two-up cards -->
+          <div class="two-up">
+            <section class="card trusted-routes-card">
+              <h2 class="card-title">Trusted Routes</h2>
+              <p class="trusted-subtitle">
+                Based on recent complaints and safety reports.
+              </p>
+              <div class="trusted-chips" id="trustedRoutes"></div>
+            </section>
+            <section class="card">
+              <h2 class="card-title">Complaints per Company</h2>
+              <div class="chart-wrapper">
+                <canvas id="companyComplaintsChart"></canvas>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- RIGHT COLUMN -->
+        <section class="column-right">
+          <section class="card recent-card">
+            <h2 class="card-title">Recent Complaints</h2>
+            <div id="recentComplaintsList" class="complaints-list">
+              <!-- injected by JS -->
+            </div>
+          </section>
+        </section>
+      </div>
+    </main>
+    <div id="ai-widget-container">
+      <div id="ai-chat-popup" class="ai-popup" style="display: none">
+        <div class="ai-popup-header">
+          <div class="ai-title"><span>🤖</span> Jatri AI Assistant</div>
+          <button id="ai-close-btn" type="button">&times;</button>
+        </div>
+
+        <div class="ai-popup-body">
+          <p class="ai-instruction">
+            Describe the incident here. We will auto-fill the official report
+            form for you.
+          </p>
+          <textarea
+            id="ai-widget-input"
+            placeholder="e.g. I was on a Raida bus at Rampura and the helper was rude..."
+          ></textarea>
+          <div id="ai-widget-status" class="ai-status"></div>
+        </div>
+
+        <div class="ai-popup-footer">
+          <button id="ai-widget-submit" type="button">
+            ✨ Analyze & Draft
+          </button>
+        </div>
+      </div>
+
+      <button id="ai-fab-btn" class="ai-fab" title="Report with AI">💬</button>
+    </div>
+
+    <!-- EDIT COMPLAINT MODAL -->
+    <div id="editModal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Edit Complaint</h3>
+          <button class="modal-close" onclick="closeEditModal()">×</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editComplaintId" />
+
+          <div class="form-group">
+            <label class="form-label">Category</label>
+            <input type="text" id="editCategory" class="form-input" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea id="editDescription" class="form-textarea"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Route / Location</label>
+            <input
+              type="text"
+              id="editRoute"
+              class="form-input"
+              placeholder="e.g. Mirpur to Motijheel"
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+          <button class="btn-save" onclick="saveComplaintEdit()">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- Scripts -->
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/navbar.js"></script>
+  </body>
+</html>
